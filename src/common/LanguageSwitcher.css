@@ -1,0 +1,6 @@
+.language-switcher select {
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-family: 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
+}
