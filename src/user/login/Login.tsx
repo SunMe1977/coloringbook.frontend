@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './Login.css';
-import { GOOGLE_AUTH_URL, FACEBOOK_AUTH_URL, GITHUB_AUTH_URL, ACCESS_TOKEN } from '../../constants';
-import { login } from '../../util/APIUtils';
+import { GOOGLE_AUTH_URL, FACEBOOK_AUTH_URL, GITHUB_AUTH_URL } from '../../constants';
 import { Link, useLocation, useNavigate, Navigate } from 'react-router-dom';
 import fbLogo from '../../img/fb-logo.png';
 import googleLogo from '../../img/google-logo.png';
@@ -45,7 +44,7 @@ function Login({ authenticated }: LoginProps) {
         <div className="or-separator">
           <span className="or-text">OR</span>
         </div>
-        <LoginForm onLoginSuccess={() => setRedirect(true)} />
+        <LoginForm />
         <span className="signup-link">
           New user? <Link to="/signup">Sign up!</Link>
         </span>
@@ -71,28 +70,32 @@ function SocialLogin() {
   );
 }
 
-interface LoginFormProps {
-  onLoginSuccess: () => void;
-}
-
-function LoginForm({ onLoginSuccess }: LoginFormProps) {
+function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { t: tCommon } = useTranslation('common');
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const loginRequest = { email, password };
 
-    login(loginRequest)
-      .then((response) => {
-        localStorage.setItem(ACCESS_TOKEN, response.accessToken);
-        toast.success("You're successfully logged in!");
-        onLoginSuccess();
-      })
-      .catch((error) => {
-        toast.error(error?.message || 'Oops! Something went wrong. Please try again!');
-      });
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = 'http://localhost:8080/auth/login';
+
+    const emailInput = document.createElement('input');
+    emailInput.type = 'hidden';
+    emailInput.name = 'email';
+    emailInput.value = email;
+    form.appendChild(emailInput);
+
+    const passwordInput = document.createElement('input');
+    passwordInput.type = 'hidden';
+    passwordInput.name = 'password';
+    passwordInput.value = password;
+    form.appendChild(passwordInput);
+
+    document.body.appendChild(form);
+    form.submit();
   };
 
   return (

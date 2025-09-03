@@ -3,7 +3,7 @@ import { Link, NavLink } from 'react-router-dom';
 import './AppHeader.css';
 import LanguageSwitcher from './LanguageSwitcher';
 import { useTranslation } from 'react-i18next';
-import logo from '../img/logo.png';
+import logo from '../img/logo.svg';
 import { useNavigate } from 'react-router-dom';
 
 interface AppHeaderProps {

@@ -62,7 +62,7 @@
 
 .applogo {
   width: 40px;
-  height: 40px;
+  width: auto;
   object-fit: contain;
   vertical-align: middle;   /* optional, for inline fallback */
 }
