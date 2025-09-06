@@ -4,14 +4,14 @@ interface RequestOptions extends RequestInit {
   url: string;
 }
 
-const request = (options: RequestOptions): Promise<any> => {
+const request = async (options: RequestOptions): Promise<any> => {
   const headers = new Headers({
     'Content-Type': 'application/json',
   });
 
   const accessToken = localStorage.getItem(ACCESS_TOKEN);
   if (accessToken) {
-    headers.append('Authorization', 'Bearer ' + accessToken);
+    headers.append('Authorization', `Bearer ${accessToken}`);
   }
 
   const { url, ...rest } = options;
@@ -20,17 +20,18 @@ const request = (options: RequestOptions): Promise<any> => {
     headers,
   };
 
-  return fetch(url, fetchOptions).then((response) =>
-    response
-      .json()
-      .then((json) => {
-        if (!response.ok) {
-          return Promise.reject(json);
-        }
-        return json;
-      })
-      .catch((err) => Promise.reject(err))
-  );
+  try {
+    const response = await fetch(url, fetchOptions);
+    const json = await response.json();
+
+    if (!response.ok) {
+      return Promise.reject(json);
+    }
+
+    return json;
+  } catch (error) {
+    return Promise.reject(error);
+  }
 };
 
 export function getCurrentUser(): Promise<any> {
@@ -40,14 +41,14 @@ export function getCurrentUser(): Promise<any> {
   }
 
   return request({
-    url: API_BASE_URL + '/user/me',
+    url: `${API_BASE_URL}/user/me`,
     method: 'GET',
   });
 }
 
 export function login(loginRequest: Record<string, any>): Promise<any> {
   return request({
-    url: API_BASE_URL + '/auth/login',
+    url: `${API_BASE_URL}/auth/login`,
     method: 'POST',
     body: JSON.stringify(loginRequest),
   });
@@ -55,7 +56,7 @@ export function login(loginRequest: Record<string, any>): Promise<any> {
 
 export function signup(signupRequest: Record<string, any>): Promise<any> {
   return request({
-    url: API_BASE_URL + '/auth/signup',
+    url: `${API_BASE_URL}/auth/signup`,
     method: 'POST',
     body: JSON.stringify(signupRequest),
   });
