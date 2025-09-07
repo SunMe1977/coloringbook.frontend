@@ -1,4 +1,4 @@
-const CACHE_NAME = 'coloringbook-cache-v1';
+const CACHE_NAME = 'coloringbook-cache-v2';
 const urlsToCache = [
   '/',
   '/index.html',
