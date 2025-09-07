@@ -10,7 +10,6 @@ import Profile from '@user/profile/Profile';
 import Home from '@home/Home';
 import NotFound from '@common/NotFound';
 import OAuth2RedirectHandler from '@user/oauth2/OAuth2RedirectHandler';
-
 import './App.css';
 
 function App() {

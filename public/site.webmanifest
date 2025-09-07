@@ -1,6 +1,7 @@
 {
   "name": "AI SelfPub ColoringBook Studio",
   "short_name": "AI SelfPub ColoringBook Studio",
+  "start_url": "./index.html",
   "icons": [
     {
       "src": "/web-app-manifest-192x192.png",

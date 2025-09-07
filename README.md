@@ -1,7 +1,15 @@
 npx npm-check-updates -u  //update major package.json
 npm outdated
 
+set env on localhost
+setx VITE_API_BASE_URL "http://localhost:8080"
+setx VITE_OAUTH2_REDIRECT_URI "http://localhost:5713/oauth2/redirect"
+
 Run it with : npm run dev
+
+npm run build
+serve -s dist
+
 
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
 
