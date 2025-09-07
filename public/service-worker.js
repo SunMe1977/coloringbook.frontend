@@ -1,73 +1,47 @@
-const isLocalhost = Boolean(
-  window.location.hostname === 'localhost' ||
-  window.location.hostname === '[::1]' ||
-  /^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/.test(window.location.hostname)
-);
+// public/service-worker.js
 
-export default function register() {
-  if (import.meta.env.PROD && 'serviceWorker' in navigator) {
-    const swUrl = '/service-worker.js';
+const CACHE_NAME = 'coloringbook-cache-v1';
+const urlsToCache = [
+  '/',
+  '/index.html',
+  '/manifest.json',
+  '/favicon.ico',
+  '/assets/logo.svg'
+];
 
-    window.addEventListener('load', () => {
-      if (isLocalhost) {
-        checkValidServiceWorker(swUrl);
-        navigator.serviceWorker.ready.then(() => {
-          console.log('Service worker ready (localhost).');
-        });
-      } else {
-        registerValidSW(swUrl);
-      }
-    });
-  }
-}
+// Install event: cache static assets
+self.addEventListener('install', event => {
+  console.log('📦 Service Worker: Installing...');
+  event.waitUntil(
+    caches.open(CACHE_NAME).then(cache => {
+      console.log('✅ Service Worker: Caching app shell');
+      return cache.addAll(urlsToCache);
+    })
+  );
+});
 
-function registerValidSW(swUrl: string) {
-  navigator.serviceWorker
-    .register(swUrl)
-    .then((registration) => {
-      registration.onupdatefound = () => {
-        const installingWorker = registration.installing;
-        if (!installingWorker) return;
-
-        installingWorker.onstatechange = () => {
-          if (installingWorker.state === 'installed') {
-            if (navigator.serviceWorker.controller) {
-              console.log('New content is available; please refresh.');
-            } else {
-              console.log('Content is cached for offline use.');
-            }
+// Activate event: clean up old caches
+self.addEventListener('activate', event => {
+  console.log('🔄 Service Worker: Activating...');
+  event.waitUntil(
+    caches.keys().then(cacheNames =>
+      Promise.all(
+        cacheNames.map(name => {
+          if (name !== CACHE_NAME) {
+            console.log('🧹 Service Worker: Removing old cache', name);
+            return caches.delete(name);
           }
-        };
-      };
-    })
-    .catch((error) => {
-      console.error('Error during service worker registration:', error);
-    });
-}
+        })
+      )
+    )
+  );
+});
 
-function checkValidServiceWorker(swUrl: string) {
-  fetch(swUrl)
-    .then((response) => {
-      const contentType = response.headers.get('content-type') || '';
-      if (response.status === 404 || !contentType.includes('javascript')) {
-        navigator.serviceWorker.ready.then((registration) => {
-          registration.unregister().then(() => {
-            window.location.reload();
-          });
-        });
-      } else {
-        registerValidSW(swUrl);
-      }
+// Fetch event: serve cached content when offline
+self.addEventListener('fetch', event => {
+  event.respondWith(
+    caches.match(event.request).then(response => {
+      return response || fetch(event.request);
     })
-    .catch(() => {
-      console.log('No internet connection found. App is running in offline mode.');
-    });
-}
-
-export function unregister() {
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.ready.then((registration) => {
-      registration.unregister();
-    });
-  }
-}
+  );
+});
