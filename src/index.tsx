@@ -16,6 +16,12 @@ if (!container) {
   throw new Error('Root container not found');
 }
 
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/service-worker.js');
+  });
+}
+
 const root = ReactDOM.createRoot(container);
 
 root.render(
