@@ -25,6 +25,6 @@
       "@constants": ["constants"]
     }
   },
-  "include": ["src"],
+  "include": ["src", "public/registerServiceWorker.ts"],
   "exclude": ["node_modules", "dist"]
 }
