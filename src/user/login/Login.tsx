@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import './Login.css';
-import { GOOGLE_AUTH_URL, FACEBOOK_AUTH_URL, GITHUB_AUTH_URL } from '../../constants';
 import { Link, useLocation, useNavigate, Navigate } from 'react-router-dom';
 import fbLogo from '../../img/fb-logo.png';
 import googleLogo from '../../img/google-logo.png';
@@ -55,6 +54,13 @@ function Login({ authenticated }: LoginProps) {
 }
 
 function SocialLogin() {
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
+  const redirectUri = import.meta.env.VITE_OAUTH2_REDIRECT_URI;
+
+  const GOOGLE_AUTH_URL = `${backendUrl}/oauth2/authorize/google?redirect_uri=${redirectUri}`;
+  const FACEBOOK_AUTH_URL = `${backendUrl}/oauth2/authorize/facebook?redirect_uri=${redirectUri}`;
+  const GITHUB_AUTH_URL = `${backendUrl}/oauth2/authorize/github?redirect_uri=${redirectUri}`;
+
   return (
     <div className="social-login">
       <a className="btn btn-block social-btn google" href={GOOGLE_AUTH_URL}>
@@ -80,7 +86,7 @@ function LoginForm() {
 
     const form = document.createElement('form');
     form.method = 'POST';
-    form.action = 'http://localhost:8080/auth/login';
+    form.action = `${import.meta.env.VITE_BACKEND_URL}/auth/login`;
 
     const emailInput = document.createElement('input');
     emailInput.type = 'hidden';
