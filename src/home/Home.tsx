@@ -11,7 +11,7 @@ const Home: React.FC = () => {
       <div className="home-content">
         <h1>{t('welcome')}</h1>
         <p>{t('description')}</p>
-         <img src={page_under_construction} width="60%" alt="Page under construction" />
+         <img src={page_under_construction} width="50%" alt="Page under construction" />
       </div>
     </div>
   );
