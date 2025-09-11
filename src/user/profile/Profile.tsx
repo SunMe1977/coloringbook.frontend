@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import './Profile.css';
 
 interface User {
@@ -8,41 +8,12 @@ interface User {
 }
 
 interface ProfileProps {
-  currentUser?: User;
+  currentUser: User; // currentUser is now guaranteed to be present by App.tsx
 }
 
 const Profile: React.FC<ProfileProps> = ({ currentUser }) => {
-  const [loading, setLoading] = useState<boolean>(true);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 300);
-
-    return () => clearTimeout(timer);
-  }, [currentUser]);
-
-  if (loading) {
-    return (
-      <div className="profile-container">
-        <div className="container">
-          <p className="profile-message">Loading profile...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!currentUser || (!currentUser.name && !currentUser.email)) {
-    console.warn('⚠️ No user data available. Redirect or login may be needed.');
-    return (
-      <div className="profile-container">
-        <div className="container">
-          <p className="profile-message">No user data available. Please log in.</p>
-        </div>
-      </div>
-    );
-  }
-
+  // App.tsx now ensures currentUser is available before rendering Profile,
+  // so we can directly destructure and use it.
   const { name, email, imageUrl } = currentUser;
 
   return (

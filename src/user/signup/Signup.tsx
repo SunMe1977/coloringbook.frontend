@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
-import { signup } from '@util/APIUtils';
+import { signup, getCurrentUser } from '@util/APIUtils'; // Import getCurrentUser
 import { ACCESS_TOKEN } from '@constants';
 import './Signup.css';
 import { useTranslation } from 'react-i18next';
@@ -13,7 +13,7 @@ interface SignupFormData {
 }
 
 interface SignupProps {
-  onSignupSuccess?: () => void;
+  onSignupSuccess?: (user: any) => void; // Updated to accept user object
 }
 
 function Signup({ onSignupSuccess }: SignupProps) {
@@ -32,19 +32,32 @@ function Signup({ onSignupSuccess }: SignupProps) {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    signup(formData)
-      .then((response) => {
+    try {
+      const response = await signup(formData);
+      if (response && response.accessToken) {
         localStorage.setItem(ACCESS_TOKEN, response.accessToken);
         toast.success(t('success'));
-        if (onSignupSuccess) onSignupSuccess();
-        navigate('/');
-      })
-      .catch((error) => {
-        toast.error(error?.message || t('error'));
-      });
+
+        const user = await getCurrentUser(); // Fetch user details after signup
+        if (user) {
+          if (onSignupSuccess) onSignupSuccess(user); // Pass user to the success handler
+          navigate('/profile'); // Redirect to profile page
+        } else {
+          console.error('Signup: getCurrentUser returned no user data after signup.');
+          toast.error('Failed to fetch user profile after signup.', { autoClose: 5000 });
+          navigate('/'); // Fallback to home if profile fetch fails
+        }
+      } else {
+        console.error('Signup: Signup response did not contain accessToken:', response);
+        toast.error('Signup failed: No access token received.', { autoClose: 5000 });
+      }
+    } catch (error: any) {
+      console.error('Signup failed:', error);
+      toast.error(error?.message || t('error'));
+    }
   };
 
   return (

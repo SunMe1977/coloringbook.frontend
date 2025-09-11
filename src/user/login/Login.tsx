@@ -1,23 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import './Login.css';
-import { Link, useLocation, useNavigate, Navigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom'; // Removed Navigate
 import fbLogo from '../../img/fb-logo.png';
 import googleLogo from '../../img/google-logo.png';
 import githubLogo from '../../img/github-logo.png';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useTranslation } from 'react-i18next';
+import { login, getCurrentUser } from '../../util/APIUtils';
+import { ACCESS_TOKEN } from '../../constants';
 
 interface LoginProps {
   authenticated: boolean;
+  onLoginSuccess: (user: any) => void;
 }
 
 interface LocationState {
   error?: string;
 }
 
-function Login({ authenticated }: LoginProps) {
-  const [redirect, setRedirect] = useState(false);
+function Login({ authenticated, onLoginSuccess }: LoginProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const { t: tCommon } = useTranslation('common');
@@ -31,9 +33,8 @@ function Login({ authenticated }: LoginProps) {
     }
   }, [location, navigate]);
 
-  if (authenticated || redirect) {
-    return <Navigate to="/" replace />;
-  }
+  // Removed: if (authenticated || redirect) { return <Navigate to="/" replace />; }
+  // App.tsx will handle redirection based on the 'authenticated' state.
 
   return (
     <div className="login-container">
@@ -43,7 +44,7 @@ function Login({ authenticated }: LoginProps) {
         <div className="or-separator">
           <span className="or-text">OR</span>
         </div>
-        <LoginForm />
+        <LoginForm onLoginSuccess={onLoginSuccess} />
         <span className="signup-link">
           New user? <Link to="/signup">Sign up!</Link>
         </span>
@@ -76,32 +77,43 @@ function SocialLogin() {
   );
 }
 
-function LoginForm() {
+function LoginForm({ onLoginSuccess }: { onLoginSuccess: (user: any) => void }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { t: tCommon } = useTranslation('common');
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    console.log('LoginForm: Attempting login...');
 
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = `${import.meta.env.VITE_BACKEND_URL}/auth/login`;
+    try {
+      const response = await login({ email, password });
+      console.log('LoginForm: Login successful, response:', response);
+      
+      if (response && response.accessToken) {
+        localStorage.setItem(ACCESS_TOKEN, response.accessToken);
+        console.log('LoginForm: Access token stored in localStorage.');
+        toast.success('Login successful!', { autoClose: 3000 });
 
-    const emailInput = document.createElement('input');
-    emailInput.type = 'hidden';
-    emailInput.name = 'email';
-    emailInput.value = email;
-    form.appendChild(emailInput);
-
-    const passwordInput = document.createElement('input');
-    passwordInput.type = 'hidden';
-    passwordInput.name = 'password';
-    passwordInput.value = password;
-    form.appendChild(passwordInput);
-
-    document.body.appendChild(form);
-    form.submit();
+        console.log('LoginForm: Calling getCurrentUser...');
+        const user = await getCurrentUser();
+        console.log('LoginForm: getCurrentUser response:', user);
+        
+        if (user) {
+          onLoginSuccess(user);
+          console.log('LoginForm: onLoginSuccess called.');
+        } else {
+          console.error('LoginForm: getCurrentUser returned no user data.');
+          toast.error('Failed to fetch user profile after login.', { autoClose: 5000 });
+        }
+      } else {
+        console.error('LoginForm: Login response did not contain accessToken:', response);
+        toast.error('Login failed: No access token received.', { autoClose: 5000 });
+      }
+    } catch (error: any) {
+      console.error('LoginForm: Login failed:', error);
+      toast.error(error.message || 'Login failed. Please try again.', { autoClose: 5000 });
+    }
   };
 
   return (

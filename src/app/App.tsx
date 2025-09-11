@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { getCurrentUser } from '@util/APIUtils';
 import { ACCESS_TOKEN } from '@constants';
 
@@ -15,30 +15,54 @@ import './App.css';
 function App() {
   const [authenticated, setAuthenticated] = useState<boolean>(false);
   const [currentUser, setCurrentUser] = useState<any>(null);
+  const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem(ACCESS_TOKEN);
     if (token) {
-//     console.debug('🔄 App.tsx: Token found, calling getCurrentUser()');
       getCurrentUser()
         .then((user) => {
-//          console.debug('✅ getCurrentUser response:', user);
           setCurrentUser(user);
           setAuthenticated(true);
         })
         .catch((error) => {
-//          console.error('❌ getCurrentUser failed:', error);
+          console.error('❌ getCurrentUser failed:', error);
           setAuthenticated(false);
+          localStorage.removeItem(ACCESS_TOKEN); // Clear invalid token
         });
     } else {
-//      console.warn('⚠️ No token found in localStorage');
+      setAuthenticated(false);
+      setCurrentUser(null);
     }
-  }, []);
+  }, []); // Run only once on mount to check initial auth status
+
+  // Effect to handle redirection after authentication state changes
+  useEffect(() => {
+    if (authenticated && currentUser) {
+      // If authenticated and currently on the login, signup, or home page, redirect to profile
+      if (location.pathname === '/login' || location.pathname === '/signup' || location.pathname === '/') {
+        navigate('/profile', { replace: true });
+      }
+    } else if (!authenticated && (location.pathname === '/profile')) {
+      // If not authenticated and trying to access profile, redirect to login
+      navigate('/login', { replace: true });
+    }
+  }, [authenticated, currentUser, location.pathname, navigate]);
+
 
   const handleLogout = () => {
     localStorage.removeItem(ACCESS_TOKEN);
     setAuthenticated(false);
     setCurrentUser(null);
+    navigate('/login', { replace: true }); // Redirect to login after logout
+  };
+
+  // This handler is used for both local login and signup success
+  const handleLoginSuccess = (user: any) => {
+    setCurrentUser(user);
+    setAuthenticated(true);
+    // The useEffect above will handle the navigation to /profile
   };
 
   return (
@@ -47,10 +71,18 @@ function App() {
       <div className="app-body">
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login authenticated={authenticated} />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/profile" element={<Profile currentUser={currentUser} />} />
-          <Route path="/oauth2/redirect" element={<OAuth2RedirectHandler />} />
+          {/* Login and Signup components no longer directly navigate to /profile */}
+          <Route 
+            path="/login" 
+            element={authenticated ? <Navigate to="/" replace /> : <Login authenticated={authenticated} onLoginSuccess={handleLoginSuccess} />} 
+          />
+          <Route path="/signup" element={<Signup onSignupSuccess={handleLoginSuccess} />} />
+          {/* Profile route now relies solely on App.tsx's state for rendering */}
+          <Route 
+            path="/profile" 
+            element={authenticated && currentUser ? <Profile currentUser={currentUser} /> : <Navigate to="/login" replace />} 
+          />
+          <Route path="/oauth2/redirect" element={<OAuth2RedirectHandler onLoginSuccess={handleLoginSuccess} />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>

@@ -1,29 +1,55 @@
 import React, { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
-import { ACCESS_TOKEN } from '../../constants';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { ACCESS_TOKEN } from '@constants';
+import { toast } from 'react-toastify';
+import { getCurrentUser } from '@util/APIUtils';
 
-function OAuth2RedirectHandler() {
+interface OAuth2RedirectHandlerProps {
+  onLoginSuccess: (user: any) => void;
+}
+
+const OAuth2RedirectHandler: React.FC<OAuth2RedirectHandlerProps> = ({ onLoginSuccess }) => {
+  const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const token = params.get('token');
-    const error = params.get('error');
+    const getUrlParameter = (name: string) => {
+      name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+      const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+      const results = regex.exec(location.search);
+      return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+    };
+
+    const token = getUrlParameter('token');
+    const error = getUrlParameter('error');
 
     if (token) {
       localStorage.setItem(ACCESS_TOKEN, token);
-      // ✅ Force full reload to re-trigger getCurrentUser in App.js
-      window.location.href = '/profile';
+      toast.success('Login successful via OAuth2!', { autoClose: 3000 });
+      
+      // Fetch current user after setting token
+      getCurrentUser()
+        .then((user) => {
+          onLoginSuccess(user); // Update App.tsx state
+          navigate('/', { replace: true }); // Redirect to home, App.tsx will handle /profile redirect
+        })
+        .catch((err) => {
+          console.error('OAuth2RedirectHandler: Failed to fetch user after token:', err);
+          toast.error('Failed to fetch user profile after OAuth2 login.', { autoClose: 5000 });
+          navigate('/login', { state: { error: 'Failed to fetch user profile after OAuth2 login.' }, replace: true });
+        });
     } else {
-      window.location.href = `/login?error=${encodeURIComponent(error || 'OAuth2 failed')}`;
+      const errorMessage = error || 'Something went wrong with OAuth2 login.';
+      toast.error(errorMessage, { autoClose: 5000 });
+      navigate('/login', { state: { error: errorMessage }, replace: true });
     }
-  }, [location]);
+  }, [location, navigate, onLoginSuccess]);
 
   return (
-    <div className="oauth2-redirect">
-      <p>Logging you in…</p>
+    <div className="oauth2-redirect-handler-container">
+      <p>Processing OAuth2 login...</p>
     </div>
   );
-}
+};
 
 export default OAuth2RedirectHandler;
