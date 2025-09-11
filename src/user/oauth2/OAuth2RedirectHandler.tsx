@@ -25,7 +25,7 @@ const OAuth2RedirectHandler: React.FC<OAuth2RedirectHandlerProps> = ({ onLoginSu
 
     if (token) {
       localStorage.setItem(ACCESS_TOKEN, token);
-      toast.success('Login successful via OAuth2!', { autoClose: 3000 });
+      // Removed: toast.success('Login successful via OAuth2!', { autoClose: 3000 });
       
       // Fetch current user after setting token
       getCurrentUser()
