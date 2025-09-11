@@ -84,24 +84,18 @@ function LoginForm({ onLoginSuccess }: { onLoginSuccess: (user: any) => void }) 
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log('LoginForm: Attempting login...');
 
     try {
       const response = await login({ email, password });
-      console.log('LoginForm: Login successful, response:', response);
       
       if (response && response.accessToken) {
         localStorage.setItem(ACCESS_TOKEN, response.accessToken);
-        console.log('LoginForm: Access token stored in localStorage.');
         toast.success('Login successful!', { autoClose: 3000 });
 
-        console.log('LoginForm: Calling getCurrentUser...');
         const user = await getCurrentUser();
-        console.log('LoginForm: getCurrentUser response:', user);
-        
+       
         if (user) {
           onLoginSuccess(user);
-          console.log('LoginForm: onLoginSuccess called.');
         } else {
           console.error('LoginForm: getCurrentUser returned no user data.');
           toast.error('Failed to fetch user profile after login.', { autoClose: 5000 });

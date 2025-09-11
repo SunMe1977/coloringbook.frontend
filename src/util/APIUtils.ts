@@ -29,23 +29,18 @@ const request = async (options: RequestOptions): Promise<any> => {
   };
 
   try {
-    console.log('Frontend: Sending request to:', url, 'with options:', fetchOptions); // NEW: Log request details
     const response = await fetch(url, fetchOptions);
-    console.log('Frontend: Backend response status:', response.status);
 
     // If we are manually handling redirects (i.e., followRedirect is false)
     if (!followRedirect && response.status >= 300 && response.status < 400 && response.headers.has('Location')) {
       const redirectUrl = response.headers.get('Location');
       if (redirectUrl) {
-        console.log('Frontend: Redirecting to:', redirectUrl); // NEW: Log redirect
         window.location.href = redirectUrl;
         return new Promise(() => {}); // Stop further execution
       }
     }
 
     const responseText = await response.text();
-    console.log('Frontend: Backend response (raw text):', responseText);
-
     if (!response.ok) {
       try {
         const json = JSON.parse(responseText);
@@ -77,9 +72,9 @@ const request = async (options: RequestOptions): Promise<any> => {
 export function getCurrentUser(): Promise<any> {
   const token = localStorage.getItem(ACCESS_TOKEN);
   if (!token) {
+    console.warn('getCurrentUser: No access token found in localStorage.');
     return Promise.reject('No access token set.');
   }
-
   return request({
     url: `${API_BASE_URL}/user/me`,
     method: 'GET',
@@ -91,7 +86,7 @@ export function login(loginRequest: Record<string, any>): Promise<any> {
     url: `${API_BASE_URL}/auth/login`,
     method: 'POST',
     body: JSON.stringify(loginRequest),
-    // Removed followRedirect: true, as backend will now return JSON directly
+    redirect: 'manual', // Explicitly set to manual
   });
 }
 
