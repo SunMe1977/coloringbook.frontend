@@ -1,3 +1,18 @@
 {
-    
+    "title": "Login to {{appname}}",
+    "or": "OR",
+    "login_with_google": "Log in with Google",
+    "login_with_facebook": "Log in with Facebook",
+    "login_with_github": "Log in with Github",
+    "new_user": "New user?",
+    "email_placeholder": "Email",
+    "password_placeholder": "Password",
+    "login_success": "Login successful!",
+    "fetch_profile_error": "Failed to fetch user profile after login.",
+    "no_access_token_error": "Login failed: No access token received.",
+    "login_failed_generic": "Login failed. Please try again.",
+    "oauth_login_success": "Login successful via OAuth2!",
+    "oauth_fetch_profile_error": "Failed to fetch user profile after OAuth2 login.",
+    "oauth_generic_error": "Something went wrong with OAuth2 login.",
+    "oauth_processing": "Processing OAuth2 login..."
 }

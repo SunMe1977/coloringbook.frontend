@@ -1,3 +1,18 @@
 {
-    
+    "title": "Accedi a {{appname}}",
+    "or": "O",
+    "login_with_google": "Accedi con Google",
+    "login_with_facebook": "Accedi con Facebook",
+    "login_with_github": "Accedi con Github",
+    "new_user": "Nuovo utente?",
+    "email_placeholder": "Email",
+    "password_placeholder": "Password",
+    "login_success": "Accesso riuscito!",
+    "fetch_profile_error": "Impossibile recuperare il profilo utente dopo l'accesso.",
+    "no_access_token_error": "Accesso fallito: Nessun token di accesso ricevuto.",
+    "login_failed_generic": "Accesso fallito. Riprova.",
+    "oauth_login_success": "Accesso riuscito tramite OAuth2!",
+    "oauth_fetch_profile_error": "Impossibile recuperare il profilo utente dopo l'accesso OAuth2.",
+    "oauth_generic_error": "Qualcosa è andato storto con l'accesso OAuth2.",
+    "oauth_processing": "Elaborazione dell'accesso OAuth2..."
 }

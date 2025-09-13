@@ -1,10 +1,4 @@
-// Placeholder for environment variables. You should ensure these are correctly loaded from your Vite environment.
-// For example, if you have a `src/config.ts` or similar:
-// export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-import { ACCESS_TOKEN } from '../constants'; // Import ACCESS_TOKEN from constants file
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
-
+import { ACCESS_TOKEN, API_BASE_URL } from '../constants';
 
 interface RequestOptions extends RequestInit {
   url: string;

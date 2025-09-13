@@ -8,5 +8,8 @@
   "italian": "Italienisch",
   "notfound": "Seite nicht gefunden", 
   "goback": "Zurück zur Startseite",
-  "profile": "Profil"
+  "profile": "Profil",
+  "user_alt_text": "Benutzer",
+  "unnamed_user": "Unbenannter Benutzer",
+  "no_email_available": "Keine E-Mail verfügbar"
 }

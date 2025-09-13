@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
-import { signup, getCurrentUser } from '@util/APIUtils'; // Import getCurrentUser
+import { signup, getCurrentUser } from '@util/APIUtils';
 import { ACCESS_TOKEN } from '@constants';
 import './Signup.css';
 import { useTranslation } from 'react-i18next';
@@ -13,7 +13,7 @@ interface SignupFormData {
 }
 
 interface SignupProps {
-  onSignupSuccess?: (user: any) => void; // Updated to accept user object
+  onSignupSuccess?: (user: any) => void;
 }
 
 function Signup({ onSignupSuccess }: SignupProps) {
@@ -41,18 +41,18 @@ function Signup({ onSignupSuccess }: SignupProps) {
         localStorage.setItem(ACCESS_TOKEN, response.accessToken);
         toast.success(t('success'));
 
-        const user = await getCurrentUser(); // Fetch user details after signup
+        const user = await getCurrentUser();
         if (user) {
-          if (onSignupSuccess) onSignupSuccess(user); // Pass user to the success handler
-          navigate('/profile'); // Redirect to profile page
+          if (onSignupSuccess) onSignupSuccess(user);
+          navigate('/profile');
         } else {
           console.error('Signup: getCurrentUser returned no user data after signup.');
-          toast.error('Failed to fetch user profile after signup.', { autoClose: 5000 });
-          navigate('/'); // Fallback to home if profile fetch fails
+          toast.error(t('fetch_profile_error_after_signup'), { autoClose: 5000 });
+          navigate('/');
         }
       } else {
         console.error('Signup: Signup response did not contain accessToken:', response);
-        toast.error('Signup failed: No access token received.', { autoClose: 5000 });
+        toast.error(t('no_access_token_error'), { autoClose: 5000 });
       }
     } catch (error: any) {
       console.error('Signup failed:', error);

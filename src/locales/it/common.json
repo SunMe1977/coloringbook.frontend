@@ -8,5 +8,8 @@
   "italian": "Italiano",
   "notfound":"La pagina che stai cercando non è stata trovata.",
   "goback":"Torna alla Home",
-  "profile": "Profilo"
+  "profile": "Profilo",
+  "user_alt_text": "Utente",
+  "unnamed_user": "Utente senza nome",
+  "no_email_available": "Nessuna email disponibile"
 }

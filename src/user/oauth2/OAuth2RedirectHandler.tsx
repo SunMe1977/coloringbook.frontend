@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { ACCESS_TOKEN } from '@constants';
 import { toast } from 'react-toastify';
 import { getCurrentUser } from '@util/APIUtils';
+import { useTranslation } from 'react-i18next';
 
 interface OAuth2RedirectHandlerProps {
   onLoginSuccess: (user: any) => void;
@@ -11,6 +12,7 @@ interface OAuth2RedirectHandlerProps {
 const OAuth2RedirectHandler: React.FC<OAuth2RedirectHandlerProps> = ({ onLoginSuccess }) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useTranslation('login'); // Using login namespace for OAuth messages
 
   useEffect(() => {
     const getUrlParameter = (name: string) => {
@@ -25,29 +27,28 @@ const OAuth2RedirectHandler: React.FC<OAuth2RedirectHandlerProps> = ({ onLoginSu
 
     if (token) {
       localStorage.setItem(ACCESS_TOKEN, token);
-      // Removed: toast.success('Login successful via OAuth2!', { autoClose: 3000 });
       
-      // Fetch current user after setting token
       getCurrentUser()
         .then((user) => {
-          onLoginSuccess(user); // Update App.tsx state
-          navigate('/', { replace: true }); // Redirect to home, App.tsx will handle /profile redirect
+          onLoginSuccess(user);
+          toast.success(t('oauth_login_success'), { autoClose: 3000 });
+          navigate('/', { replace: true });
         })
         .catch((err) => {
           console.error('OAuth2RedirectHandler: Failed to fetch user after token:', err);
-          toast.error('Failed to fetch user profile after OAuth2 login.', { autoClose: 5000 });
-          navigate('/login', { state: { error: 'Failed to fetch user profile after OAuth2 login.' }, replace: true });
+          toast.error(t('oauth_fetch_profile_error'), { autoClose: 5000 });
+          navigate('/login', { state: { error: t('oauth_fetch_profile_error') }, replace: true });
         });
     } else {
-      const errorMessage = error || 'Something went wrong with OAuth2 login.';
+      const errorMessage = error || t('oauth_generic_error');
       toast.error(errorMessage, { autoClose: 5000 });
       navigate('/login', { state: { error: errorMessage }, replace: true });
     }
-  }, [location, navigate, onLoginSuccess]);
+  }, [location, navigate, onLoginSuccess, t]);
 
   return (
     <div className="oauth2-redirect-handler-container">
-      <p>Processing OAuth2 login...</p>
+      <p>{t('oauth_processing')}</p>
     </div>
   );
 };

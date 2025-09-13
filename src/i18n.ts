@@ -10,18 +10,22 @@ import itLogin from './locales/it/login.json';
 import enHome from './locales/en/home.json';
 import deHome from './locales/de/home.json';
 import itHome from './locales/it/home.json';
+import enSignup from './locales/en/signup.json';
+import deSignup from './locales/de/signup.json';
+import itSignup from './locales/it/signup.json';
+
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
     resources: {
-    en: { common: en, login: enLogin , home: enHome },
-    de: { common: de, login: deLogin , home: deHome },
-    it: { common: it, login: itLogin , home: itHome  },
+    en: { common: en, login: enLogin , home: enHome, signup: enSignup },
+    de: { common: de, login: deLogin , home: deHome, signup: deSignup },
+    it: { common: it, login: itLogin , home: itHome, signup: itSignup  },
     },
     lng: localStorage.getItem('lang') || 'en',
     fallbackLng: 'en',
-    ns: ['login', 'common'],
+    ns: ['login', 'common', 'home', 'signup'],
     defaultNS: 'common',
     interpolation: {
       escapeValue: false, // React already escapes

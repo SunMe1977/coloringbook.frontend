@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './Login.css';
-import { Link, useLocation, useNavigate } from 'react-router-dom'; // Removed Navigate
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import fbLogo from '../../img/fb-logo.png';
 import googleLogo from '../../img/google-logo.png';
 import githubLogo from '../../img/github-logo.png';
@@ -8,7 +8,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useTranslation } from 'react-i18next';
 import { login, getCurrentUser } from '../../util/APIUtils';
-import { ACCESS_TOKEN } from '../../constants';
+import { ACCESS_TOKEN, GOOGLE_AUTH_URL, FACEBOOK_AUTH_URL, GITHUB_AUTH_URL } from '../../constants';
 
 interface LoginProps {
   authenticated: boolean;
@@ -33,20 +33,17 @@ function Login({ authenticated, onLoginSuccess }: LoginProps) {
     }
   }, [location, navigate]);
 
-  // Removed: if (authenticated || redirect) { return <Navigate to="/" replace />; }
-  // App.tsx will handle redirection based on the 'authenticated' state.
-
   return (
     <div className="login-container">
       <div className="login-content">
-        <h1 className="login-title">Login to {tCommon('appname')}</h1>
+        <h1 className="login-title">{t('title', { appname: tCommon('appname') })}</h1>
         <SocialLogin />
         <div className="or-separator">
-          <span className="or-text">OR</span>
+          <span className="or-text">{t('or')}</span>
         </div>
         <LoginForm onLoginSuccess={onLoginSuccess} />
         <span className="signup-link">
-          New user? <Link to="/signup">Sign up!</Link>
+          {t('new_user')} <Link to="/signup">{tCommon('signup')}</Link>
         </span>
       </div>
       <ToastContainer position="top-right" autoClose={3000} />
@@ -55,23 +52,18 @@ function Login({ authenticated, onLoginSuccess }: LoginProps) {
 }
 
 function SocialLogin() {
-  const backendUrl = import.meta.env.VITE_BACKEND_URL;
-  const redirectUri = import.meta.env.VITE_OAUTH2_REDIRECT_URI;
-
-  const GOOGLE_AUTH_URL = `${backendUrl}/oauth2/authorize/google?redirect_uri=${redirectUri}`;
-  const FACEBOOK_AUTH_URL = `${backendUrl}/oauth2/authorize/facebook?redirect_uri=${redirectUri}`;
-  const GITHUB_AUTH_URL = `${backendUrl}/oauth2/authorize/github?redirect_uri=${redirectUri}`;
+  const { t } = useTranslation('login');
 
   return (
     <div className="social-login">
       <a className="btn btn-block social-btn google" href={GOOGLE_AUTH_URL}>
-        <img src={googleLogo} alt="Google" /> Log in with Google
+        <img src={googleLogo} alt="Google" /> {t('login_with_google')}
       </a>
       <a className="btn btn-block social-btn facebook" href={FACEBOOK_AUTH_URL}>
-        <img src={fbLogo} alt="Facebook" /> Log in with Facebook
+        <img src={fbLogo} alt="Facebook" /> {t('login_with_facebook')}
       </a>
       <a className="btn btn-block social-btn github" href={GITHUB_AUTH_URL}>
-        <img src={githubLogo} alt="Github" /> Log in with Github
+        <img src={githubLogo} alt="Github" /> {t('login_with_github')}
       </a>
     </div>
   );
@@ -81,6 +73,7 @@ function LoginForm({ onLoginSuccess }: { onLoginSuccess: (user: any) => void }) 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { t: tCommon } = useTranslation('common');
+  const { t } = useTranslation('login');
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -90,7 +83,7 @@ function LoginForm({ onLoginSuccess }: { onLoginSuccess: (user: any) => void }) 
       
       if (response && response.accessToken) {
         localStorage.setItem(ACCESS_TOKEN, response.accessToken);
-        toast.success('Login successful!', { autoClose: 3000 });
+        toast.success(t('login_success'), { autoClose: 3000 });
 
         const user = await getCurrentUser();
        
@@ -98,15 +91,15 @@ function LoginForm({ onLoginSuccess }: { onLoginSuccess: (user: any) => void }) 
           onLoginSuccess(user);
         } else {
           console.error('LoginForm: getCurrentUser returned no user data.');
-          toast.error('Failed to fetch user profile after login.', { autoClose: 5000 });
+          toast.error(t('fetch_profile_error'), { autoClose: 5000 });
         }
       } else {
         console.error('LoginForm: Login response did not contain accessToken:', response);
-        toast.error('Login failed: No access token received.', { autoClose: 5000 });
+        toast.error(t('no_access_token_error'), { autoClose: 5000 });
       }
     } catch (error: any) {
       console.error('LoginForm: Login failed:', error);
-      toast.error(error.message || 'Login failed. Please try again.', { autoClose: 5000 });
+      toast.error(error.message || t('login_failed_generic'), { autoClose: 5000 });
     }
   };
 
@@ -117,7 +110,7 @@ function LoginForm({ onLoginSuccess }: { onLoginSuccess: (user: any) => void }) 
           type="email"
           name="email"
           className="form-control"
-          placeholder="Email"
+          placeholder={t('email_placeholder')}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
@@ -128,7 +121,7 @@ function LoginForm({ onLoginSuccess }: { onLoginSuccess: (user: any) => void }) 
           type="password"
           name="password"
           className="form-control"
-          placeholder="Password"
+          placeholder={t('password_placeholder')}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required

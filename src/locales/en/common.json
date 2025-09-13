@@ -8,5 +8,8 @@
   "italian": "Italian",
   "notfound": "The Page you're looking for was not found.",
   "goback": "Go back to Home",
-  "profile": "Profile"  
+  "profile": "Profile",
+  "user_alt_text": "User",
+  "unnamed_user": "Unnamed User",
+  "no_email_available": "No email available"
 }

@@ -1,3 +1,18 @@
 {
-    
+    "title": "Anmelden bei {{appname}}",
+    "or": "ODER",
+    "login_with_google": "Mit Google anmelden",
+    "login_with_facebook": "Mit Facebook anmelden",
+    "login_with_github": "Mit Github anmelden",
+    "new_user": "Neuer Benutzer?",
+    "email_placeholder": "E-Mail",
+    "password_placeholder": "Passwort",
+    "login_success": "Anmeldung erfolgreich!",
+    "fetch_profile_error": "Fehler beim Abrufen des Benutzerprofils nach der Anmeldung.",
+    "no_access_token_error": "Anmeldung fehlgeschlagen: Kein Zugriffstoken erhalten.",
+    "login_failed_generic": "Anmeldung fehlgeschlagen. Bitte versuchen Sie es erneut.",
+    "oauth_login_success": "Anmeldung über OAuth2 erfolgreich!",
+    "oauth_fetch_profile_error": "Fehler beim Abrufen des Benutzerprofils nach der OAuth2-Anmeldung.",
+    "oauth_generic_error": "Etwas ist bei der OAuth2-Anmeldung schiefgelaufen.",
+    "oauth_processing": "OAuth2-Anmeldung wird verarbeitet..."
 }
