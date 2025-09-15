@@ -6,7 +6,7 @@ const AppFooter: React.FC = () => {
   const { t } = useTranslation('common');
 
   return (
-    <footer className="main-footer" style={{ backgroundColor: 'lime', height: '100px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderTop: '5px solid red' }}>
+    <footer className="main-footer">
       <div className="container">
         <div className="footer-content">
           <div className="footer-links">
