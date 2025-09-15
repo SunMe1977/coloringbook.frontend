@@ -217,6 +217,32 @@ fieldset[disabled] .form-control {
   margin-bottom: 10px;
 }
 
+/* Password input container for positioning the toggle button */
+.password-input-container {
+  position: relative;
+}
+
+/* Adjust padding for password input to make space for the toggle button */
+.password-input-container .form-control {
+  padding-right: 60px; /* Make space for the button */
+}
+
+/* Style for the password toggle button */
+.password-toggle-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.8em;
+  text-decoration: none;
+  color: #6c757d; /* Muted color */
+}
+
+.password-toggle-btn:hover {
+  color: #333; /* Slightly darker on hover */
+  text-decoration: underline;
+}
+
+
 /**
   Or separator
 **/
@@ -229,13 +255,263 @@ fieldset[disabled] .form-control {
   margin-top: 20px;
   margin-bottom: 30px;
   font-size: 1em;
+  text-align: center; /* Center the line */
 }
 
 .or-text {
   position: absolute;
-  left: 46%;
+  left: 50%; /* Center horizontally */
   top: 0;
+  transform: translateX(-50%); /* Adjust for element's own width */
   background: #fff;
   padding: 10px;
   color: rgba(0, 0, 0, 0.45);
+}
+
+/* Navbar styles - mimicking Bootstrap 3 default navbar */
+.navbar {
+  position: relative;
+  min-height: 50px;
+  margin-bottom: 20px;
+  border: 1px solid transparent;
+}
+
+.navbar-fixed-top {
+  position: fixed;
+  right: 0;
+  left: 0;
+  z-index: 1030;
+  top: 0;
+  border-width: 0 0 1px;
+}
+
+.navbar-default {
+  background-color: #f8f8f8; /* Light grey background */
+  border-color: #e7e7e7;
+}
+
+.navbar-header {
+  float: left;
+  padding: 0 15px; /* Adjust padding */
+  height: 50px; /* Match min-height of navbar */
+  display: flex; /* Use flexbox for vertical alignment */
+  align-items: center; /* Vertically center items */
+}
+
+.navbar-brand {
+  float: left;
+  height: 50px;
+  padding: 15px 0; /* Adjust padding to align with text */
+  font-size: 18px;
+  line-height: 20px;
+  color: #2098f3; /* Changed to blue */
+  display: flex; /* Use flexbox for vertical alignment of logo and text */
+  align-items: center; /* Vertically center items */
+}
+
+.navbar-brand:hover,
+.navbar-brand:focus {
+  color: #40a9ff; /* Changed to blue hover */
+  background-color: transparent;
+}
+
+.navbar-brand img {
+  height: 30px; /* Make logo bigger */
+  display: inline-block;
+  margin-top: 0; /* Reset margin-top */
+  margin-right: 10px; /* Add some space to the right of the logo */
+}
+
+.navbar-collapse {
+  overflow-x: visible;
+  padding-right: 15px;
+  padding-left: 15px;
+  border-top: 1px solid transparent;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  -webkit-overflow-scrolling: touch;
+  display: flex; /* Use flexbox to align items */
+  justify-content: flex-end; /* Push content to the right */
+  align-items: center; /* Vertically center items */
+  height: 50px; /* Match navbar height */
+}
+
+.nav {
+  padding-left: 0;
+  margin-bottom: 0;
+  list-style: none; /* Remove bullets */
+}
+
+.nav > li {
+  position: relative;
+  display: block;
+}
+
+.nav > li > a {
+  position: relative;
+  display: block;
+  padding: 15px; /* Adjust padding for better vertical alignment */
+  line-height: 20px; /* Ensure consistent line height */
+}
+
+.navbar-nav {
+  margin: 0; /* Reset margin */
+  display: flex; /* Use flexbox for horizontal alignment */
+  align-items: center; /* Vertically center items */
+}
+
+.navbar-nav > li > a {
+  color: #2098f3; /* Changed to blue */
+}
+
+.navbar-default .navbar-nav > li > a:hover,
+.navbar-default .navbar-nav > li > a:focus {
+  color: #40a9ff; /* Changed to blue hover */
+  background-color: transparent;
+}
+
+.navbar-right {
+  float: right !important;
+  margin-right: -15px; /* Adjust margin */
+}
+
+.navbar-right > li {
+  float: left;
+}
+
+/* Clearfix for navbar */
+.navbar:before,
+.navbar:after,
+.container:before,
+.container:after {
+  content: " ";
+  display: table;
+}
+.navbar:after,
+.container:after {
+  clear: both;
+}
+
+/* Adjustments for LanguageSwitcher within navbar */
+.navbar-nav .form-group {
+  margin-top: 0; /* Reset margin-top */
+  margin-bottom: 0; /* Reset margin-bottom */
+  margin-left: 15px; /* Spacing from other nav items */
+}
+
+.navbar-nav .form-control {
+  height: 34px; /* Standard height for form controls in navbar */
+  padding: 6px 12px;
+  font-size: 14px;
+  line-height: 1.42857143; /* Match Bootstrap default */
+}
+
+/* New styles for authentication forms */
+.auth-card {
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  padding: 40px; /* Generous padding */
+  margin-top: 50px; /* Space from the header */
+}
+
+.auth-card-title {
+  font-size: 2em; /* Larger title */
+  font-weight: 600; /* Bolder */
+  text-align: center;
+  margin-bottom: 30px;
+  color: #333;
+}
+
+/* Social Login Button Enhancements */
+.social-login a.btn {
+  display: flex; /* Use flexbox for internal alignment */
+  align-items: center; /* Vertically center items */
+  justify-content: center; /* Horizontally center content */
+  text-align: center; /* Ensure text is centered */
+  padding: 0 20px; /* Adjust padding as needed */
+  height: 50px; /* Slightly taller buttons for better visual */
+  margin-bottom: 15px;
+  font-weight: 400;
+  font-size: 16px;
+}
+
+.social-login a.btn img {
+  height: 24px; /* Consistent logo size */
+  margin-right: 10px; /* Space between logo and text */
+  float: none; /* Remove float */
+  margin-top: 0; /* Reset margin-top */
+}
+
+/* Footer Styles */
+.main-footer {
+  background-color: #f8f9fa; /* Light background for the footer */
+  padding: 20px 0;
+  border-top: 1px solid #e9ecef;
+  color: #6c757d;
+  font-size: 0.9em;
+  text-align: center;
+  margin-top: 40px; /* Space above the footer */
+}
+
+.main-footer .container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.footer-links {
+  margin-bottom: 10px;
+}
+
+.footer-links a {
+  color: #2098f3;
+  text-decoration: none;
+  margin: 0 10px;
+  white-space: nowrap; /* Prevent links from breaking */
+}
+
+.footer-links a:hover {
+  color: #40a9ff;
+  text-decoration: underline;
+}
+
+.footer-copyright {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.9em;
+}
+
+.footer-copyright strong {
+  font-weight: 600;
+  margin-right: 5px;
+}
+
+.footer-copyright a {
+  color: #6c757d; /* Darker color for copyright links */
+  text-decoration: none;
+}
+
+.footer-copyright a:hover {
+  color: #40a9ff;
+  text-decoration: underline;
+}
+
+.d-none.d-sm-inline.float-right {
+  margin-left: 10px;
+}
+
+/* Ensure app content pushes footer down */
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.app-content {
+  flex-grow: 1; /* Allows content to take up available space */
+  padding-top: 70px; /* Add padding to push content below the fixed header */
 }

@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { toast, ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 import { signup, getCurrentUser } from '@util/APIUtils';
 import { ACCESS_TOKEN } from '@constants';
-import './Signup.css';
 import { useTranslation } from 'react-i18next';
 
 interface SignupFormData {
@@ -22,6 +21,8 @@ function Signup({ onSignupSuccess }: SignupProps) {
     email: '',
     password: '',
   });
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   const navigate = useNavigate();
   const { t: tCommon } = useTranslation('common');
@@ -32,8 +33,26 @@ function Signup({ onSignupSuccess }: SignupProps) {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setConfirmPassword(e.target.value);
+  };
+
+  const toggleShowPassword = () => {
+    setShowPassword((prev) => !prev);
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (formData.password !== confirmPassword) {
+      toast.error(t('passwords_do_not_match'), { autoClose: 5000 });
+      return;
+    }
+
+    if (formData.password.length < 6) {
+      toast.error(t('password_too_short'), { autoClose: 5000 });
+      return;
+    }
 
     try {
       const response = await signup(formData);
@@ -61,54 +80,84 @@ function Signup({ onSignupSuccess }: SignupProps) {
   };
 
   return (
-    <div className="signup-container">
-      <div className="signup-content">
-        <h1 className="signup-title">{t('title')}</h1>
-        <form onSubmit={handleSubmit}>
-          <div className="form-item">
-            <input
-              type="text"
-              name="name"
-              className="form-control"
-              placeholder={t('name')}
-              value={formData.name}
-              onChange={handleChange}
-              required
-            />
+    <div className="container">
+      <div className="row">
+        <div className="col-md-6 col-md-offset-3">
+          <div className="auth-card">
+            <h1 className="auth-card-title">{t('title')}</h1>
+            <form onSubmit={handleSubmit}>
+              <div className="form-group">
+                <input
+                  type="text"
+                  name="name"
+                  className="form-control"
+                  placeholder={t('name')}
+                  value={formData.name}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <input
+                  type="email"
+                  name="email"
+                  className="form-control"
+                  placeholder={t('email')}
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+              <div className="form-group password-input-container"> {/* Added container for positioning */}
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  name="password"
+                  className="form-control"
+                  placeholder={t('password')}
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={toggleShowPassword}
+                  className="btn btn-link password-toggle-btn"
+                  style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', height: 'auto', padding: '0 5px', color: '#6c757d' }}
+                >
+                  {showPassword ? t('hide') : t('show')}
+                </button>
+              </div>
+              <div className="form-group password-input-container"> {/* Added container for positioning */}
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  name="confirmPassword"
+                  className="form-control"
+                  placeholder={t('confirm_password')}
+                  value={confirmPassword}
+                  onChange={handleConfirmPasswordChange}
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={toggleShowPassword}
+                  className="btn btn-link password-toggle-btn"
+                  style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', height: 'auto', padding: '0 5px', color: '#6c757d' }}
+                >
+                  {showPassword ? t('hide') : t('show')}
+                </button>
+              </div>
+              <div className="form-group">
+                <button type="submit" className="btn btn-block btn-primary">
+                  {tCommon('signup')}
+                </button>
+              </div>
+            </form>
+            <span className="help-block text-center">
+              {t('already')} <Link to="/login">{tCommon('login')}</Link>
+            </span>
           </div>
-          <div className="form-item">
-            <input
-              type="email"
-              name="email"
-              className="form-control"
-              placeholder={t('email')}
-              value={formData.email}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="form-item">
-            <input
-              type="password"
-              name="password"
-              className="form-control"
-              placeholder={t('password')}
-              value={formData.password}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="form-item">
-            <button type="submit" className="btn btn-block btn-primary">
-              {tCommon('signup')}
-            </button>
-          </div>
-        </form>
-        <span className="login-link">
-          {t('already')} <Link to="/login">{tCommon('login')}</Link>
-        </span>
+        </div>
       </div>
-      <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );
 }

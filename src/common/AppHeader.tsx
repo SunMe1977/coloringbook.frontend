@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link, NavLink } from 'react-router-dom';
-import './AppHeader.css';
 import LanguageSwitcher from './LanguageSwitcher';
 import { useTranslation } from 'react-i18next';
 import logo from '../img/logo.svg';
@@ -17,49 +16,48 @@ const AppHeader: React.FC<AppHeaderProps> = ({ authenticated, onLogout }) => {
 
   const handleLogout = () => {
     onLogout();         // perform logout logic
-    navigate('/');      // redirect to home
+    navigate('/login', { replace: true });      // redirect to login
   };
   return (
-    <header className="app-header">
+    <nav className="navbar navbar-default navbar-fixed-top">
       <div className="container">
-      <div className="app-branding">
-        <Link to="/" className="branding-link">
-          <img src={logo} className="applogo" alt="AI SelfPub ColoringBook Studio" />
-          <span className="app-title">{tCommon('appname')}</span>
-        </Link>
-      </div>
-        <div className="app-options">
-          <nav className="app-nav">
-            <ul>
-              {authenticated ? (
-                <>
-                  <li>
-                    <NavLink to="/profile">{tCommon('profile')}</NavLink>
-                  </li>
-                  <li>
-                    <a onClick={handleLogout} style={{ cursor: 'pointer' }}>
-                      {tCommon('logout')}
-                    </a>
-                  </li>
-                </>
-              ) : (
-                <>
-                  <li>
-                    <NavLink to="/login">{tCommon('login')}</NavLink>
-                  </li>
-                  <li>
-                    <NavLink to="/signup">{tCommon('signup')}</NavLink>
-                  </li>
-                  <li>
-                    <LanguageSwitcher />
-                  </li>
-                </>
-              )}
-            </ul>
-          </nav>
+        <div className="navbar-header">
+          <Link to="/" className="navbar-brand">
+            <img src={logo} alt="AI SelfPub ColoringBook Studio" /> {/* Removed inline style, now handled by CSS */}
+            {tCommon('appname')}
+          </Link>
+        </div>
+
+        <div className="navbar-collapse"> 
+          <ul className="nav navbar-nav navbar-right">
+            {authenticated ? (
+              <>
+                <li>
+                  <NavLink to="/profile">{tCommon('profile')}</NavLink>
+                </li>
+                <li>
+                  <a onClick={handleLogout} style={{ cursor: 'pointer' }}>
+                    {tCommon('logout')}
+                  </a>
+                </li>
+              </>
+            ) : (
+              <>
+                <li>
+                  <NavLink to="/login">{tCommon('login')}</NavLink>
+                </li>
+                <li>
+                  <NavLink to="/signup">{tCommon('signup')}</NavLink>
+                </li>
+                <li>
+                  <LanguageSwitcher />
+                </li>
+              </>
+            )}
+          </ul>
         </div>
       </div>
-    </header>
+    </nav>
   );
 };
 

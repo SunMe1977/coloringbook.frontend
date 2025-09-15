@@ -1,4 +1,8 @@
-import { ACCESS_TOKEN, API_BASE_URL } from '../constants';
+// Placeholder for environment variables. You should ensure these are correctly loaded from your Vite environment.
+// For example, if you have a `src/config.ts` or similar:
+// export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import { ACCESS_TOKEN, API_BASE_URL } from '@constants'; // Import ACCESS_TOKEN and API_BASE_URL from constants file
+
 
 interface RequestOptions extends RequestInit {
   url: string;

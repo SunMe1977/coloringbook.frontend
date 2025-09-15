@@ -1,30 +1,37 @@
 {
   "compilerOptions": {
-    "target": "ES6",
-    "lib": ["DOM", "DOM.Iterable", "ESNext"],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "module": "ESNext",
-    "moduleResolution": "Node",
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "baseUrl": "src",
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+
+    /* Path Aliases */
+    "baseUrl": ".",
     "paths": {
-      "@components/*": ["components/*"],
-      "@common/*": ["common/*"],
-      "@home/*": ["home/*"],
-      "@user/*": ["user/*"],
-      "@util/*": ["util/*"],
-      "@img/*": ["img/*"],
-      "@constants": ["constants"]
+      "@/*": ["./src/*"],
+      "@pages/*": ["./src/pages/*"],
+      "@components/*": ["./src/components/*"],
+      "@common/*": ["./src/common/*"],
+      "@constants": ["./src/constants/index.ts"], // Explicitly point to index.ts
+      "@home/*": ["./src/home/*"],
+      "@util/*": ["./src/util/*"],
+      "@user/*": ["./src/user/*"]
     }
   },
-  "include": ["src", "public/service-worker.js"],
-  "exclude": ["node_modules", "dist"]
+  "include": ["src", "vite.config.ts"]
 }

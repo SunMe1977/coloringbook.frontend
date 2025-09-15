@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import './Profile.css';
 import { useTranslation } from 'react-i18next';
 
 interface User {
@@ -40,26 +39,30 @@ const Profile: React.FC<ProfileProps> = ({ currentUser }) => {
   };
 
   return (
-    <div className="profile-container">
-      <div className="container">
-        <div className="profile-info">
-          <div className="profile-avatar">
-            {currentImageUrl ? (
-              <img 
-                key={`${currentImageUrl}-${retryCount}`} // Key changes on retry to force re-render
-                src={currentImageUrl} 
-                alt={name || t('user_alt_text')} 
-                onError={handleImageError}
-              />
-            ) : (
-              <div className="text-avatar">
-                <span>{name ? name.charAt(0).toUpperCase() : '?'}</span>
-              </div>
-            )}
-          </div>
-          <div className="profile-name">
-            <h2>{name || t('unnamed_user')}</h2>
-            <p className="profile-email">{email || t('no_email_available')}</p>
+    <div className="container" style={{ paddingTop: '30px' }}>
+      <div className="row">
+        <div className="col-md-6 col-md-offset-3 text-center"> {/* Using Bootstrap-like grid classes */}
+          <div className="panel panel-default" style={{ padding: '30px' }}> {/* Using Bootstrap-like panel classes */}
+            <div className="profile-avatar" style={{ marginBottom: '20px' }}>
+              {currentImageUrl ? (
+                <img 
+                  key={`${currentImageUrl}-${retryCount}`} // Key changes on retry to force re-render
+                  src={currentImageUrl} 
+                  alt={name || t('user_alt_text')} 
+                  onError={handleImageError}
+                  className="img-circle img-responsive center-block" // Using Bootstrap-like image classes
+                  style={{ maxWidth: '200px', height: '200px' }}
+                />
+              ) : (
+                <div className="text-avatar center-block" style={{ width: '200px', height: '200px', borderRadius: '50%', background: 'linear-gradient(45deg, #46b5e5 1%, #1e88e5 64%, #40baf5 97%)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto' }}>
+                  <span style={{ lineHeight: '200px', color: '#fff', fontSize: '3em' }}>{name ? name.charAt(0).toUpperCase() : '?'}</span>
+                </div>
+              )}
+            </div>
+            <div className="profile-name">
+              <h2>{name || t('unnamed_user')}</h2>
+              <p className="text-muted">{email || t('no_email_available')}</p> {/* Using Bootstrap-like text-muted */}
+            </div>
           </div>
         </div>
       </div>
