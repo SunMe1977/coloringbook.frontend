@@ -25,6 +25,14 @@ const OAuth2RedirectHandler: React.FC<OAuth2RedirectHandlerProps> = ({ onLoginSu
     const token = getUrlParameter('token');
     const error = getUrlParameter('error');
 
+    // Clear URL parameters immediately after reading them
+    // This prevents re-processing if the component re-renders or if there's a history issue
+    if (window.history.replaceState) {
+      const newUrl = new URL(window.location.href);
+      newUrl.search = ''; // Remove all query parameters
+      window.history.replaceState(null, '', newUrl.toString());
+    }
+
     if (token) {
       localStorage.setItem(ACCESS_TOKEN, token);
       
@@ -44,7 +52,7 @@ const OAuth2RedirectHandler: React.FC<OAuth2RedirectHandlerProps> = ({ onLoginSu
       toast.error(errorMessage, { autoClose: 5000 });
       navigate('/login', { state: { error: errorMessage }, replace: true });
     }
-  }, [location, navigate, onLoginSuccess, t]);
+  }, [location.search, navigate, onLoginSuccess, t]); // Depend only on location.search for parameter changes
 
   return (
     <div className="oauth2-redirect-handler-container">
