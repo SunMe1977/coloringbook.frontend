@@ -1,4 +1,4 @@
-import React from 'react';
+import { JSX } from 'react/jsx-runtime';
 
 export default function LoadingIndicator(): JSX.Element {
   return (
