@@ -516,8 +516,13 @@ fieldset[disabled] .form-control {
 
 /* Media query for small screens (e.g., mobile phones) */
 @media (max-width: 767px) {
+  .app-content {
+    padding-top: 250px; /* Increased padding for small screens to clear expanded header */
+  }
+
   .navbar-header {
     width: 100%; /* Take full width on small screens */
+    float: none; /* Remove float for centering */
     justify-content: center; /* Center brand on small screens */
   }
 
@@ -528,6 +533,7 @@ fieldset[disabled] .form-control {
     box-shadow: none; /* Remove shadow on collapse */
     padding-right: 0;
     padding-left: 0;
+    width: 100%; /* Ensure it takes full width */
   }
 
   .navbar-nav {
@@ -544,10 +550,6 @@ fieldset[disabled] .form-control {
     /* Removed border-bottom and padding from li */
   }
 
-  .navbar-nav > li:last-child {
-    margin-bottom: 0; /* No margin below last item */
-  }
-
   .navbar-nav > li > a {
     display: block; /* Make the anchor fill the li */
     padding: 10px 15px; /* Apply vertical and horizontal padding to the clickable area */
@@ -555,8 +557,8 @@ fieldset[disabled] .form-control {
     border-bottom: 1px solid #eee; /* Add border to the anchor itself */
   }
 
-  .navbar-nav > li:last-child > a {
-    border-bottom: none; /* No border on the last item's anchor */
+  .navbar-nav > li:last-child {
+    margin-bottom: 0; /* No margin below last item */
   }
 
   /* Adjustments for LanguageSwitcher within navbar */
@@ -567,6 +569,7 @@ fieldset[disabled] .form-control {
     padding: 10px 15px; /* Add padding to the form-group itself */
     margin-bottom: 10px; /* Add space below the language switcher */
     border-bottom: 1px solid #eee; /* Add border to the form-group */
+    text-align: center; /* Center the select element */
   }
 
   .navbar-nav .form-group:last-child {
@@ -577,6 +580,11 @@ fieldset[disabled] .form-control {
   .navbar-nav .form-control {
     width: auto; /* Allow width to adjust to content */
     display: inline-block; /* Keep it inline-block to center */
+  }
+
+  /* Remove margin-top from auth-card on small screens to prevent overlap */
+  .auth-card {
+    margin-top: 0; /* Remove margin-top on small screens */
   }
 
   /* Footer links stacking on small screens */
