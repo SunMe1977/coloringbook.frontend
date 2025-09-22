@@ -1,3 +1,4 @@
+/* Base Styles */
 * {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -290,6 +291,22 @@ fieldset[disabled] .form-control {
   border-color: #e7e7e7;
 }
 
+/* Default styles for navbar-toggle (hidden on large screens) */
+.navbar-toggle {
+  display: none; /* Hidden by default on large screens */
+  padding: 9px 10px;
+  margin-top: 8px;
+  margin-right: 15px;
+  margin-bottom: 8px;
+  background-color: transparent;
+  background-image: none;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Removed .navbar-toggle .icon-bar styles as they are no longer used */
+
 .navbar-header {
   float: left;
   padding: 0 15px; /* Adjust padding */
@@ -322,6 +339,7 @@ fieldset[disabled] .form-control {
   margin-right: 10px; /* Add some space to the right of the logo */
 }
 
+/* Default state for navbar-collapse (visible on large screens) */
 .navbar-collapse {
   overflow-x: visible;
   padding-right: 15px;
@@ -329,10 +347,12 @@ fieldset[disabled] .form-control {
   border-top: 1px solid transparent;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
   -webkit-overflow-scrolling: touch;
-  display: flex; /* Use flexbox to align items */
-  justify-content: flex-end; /* Push content to the right */
-  align-items: center; /* Vertically center items */
-  height: 50px; /* Match navbar height */
+  
+  /* Styles for large screens */
+  display: flex; 
+  justify-content: flex-end;
+  align-items: center;
+  height: 50px; 
 }
 
 .nav {
@@ -367,13 +387,14 @@ fieldset[disabled] .form-control {
   background-color: transparent;
 }
 
+/* REMOVED conflicting floats for navbar-right and its children */
 .navbar-right {
-  float: right !important;
+  /* Removed float: right */
   margin-right: -15px; /* Adjust margin */
 }
 
 .navbar-right > li {
-  float: left;
+  /* No float here, handled by flexbox on .navbar-nav */
 }
 
 /* Clearfix for navbar */
@@ -467,7 +488,7 @@ fieldset[disabled] .form-control {
   color: #2098f3;
   text-decoration: none;
   margin: 0 10px;
-  white-space: nowrap; /* This is the culprit */
+  white-space: nowrap;
 }
 
 .footer-links a:hover {
@@ -498,11 +519,7 @@ fieldset[disabled] .form-control {
   text-decoration: underline;
 }
 
-.d-none.d-sm-inline.float-right {
-  margin-left: 10px;
-}
-
-/* Ensure app content pushes footer down */
+/* Layout Styles */
 .app {
   display: flex;
   flex-direction: column;
@@ -514,112 +531,189 @@ fieldset[disabled] .form-control {
   padding-top: 70px; /* Add padding to push content below the fixed header */
 }
 
+/* Utilities */
+.or-separator {
+  border-bottom: 1px solid #eee;
+  padding: 10px 0;
+  position: relative;
+  display: block;
+  margin-top: 20px;
+  margin-bottom: 30px;
+  font-size: 1em;
+  text-align: center; /* Center the line */
+}
+
+.or-text {
+  position: absolute;
+  left: 50%; /* Center horizontally */
+  top: 0;
+  transform: translateX(-50%); /* Adjust for element's own width */
+  background: #fff;
+  padding: 10px;
+  color: rgba(0, 0, 0, 0.45);
+}
+
+.d-none.d-sm-inline.float-right {
+  margin-left: 10px;
+}
+
+/* App.css content (minimal, can be integrated into base or layout) */
+.s-alert-box {
+  min-width: 250px;
+}
+
+.s-alert-close::before,
+.s-alert-close::after {
+  width: 2px;
+}
+
 /* Media query for small screens (e.g., mobile phones) */
 @media (max-width: 767px) {
   .app-content {
-    padding-top: 300px; /* Increased padding for small screens to clear expanded header */
+    padding-top: 60px; /* Adjusted to clear the fixed header when menu is closed */
+  }
+
+  .navbar-toggle {
+    display: flex !important; /* Ensure it's always visible on small screens */
+    align-items: center; /* Vertically center the icon */
+    justify-content: center; /* Horizontally center the icon */
+    background-color: transparent; /* Transparent background */
+    border: 1px solid #2098f3; /* Link color border */
+    z-index: 1040;
+    padding: 0; /* Remove internal padding, let icon size define it */
+    height: 34px; /* Explicit height to ensure vertical centering */
+    width: 38px; /* Explicit width for a consistent button size */
+    border-radius: 4px; /* Rounded corners */
+    margin-right: 10px; /* Add spacing to the right of the toggle button */
+    /* Removed margin-left: auto; as it's now the first item */
+  }
+
+  .navbar-toggle:hover,
+  .navbar-toggle:focus {
+    background-color: rgba(32, 152, 243, 0.1); /* Light blue background on hover */
+    border-color: #2098f3; /* Keep border color */
   }
 
   .navbar-header {
-    width: 100%; /* Take full width on small screens */
-    float: none; /* Remove float for centering */
-    justify-content: center; /* Center brand on small screens */
+    width: 100%;
+    display: flex; /* Use flexbox */
+    justify-content: space-between; /* Space between brand and toggle */
+    align-items: center; /* Vertically center items */
+    float: none; /* Remove float */
+    min-height: 50px; /* Ensure header has a minimum height */
+    position: relative; /* Keep relative for potential future absolute children, but not for toggle itself */
+    margin-bottom: 10px; /* Add spacing below the header */
+  }
+
+  .navbar-brand {
+    float: none; /* Remove float */
+    text-align: left; /* Align brand text to left within header */
+    margin-left: 0; /* Reset margin */
   }
 
   .navbar-collapse {
-    display: block; /* Change to block to allow stacking */
-    height: auto; /* Allow height to adjust */
-    border-top: none; /* Remove border top on collapse */
-    box-shadow: none; /* Remove shadow on collapse */
+    display: block; /* This is fine for the container */
+    height: 0; /* Use height instead of max-height for more reliable hiding */
+    overflow: hidden;
+    transition: height 0.3s ease-out, padding-top 0.3s ease-out, padding-bottom 0.3s ease-out; /* Smooth transition for collapsing */
+    width: 100%;
+    border-top: 1px solid #eee; /* Add a border for separation */
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    -webkit-overflow-scrolling: touch;
     padding-right: 0;
     padding-left: 0;
-    width: 100%; /* Ensure it takes full width */
+    padding-top: 0; /* Ensure no padding when collapsed */
+    padding-bottom: 0; /* Ensure no padding when collapsed */
+  }
+
+  .navbar-collapse.in {
+    height: auto; /* Use height auto when open */
+    max-height: 500px; /* Fallback max-height for content that might exceed viewport */
+    transition: height 0.3s ease-in, padding-top 0.3s ease-in, padding-bottom 0.3s ease-in; /* Smooth transition for expanding */
+    padding-top: 10px; /* Add some padding when open */
+    padding-bottom: 10px; /* Add some padding when open */
   }
 
   .navbar-nav {
-    display: block; /* Change to block to allow stacking */
-    width: 100%; /* Take full width */
-    text-align: center; /* Center text */
+    /* Removed display: flex; */ /* This was the culprit */
+    flex-direction: column; /* Keep for when it's effectively block, but items stack */
+    width: 100%;
+    margin: 0; /* Reset margin */
   }
 
   .navbar-nav > li {
     float: none; /* Remove float */
-    width: 100%; /* Take full width */
-    display: block; /* Ensure it takes full width and stacks */
-    margin-bottom: 10px; /* Add space below each item */
-    /* Removed border-bottom and padding from li */
+    width: 100%;
+    display: block; /* Ensure list items take full width */
+    margin-bottom: 0; /* Reset margin-bottom */
   }
 
   .navbar-nav > li > a {
-    display: block; /* Make the anchor fill the li */
-    padding: 10px 15px; /* Apply vertical and horizontal padding to the clickable area */
-    text-align: center; /* Center the text within the block */
-    border-bottom: 1px solid #eee; /* Add border to the anchor itself */
+    display: block;
+    padding: 10px 15px;
+    text-align: center; /* Center text within each link */
+    border-bottom: 1px solid #eee;
   }
 
-  .navbar-nav > li:last-child {
-    margin-bottom: 0; /* No margin below last item */
+  .navbar-nav > li:last-child > a {
+    border-bottom: none;
   }
 
   /* Adjustments for LanguageSwitcher within navbar */
   .navbar-nav .form-group {
-    margin-left: 0; /* Reset margin for language switcher */
-    width: 100%; /* Take full width */
-    display: block; /* Ensure it stacks */
-    padding: 10px 15px; /* Add padding to the form-group itself */
-    margin-bottom: 10px; /* Add space below the language switcher */
-    border-bottom: 1px solid #eee; /* Add border to the form-group */
-    text-align: center; /* Center the select element */
+    margin-left: 0;
+    width: 100%;
+    display: block;
+    padding: 10px 15px;
+    margin-bottom: 0; /* Reset margin-bottom */
+    border-bottom: 1px solid #eee;
+    text-align: center;
   }
 
   .navbar-nav .form-group:last-child {
     border-bottom: none;
-    margin-bottom: 0;
   }
 
   .navbar-nav .form-control {
-    width: auto; /* Allow width to adjust to content */
-    display: inline-block; /* Keep it inline-block to center */
+    width: auto;
+    display: inline-block;
   }
 
-  /* Remove margin-top from auth-card on small screens to prevent overlap */
   .auth-card {
     margin-top: 0; /* Remove margin-top on small screens */
   }
 
-  /* Remove negative margin from navbar-right on small screens to ensure proper centering */
   .navbar-right {
+    float: none; /* Explicitly remove float for mobile */
     margin-right: 0 !important;
   }
 
-  /* Footer links stacking on small screens */
   .footer-links {
-    display: flex;
     flex-direction: column;
-    align-items: center; /* Center the links */
-    width: 100%; /* Take full width */
+    align-items: center;
+    width: 100%;
   }
 
   .footer-links a {
-    white-space: normal; /* Allow text to wrap */
-    margin: 5px 0; /* Adjust vertical margin for stacking */
-    padding: 5px 10px; /* Add some padding */
-    display: block; /* Make each link take its own line */
-    width: fit-content; /* Adjust width to content */
+    white-space: normal;
+    margin: 5px 0;
+    padding: 5px 10px;
+    display: block;
+    width: fit-content;
   }
 
   .footer-copyright {
-    flex-direction: column; /* Stack copyright elements */
+    flex-direction: column;
     text-align: center;
   }
 
   .footer-copyright strong {
     margin-right: 0;
-    margin-bottom: 5px; /* Space between copyright and app name */
+    margin-bottom: 5px;
   }
 
   .d-none.d-sm-inline.float-right {
     margin-left: 0;
-    margin-top: 5px; /* Space for the "Anything you want" text */
+    margin-top: 5px;
   }
 }
