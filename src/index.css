@@ -584,8 +584,8 @@ fieldset[disabled] .form-control {
     height: 34px; /* Explicit height to ensure vertical centering */
     width: 38px; /* Explicit width for a consistent button size */
     border-radius: 4px; /* Rounded corners */
-    margin-right: 10px; /* Add spacing to the right of the toggle button */
-    /* Removed margin-left: auto; as it's now the first item */
+    margin-left: 10px; /* Add spacing to the left of the toggle button */
+    margin-right: 0; /* Remove previous right margin */
   }
 
   .navbar-toggle:hover,
