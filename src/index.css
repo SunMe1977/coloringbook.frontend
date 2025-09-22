@@ -517,7 +517,7 @@ fieldset[disabled] .form-control {
 /* Media query for small screens (e.g., mobile phones) */
 @media (max-width: 767px) {
   .app-content {
-    padding-top: 250px; /* Increased padding for small screens to clear expanded header */
+    padding-top: 300px; /* Increased padding for small screens to clear expanded header */
   }
 
   .navbar-header {
@@ -585,6 +585,11 @@ fieldset[disabled] .form-control {
   /* Remove margin-top from auth-card on small screens to prevent overlap */
   .auth-card {
     margin-top: 0; /* Remove margin-top on small screens */
+  }
+
+  /* Remove negative margin from navbar-right on small screens to ensure proper centering */
+  .navbar-right {
+    margin-right: 0 !important;
   }
 
   /* Footer links stacking on small screens */
