@@ -634,7 +634,7 @@ fieldset[disabled] .form-control {
   }
 
   .navbar-collapse.in {
-    max-height: calc(100vh - 50px - 1px); /* Adjusted to account for fixed header height and its own top border */
+    max-height: calc(100vh - 53px); /* Adjusted to account for fixed header (50px) + fixed-top bottom border (1px) + collapse top border (1px) + 1px buffer */
     overflow-y: auto; /* Apply scrolling to this container */
     display: block; /* Ensure it's a block element when expanded */
     width: 100%;
