@@ -602,7 +602,7 @@ fieldset[disabled] .form-control {
     float: none; /* Remove float */
     min-height: 50px; /* Ensure header has a minimum height */
     position: relative; /* Keep relative for potential future absolute children, but not for toggle itself */
-    margin-bottom: 10px; /* Add spacing below the header */
+    /* Removed margin-bottom: 10px; */
   }
 
   .navbar-brand {
@@ -612,7 +612,7 @@ fieldset[disabled] .form-control {
   }
 
   .navbar-collapse {
-    display: block; /* This is fine for the container */
+    /* Removed display: block; */ /* This was the culprit */
     height: 0; /* Use height instead of max-height for more reliable hiding */
     overflow: hidden;
     transition: height 0.3s ease-out, padding-top 0.3s ease-out, padding-bottom 0.3s ease-out; /* Smooth transition for collapsing */
@@ -626,7 +626,12 @@ fieldset[disabled] .form-control {
     padding-bottom: 0; /* Ensure no padding when collapsed */
   }
 
+  .navbar-collapse.collapse {
+    display: none; /* Explicitly hide when collapsed */
+  }
+
   .navbar-collapse.in {
+    display: block; /* Explicitly show when expanded */
     height: auto; /* Use height auto when open */
     max-height: 500px; /* Fallback max-height for content that might exceed viewport */
     transition: height 0.3s ease-in, padding-top 0.3s ease-in, padding-bottom 0.3s ease-in; /* Smooth transition for expanding */
@@ -635,7 +640,6 @@ fieldset[disabled] .form-control {
   }
 
   .navbar-nav {
-    /* Removed display: flex; */ /* This was the culprit */
     flex-direction: column; /* Keep for when it's effectively block, but items stack */
     width: 100%;
     margin: 0; /* Reset margin */
