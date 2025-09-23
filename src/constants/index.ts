@@ -4,5 +4,5 @@ export const OAUTH2_REDIRECT_URI = import.meta.env.VITE_OAUTH2_REDIRECT_URI || '
 export const ACCESS_TOKEN = 'accessToken';
 
 export const GOOGLE_AUTH_URL = `${API_BASE_URL}/oauth2/authorization/google`;
-export const FACEBOOK_AUTH_URL = `${API_BASE_URL}/oauth2/authorize/facebook`;
+export const FACEBOOK_AUTH_URL = `${API_BASE_URL}/oauth2/authorization/facebook`;
 export const GITHUB_AUTH_URL = `${API_BASE_URL}/oauth2/authorization/github`;

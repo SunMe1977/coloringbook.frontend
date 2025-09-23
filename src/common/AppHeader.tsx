@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import LanguageSwitcher from './LanguageSwitcher';
 import { useTranslation } from 'react-i18next';
 import logo from '../img/logo.svg';
+import { useNavigate } from 'react-router-dom';
 import { Menu } from 'lucide-react';
 
 interface AppHeaderProps {
@@ -27,34 +28,35 @@ const AppHeader: React.FC<AppHeaderProps> = ({ authenticated, onLogout }) => {
   return (
     <nav className="navbar navbar-default navbar-fixed-top">
       <div className="container">
-        <div className="navbar-header d-flex justify-content-between align-items-center w-100">
+        <div className="navbar-header"> {/* Removed d-flex, justify-content-between, align-items-center, w-100 */}
           <Link to="/" className="navbar-brand" onClick={() => setIsNavCollapsed(true)}>
             <img src={logo} alt="AI SelfPub ColoringBook Studio" />
             {tCommon('appname')}
           </Link>
 
+          {/* Burger menu on the right */}
           <button
             type="button"
             className="navbar-toggle collapsed"
             onClick={handleNavToggle}
             aria-expanded={!isNavCollapsed}
             aria-label="Toggle navigation"
-            style={{ marginLeft: 'auto' }}
+            // Removed style={{ marginLeft: 'auto' }} - will be handled by CSS
           >
             <Menu size={20} color="#2098f3" />
           </button>
         </div>
 
         <div className={`navbar-collapse ${isNavCollapsed ? 'collapse' : 'in'}`}>
-          <ul className="nav navbar-nav">
+          <ul className="nav navbar-nav"> {/* Removed w-100, d-flex, flex-column, align-items-center */}
             {authenticated ? (
               <>
-                <li>
+                <li> {/* Removed inline style */}
                   <NavLink to="/profile" onClick={() => setIsNavCollapsed(true)}>
                     {tCommon('profile')}
                   </NavLink>
                 </li>
-                <li>
+                <li> {/* Removed inline style */}
                   <a onClick={() => { handleLogout(); setIsNavCollapsed(true); }} style={{ cursor: 'pointer' }}>
                     {tCommon('logout')}
                   </a>
@@ -62,17 +64,17 @@ const AppHeader: React.FC<AppHeaderProps> = ({ authenticated, onLogout }) => {
               </>
             ) : (
               <>
-                <li>
+                <li> {/* Removed inline style */}
                   <NavLink to="/login" onClick={() => setIsNavCollapsed(true)}>
                     {tCommon('login')}
                   </NavLink>
                 </li>
-                <li>
+                <li> {/* Removed inline style */}
                   <NavLink to="/signup" onClick={() => setIsNavCollapsed(true)}>
                     {tCommon('signup')}
                   </NavLink>
                 </li>
-                <li>
+                <li> {/* Removed inline style */}
                   <LanguageSwitcher />
                 </li>
               </>
