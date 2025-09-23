@@ -605,7 +605,7 @@ fieldset[disabled] .form-control {
     height: 34px;
     width: 38px;
     border-radius: 4px;
-    margin-left: auto; /* Pushes the toggle to the far right */
+    margin-left: auto !important; /* Pushes the toggle to the far right */
     margin-right: 0; /* Ensure no right margin */
     float: none !important; /* Crucial: Remove any lingering float */
   }
