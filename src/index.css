@@ -621,11 +621,10 @@ fieldset[disabled] .form-control {
     overflow: hidden;
     transition: max-height 0.3s ease-out;
     width: 100%; /* Ensure it takes full width */
-    border-top: 1px solid #eee;
+    border-top: 1px solid #eee; /* This border adds 1px */
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
     -webkit-overflow-scrolling: touch;
-    padding-right: 0;
-    padding-left: 0;
+    padding: 0; /* Remove all padding from here */
     display: block; /* Ensure it's a block element for max-height transition */
   }
 
@@ -635,13 +634,11 @@ fieldset[disabled] .form-control {
   }
 
   .navbar-collapse.in {
-    max-height: calc(100vh - 50px); /* Adjusted to account for fixed header height */
-    overflow-y: auto; /* Enable vertical scrolling if content exceeds height */
+    max-height: calc(100vh - 50px - 1px); /* Adjusted to account for fixed header height and its own top border */
+    overflow-y: auto; /* Apply scrolling to this container */
     display: block; /* Ensure it's a block element when expanded */
     width: 100%;
     transition: max-height 0.3s ease-in;
-    padding-top: 10px; /* Moved padding here */
-    padding-bottom: 10px; /* Moved padding here */
   }
 
   .navbar-nav {
@@ -649,47 +646,42 @@ fieldset[disabled] .form-control {
     margin: 0 !important; /* Reset margin */
     float: none !important; /* Ensure no floats interfere */
     display: block !important; /* Force block display for the ul itself */
-    /* Removed padding-top and padding-bottom from here */
+    height: auto; /* Allow it to naturally expand */
+    overflow-y: visible; /* Prevent inner scrolling, parent handles it */
   }
 
   .navbar-nav > li {
     float: none !important; /* Remove float from list items */
     width: 100% !important; /* Force full width */
     display: block !important; /* Force block display for list items */
-    margin-bottom: 10px; /* Add spacing between menu items */
+    margin-bottom: 0; /* Remove margin-bottom from li */
     text-align: right; /* Align content within each li to the right */
     box-sizing: border-box; /* Include padding in width calculation */
+    padding: 10px 15px; /* Apply padding directly to li */
+    border-bottom: 1px solid #eee; /* Keep border on li */
   }
 
   .navbar-nav > li:last-child {
     margin-bottom: 0; /* No margin-bottom for the last item */
+    border-bottom: none; /* No border-bottom for the last item */
   }
 
   .navbar-nav > li > a {
     display: block;
-    padding: 10px 15px;
-    text-align: right; /* Align text within each link to the right */
-    border-bottom: 1px solid #eee;
-  }
-
-  .navbar-nav > li:last-child > a {
-    border-bottom: none;
+    padding: 0; /* Remove padding from a, it's now on li */
+    border-bottom: none; /* Remove border from a, it's now on li */
   }
 
   /* Adjustments for LanguageSwitcher within navbar */
   .navbar-nav .form-group {
     margin-left: 0;
     width: 100% !important; /* Force full width for form-group */
-    display: block !important; /* Force block display */
-    padding: 10px 15px;
+    display: inline-block; /* Keep it inline-block to respect text-align: right on parent */
+    padding: 0; /* Remove padding from form-group, it's on li */
     margin-bottom: 0;
-    border-bottom: 1px solid #eee;
-    text-align: right; /* Align the form group to the right */
-    box-sizing: border-box; /* Include padding in width calculation */
-  }
-
-  .navbar-nav .form-group:last-child {
-    border-bottom: none;
+    border-bottom: none; /* Remove border from form-group, it's on li */
+    text-align: right;
+    box-sizing: border-box;
   }
 
   .navbar-nav .form-control {
