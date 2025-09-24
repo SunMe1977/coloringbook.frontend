@@ -95,3 +95,11 @@ export function signup(signupRequest: Record<string, any>): Promise<any> {
     body: JSON.stringify(signupRequest),
   });
 }
+
+export function updateUser(updateRequest: { name: string; email: string }): Promise<any> {
+  return request({
+    url: `${API_BASE_URL}/user/me`,
+    method: 'PUT',
+    body: JSON.stringify(updateRequest),
+  });
+}

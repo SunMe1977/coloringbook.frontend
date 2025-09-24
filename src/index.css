@@ -656,12 +656,13 @@ fieldset[disabled] .form-control {
     padding: 0;
     display: flex; /* Use flex for column direction */
     flex-direction: column; /* Stack items vertically */
-    align-items: flex-start; /* Align items to the left */
+    /* Removed align-items: flex-start; as padding on li will handle alignment */
   }
 
   .navbar-nav > li {
     width: 100%; /* Full width list item */
-    padding: 10px 15px; /* Padding for each menu item */
+    padding: 10px 15px; /* Consistent padding for each menu item */
+    margin: 0; /* Ensure no extra margin */
     border-bottom: 1px solid #eee; /* Separator for each item */
     text-align: left; /* Align text to the left */
   }
@@ -673,24 +674,28 @@ fieldset[disabled] .form-control {
   .navbar-nav > li > a {
     display: block; /* Make links fill the list item width */
     padding: 0; /* Reset padding on anchor, it's on li now */
+    margin: 0; /* Ensure no extra margin */
   }
 
   /* Adjustments for LanguageSwitcher within navbar */
   .navbar-nav .form-group {
     width: 100%; /* Full width for form-group */
-    padding: 10px 15px; /* Padding for the form group */
+    padding: 10px 15px; /* Consistent padding for the form group */
     margin: 0; /* Reset margins */
     border-bottom: 1px solid #eee; /* Separator for language switcher */
     text-align: left;
+    display: block !important; /* Override inline-block from LanguageSwitcher component */
+    vertical-align: top !important; /* Reset vertical-align */
   }
 
   .navbar-nav .form-group:last-child {
     border-bottom: none; /* No border on the last form group */
   }
 
-  .navbar-nav .form-control {
+  .navbar-nav .form-control { /* This is the select element */
     width: 100%; /* Make it full width within its container */
-    display: block; /* Make it a block element */
+    display: block;
+    margin: 0; /* Ensure no extra margin on the select itself */
   }
 
   .auth-card {

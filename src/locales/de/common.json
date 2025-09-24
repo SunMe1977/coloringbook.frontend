@@ -31,5 +31,12 @@
   "cookie_consent_text": "Diese Website verwendet Cookies, um die Benutzererfahrung zu verbessern.",
   "cookie_consent_accept": "Akzeptieren",
   "cookie_consent_decline": "Ablehnen",
-  "cookie_consent_learn_more": "Mehr erfahren"
+  "cookie_consent_learn_more": "Mehr erfahren",
+  "edit_profile": "Profil bearbeiten",
+  "save": "Speichern",
+  "cancel": "Abbrechen",
+  "name_placeholder": "Ihr Name",
+  "email_placeholder": "Ihre E-Mail",
+  "user.update.success": "Profil erfolgreich aktualisiert!",
+  "user.update.error": "Fehler beim Aktualisieren des Profils. Bitte versuchen Sie es erneut."
 }

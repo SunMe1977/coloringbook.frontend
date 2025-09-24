@@ -26,7 +26,7 @@ function App() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  useEffect(() => {
+  const loadCurrentUser = () => {
     const token = localStorage.getItem(ACCESS_TOKEN);
     if (token) {
       getCurrentUser()
@@ -43,6 +43,10 @@ function App() {
       setAuthenticated(false);
       setCurrentUser(null);
     }
+  };
+
+  useEffect(() => {
+    loadCurrentUser();
   }, []);
 
   useEffect(() => {
@@ -68,6 +72,11 @@ function App() {
     setAuthenticated(true);
   };
 
+  // New handler to update currentUser state from child components
+  const handleUserUpdate = (updatedUser: any) => {
+    setCurrentUser(updatedUser);
+  };
+
   return (
     <div className="app">
       <AppHeader authenticated={authenticated} onLogout={handleLogout} />
@@ -81,7 +90,7 @@ function App() {
             <Route path="/signup" element={<Signup onSignupSuccess={handleLoginSuccess} />} />
             <Route 
               path="/profile" 
-              element={authenticated && currentUser ? <Profile currentUser={currentUser} /> : <Navigate to="/login" replace />} 
+              element={authenticated && currentUser ? <Profile currentUser={currentUser} onUserUpdate={handleUserUpdate} /> : <Navigate to="/login" replace />} 
             />
             <Route path="/oauth2/redirect" element={<OAuth2RedirectHandler onLoginSuccess={handleLoginSuccess} />} />
             <Route path="/impressum" element={<Impressum />} />

@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import LanguageSwitcher from './LanguageSwitcher';
 import { useTranslation } from 'react-i18next';
 import logo from '../img/logo.svg';
-import { useNavigate } from 'react-router-dom';
 import { Menu } from 'lucide-react';
 
 interface AppHeaderProps {
@@ -19,6 +18,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({ authenticated, onLogout }) => {
   const handleLogout = () => {
     onLogout();
     navigate('/login', { replace: true });
+    setIsNavCollapsed(true);
   };
 
   const handleNavToggle = () => {
@@ -41,13 +41,14 @@ const AppHeader: React.FC<AppHeaderProps> = ({ authenticated, onLogout }) => {
             onClick={handleNavToggle}
             aria-expanded={!isNavCollapsed}
             aria-label="Toggle navigation"
+            style={{ marginLeft: 'auto' }}
           >
             <Menu size={20} color="#2098f3" />
           </button>
         </div>
 
         <div className={`navbar-collapse ${isNavCollapsed ? 'collapse' : 'in'}`}>
-          <ul className="nav navbar-nav">
+          <ul className="nav navbar-nav navbar-right">
             {authenticated ? (
               <>
                 <li>
@@ -56,27 +57,28 @@ const AppHeader: React.FC<AppHeaderProps> = ({ authenticated, onLogout }) => {
                   </NavLink>
                 </li>
                 <li>
-                  <a onClick={() => { handleLogout(); setIsNavCollapsed(true); }} style={{ cursor: 'pointer' }}>
+                  <a
+                    onClick={handleLogout}
+                    style={{ cursor: 'pointer' }}
+                  >
                     {tCommon('logout')}
                   </a>
                 </li>
               </>
             ) : (
-              <>
-                <li>
+              <li>
+                <div className="d-flex flex-column align-items-end gap-1 text-right">
                   <NavLink to="/login" onClick={() => setIsNavCollapsed(true)}>
                     {tCommon('login')}
                   </NavLink>
-                </li>
-                <li>
                   <NavLink to="/signup" onClick={() => setIsNavCollapsed(true)}>
                     {tCommon('signup')}
                   </NavLink>
-                </li>
-                <li>
-                  <LanguageSwitcher />
-                </li>
-              </>
+                  <div style={{ width: 'fit-content' }}>
+                    <LanguageSwitcher />
+                  </div>
+                </div>
+              </li>
             )}
           </ul>
         </div>

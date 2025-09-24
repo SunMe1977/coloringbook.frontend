@@ -31,5 +31,12 @@
   "cookie_consent_text": "Questo sito web utilizza i cookie per migliorare l'esperienza dell'utente.",
   "cookie_consent_accept": "Accetta",
   "cookie_consent_decline": "Rifiuta",
-  "cookie_consent_learn_more": "Scopri di più"
+  "cookie_consent_learn_more": "Scopri di più",
+  "edit_profile": "Modifica Profilo",
+  "save": "Salva",
+  "cancel": "Annulla",
+  "name_placeholder": "Il tuo nome",
+  "email_placeholder": "La tua email",
+  "user.update.success": "Profilo aggiornato con successo!",
+  "user.update.error": "Impossibile aggiornare il profilo. Riprova."
 }
