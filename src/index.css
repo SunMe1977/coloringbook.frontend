@@ -622,78 +622,75 @@ fieldset[disabled] .form-control {
   }
 
   .navbar-collapse {
-    max-height: 0; /* Start collapsed with max-height 0 */
-    overflow: hidden;
-    transition: max-height 0.3s ease-in-out; /* Transition max-height */
-    width: 100%; /* Ensure it takes full width */
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    -webkit-overflow-scrolling: touch;
-    padding: 0; /* Remove all padding from here */
-    display: block; /* Ensure it's a block element for transition */
-    background-color: #f8f8f8; /* Explicitly set background to match navbar-default */
-  }
-
-  .navbar-collapse.collapse {
-    max-height: 0; /* Explicitly hide when collapsed */
+    /* Revert to block flow, hidden by default */
+    position: static; /* Allow it to flow naturally */
+    top: auto;
+    left: auto;
+    width: 100%; /* Full width within its parent */
+    height: auto; /* Height adjusts to content */
+    max-height: none;
+    overflow-y: visible; /* No internal scrolling */
+    background-color: #f8f8f8; /* Ensure background */
+    z-index: 1029; /* Keep z-index for stacking if needed */
+    transform: none; /* Remove transform for sliding */
+    transition: none; /* Remove transition for now */
+    padding-top: 0;
+    padding-bottom: 0; /* Reset padding */
+    border-top: 1px solid #e7e7e7; /* Add a border to separate from header */
+    box-shadow: none; /* Remove box-shadow */
+    display: none; /* Hidden by default */
   }
 
   .navbar-collapse.in {
-    max-height: 1000vh; /* Set a very large max-height to ensure all content fits */
-    overflow-y: auto; /* Apply scrolling to this container if content overflows */
-    display: block; /* Ensure it's a block element when expanded */
-    width: 100%;
-    padding: 0; /* Ensure no padding adds to height */
+    display: block; /* Show as block when open, pushing content down */
   }
 
+  .navbar-collapse.collapse {
+    display: none; /* Explicitly hide when collapsed */
+  }
+
+  /* Adjustments for navbar-nav within the menu */
   .navbar-nav {
-    width: 100% !important; /* Force full width */
-    margin: 0 !important; /* Reset margin */
-    padding: 0 !important; /* Ensure no padding on the ul itself */
-    float: none !important; /* Ensure no floats interfere */
-    display: flex !important; /* Keep flex for column direction */
+    width: 100%; /* Full width within the collapsed area */
+    margin: 0;
+    padding: 0;
+    display: flex; /* Use flex for column direction */
     flex-direction: column; /* Stack items vertically */
-    height: auto; /* Allow it to naturally expand */
-    overflow-y: visible; /* Prevent inner scrolling, parent handles it */
-    align-items: flex-end; /* Align items to the right within the menu */
+    align-items: flex-start; /* Align items to the left */
   }
 
   .navbar-nav > li {
-    float: none !important; /* Remove float from list items */
-    width: 100% !important; /* Force full width */
-    display: block !important; /* Force block display for list items */
-    margin-bottom: 0; /* Remove margin-bottom from li */
-    text-align: right; /* Align content within each li to the right */
-    box-sizing: border-box; /* Include padding in width calculation */
-    padding: 0; /* Removed padding from li */
-    border-bottom: 1px solid #eee; /* Keep border on li */
-  }
-
-  .navbar-nav > li > a {
-    display: block;
-    padding: 10px 15px; /* Added padding to the anchor tag */
-    border-bottom: none; /* Remove border from a, it's now on li */
+    width: 100%; /* Full width list item */
+    padding: 10px 15px; /* Padding for each menu item */
+    border-bottom: 1px solid #eee; /* Separator for each item */
+    text-align: left; /* Align text to the left */
   }
 
   .navbar-nav > li:last-child {
-    margin-bottom: 0; /* No margin-bottom for the last item */
-    border-bottom: none; /* No border-bottom for the last item */
+    border-bottom: none; /* No border on the last item */
+  }
+
+  .navbar-nav > li > a {
+    display: block; /* Make links fill the list item width */
+    padding: 0; /* Reset padding on anchor, it's on li now */
   }
 
   /* Adjustments for LanguageSwitcher within navbar */
   .navbar-nav .form-group {
-    margin-left: 0;
-    width: 100% !important; /* Force full width for form-group */
-    display: inline-block; /* Keep it inline-block to respect text-align: right on parent */
-    padding: 10px 15px; /* Added padding to the form-group */
-    margin-bottom: 0;
-    border-bottom: none; /* Remove border from form-group, it's on li */
-    text-align: right;
-    box-sizing: border-box;
+    width: 100%; /* Full width for form-group */
+    padding: 10px 15px; /* Padding for the form group */
+    margin: 0; /* Reset margins */
+    border-bottom: 1px solid #eee; /* Separator for language switcher */
+    text-align: left;
+  }
+
+  .navbar-nav .form-group:last-child {
+    border-bottom: none; /* No border on the last form group */
   }
 
   .navbar-nav .form-control {
-    width: auto; /* Allow it to size based on content */
-    display: inline-block; /* Keep it inline-block to respect text-align: right on parent */
+    width: 100%; /* Make it full width within its container */
+    display: block; /* Make it a block element */
   }
 
   .auth-card {
