@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import { signup, getCurrentUser } from '@util/APIUtils';
 import { ACCESS_TOKEN } from '@constants';
 import { useTranslation } from 'react-i18next';
+import { Eye, EyeOff } from 'lucide-react'; // Import icons
 
 interface SignupFormData {
   name: string;
@@ -27,6 +28,7 @@ function Signup({ onSignupSuccess }: SignupProps) {
   const navigate = useNavigate();
   const { t: tCommon } = useTranslation('common');
   const { t } = useTranslation('signup');
+  const { t: tLogin } = useTranslation('login'); // For forgot password link
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -152,8 +154,11 @@ function Signup({ onSignupSuccess }: SignupProps) {
                 </button>
               </div>
             </form>
-            <span className="help-block text-center">
+            <span className="help-block text-center auth-link-block">
               {t('already')} <Link to="/login">{tCommon('login')}</Link>
+            </span>
+            <span className="help-block text-center auth-link-block">
+              <Link to="/forgot-password">{tLogin('forgot_password_link')}</Link>
             </span>
           </div>
         </div>

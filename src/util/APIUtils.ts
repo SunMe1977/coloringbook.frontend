@@ -96,10 +96,40 @@ export function signup(signupRequest: Record<string, any>): Promise<any> {
   });
 }
 
-export function updateUser(updateRequest: { name: string; email: string }): Promise<any> {
+export function forgotPassword(email: string): Promise<any> {
+  return request({
+    url: `${API_BASE_URL}/auth/forgot-password`,
+    method: 'POST',
+    body: JSON.stringify({ email }),
+  });
+}
+
+export function resetPassword(token: string, newPassword: string): Promise<any> {
+  return request({
+    url: `${API_BASE_URL}/auth/reset-password`,
+    method: 'POST',
+    body: JSON.stringify({ token, newPassword }),
+  });
+}
+
+export function updateUserProfile(updateRequest: { name: string; email: string }): Promise<any> {
   return request({
     url: `${API_BASE_URL}/user/me`,
     method: 'PUT',
     body: JSON.stringify(updateRequest),
+  });
+}
+
+export function requestEmailVerification(): Promise<any> {
+  return request({
+    url: `${API_BASE_URL}/user/verify-email/request`,
+    method: 'POST',
+  });
+}
+
+export function confirmEmailVerification(token: string): Promise<any> {
+  return request({
+    url: `${API_BASE_URL}/user/verify-email/confirm?token=${token}`,
+    method: 'GET',
   });
 }

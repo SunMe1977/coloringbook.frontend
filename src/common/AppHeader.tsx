@@ -34,7 +34,6 @@ const AppHeader: React.FC<AppHeaderProps> = ({ authenticated, onLogout }) => {
             {tCommon('appname')}
           </Link>
 
-          {/* Burger menu on the right - always show on mobile */}
           <button
             type="button"
             className="navbar-toggle collapsed"
@@ -49,6 +48,11 @@ const AppHeader: React.FC<AppHeaderProps> = ({ authenticated, onLogout }) => {
 
         <div className={`navbar-collapse ${isNavCollapsed ? 'collapse' : 'in'}`}>
           <ul className="nav navbar-nav navbar-right">
+            {/* Language Switcher - always visible */}
+            <li className="language-switcher-item">
+              <LanguageSwitcher />
+            </li>
+
             {authenticated ? (
               <>
                 <li>
@@ -66,18 +70,13 @@ const AppHeader: React.FC<AppHeaderProps> = ({ authenticated, onLogout }) => {
                 </li>
               </>
             ) : (
-              <li>
-                <div className="d-flex flex-column align-items-end gap-1 text-right">
-                  <NavLink to="/login" onClick={() => setIsNavCollapsed(true)}>
-                    {tCommon('login')}
-                  </NavLink>
-                  <NavLink to="/signup" onClick={() => setIsNavCollapsed(true)}>
-                    {tCommon('signup')}
-                  </NavLink>
-                  <div style={{ width: 'fit-content' }}>
-                    <LanguageSwitcher />
-                  </div>
-                </div>
+              <li className="auth-links-group"> {/* New wrapper for login/signup links */}
+                <NavLink to="/login" onClick={() => setIsNavCollapsed(true)} className="nav-link-item">
+                  {tCommon('login')}
+                </NavLink>
+                <NavLink to="/signup" onClick={() => setIsNavCollapsed(true)} className="nav-link-item">
+                  {tCommon('signup')}
+                </NavLink>
               </li>
             )}
           </ul>

@@ -44,8 +44,11 @@ function Login({ authenticated, onLoginSuccess }: LoginProps) {
               <span className="or-text">{t('or')}</span>
             </div>
             <LoginForm onLoginSuccess={onLoginSuccess} />
-            <span className="help-block text-center">
+            <span className="help-block text-center auth-link-block">
               {t('new_user')} <Link to="/signup">{tCommon('signup')}</Link>
+            </span>
+            <span className="help-block text-center auth-link-block">
+              <Link to="/forgot-password">{t('forgot_password_link')}</Link>
             </span>
           </div>
         </div>

@@ -37,6 +37,17 @@
   "cancel": "Cancel",
   "name_placeholder": "Your Name",
   "email_placeholder": "Your Email",
+  "github_email_warning": "Your current email is a GitHub noreply email. Please update it to a real email address.",
   "user.update.success": "Profile updated successfully!",
-  "user.update.error": "Failed to update profile. Please try again."
+  "user.update.error": "Failed to update profile. Please try again.",
+  "email.verified": "Verified",
+  "email.unverified": "Unverified",
+  "email.verify_button": "Verify Email",
+  "email.verification.sent": "A verification email has been sent to your email address. Please check your inbox.",
+  "email.verification.error": "Failed to send verification email. Please try again.",
+  "email.verification.title": "Email Verification",
+  "email.verification.processing": "Processing email verification...",
+  "email.verification.success": "Your email has been successfully verified!",
+  "email.verification.error_generic": "Email verification failed. Please try again or request a new link.",
+  "email.verification.no_token_found": "No verification token found in the URL."
 }

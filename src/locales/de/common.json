@@ -37,6 +37,17 @@
   "cancel": "Abbrechen",
   "name_placeholder": "Ihr Name",
   "email_placeholder": "Ihre E-Mail",
+  "github_email_warning": "Ihre aktuelle E-Mail-Adresse ist eine GitHub-Noreply-E-Mail. Bitte aktualisieren Sie diese auf eine echte E-Mail-Adresse.",
   "user.update.success": "Profil erfolgreich aktualisiert!",
-  "user.update.error": "Fehler beim Aktualisieren des Profils. Bitte versuchen Sie es erneut."
+  "user.update.error": "Fehler beim Aktualisieren des Profils. Bitte versuchen Sie es erneut.",
+  "email.verified": "Verifiziert",
+  "email.unverified": "Unverifiziert",
+  "email.verify_button": "E-Mail verifizieren",
+  "email.verification.sent": "Eine Verifizierungs-E-Mail wurde an Ihre E-Mail-Adresse gesendet. Bitte überprüfen Sie Ihren Posteingang.",
+  "email.verification.error": "Fehler beim Senden der Verifizierungs-E-Mail. Bitte versuchen Sie es erneut.",
+  "email.verification.title": "E-Mail-Verifizierung",
+  "email.verification.processing": "E-Mail-Verifizierung wird verarbeitet...",
+  "email.verification.success": "Ihre E-Mail-Adresse wurde erfolgreich verifiziert!",
+  "email.verification.error_generic": "E-Mail-Verifizierung fehlgeschlagen. Bitte versuchen Sie es erneut oder fordern Sie einen neuen Link an.",
+  "email.verification.no_token_found": "Kein Verifizierungs-Token in der URL gefunden."
 }

@@ -11,6 +11,9 @@ import Profile from '@user/profile/Profile';
 import Home from '@home/Home';
 import NotFound from '@common/NotFound';
 import OAuth2RedirectHandler from '@user/oauth2/OAuth2RedirectHandler';
+import ForgotPassword from '@user/password/ForgotPassword';
+import ResetPassword from '@user/password/ResetPassword';
+import VerifyEmail from '@user/email/VerifyEmail'; // Import new component
 import Impressum from '@pages/Impressum';
 import PrivacyPolicy from '@pages/PrivacyPolicy';
 import UserDataDeletion from '@pages/UserDataDeletion';
@@ -26,7 +29,7 @@ function App() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const loadCurrentUser = () => {
+  useEffect(() => {
     const token = localStorage.getItem(ACCESS_TOKEN);
     if (token) {
       getCurrentUser()
@@ -43,15 +46,11 @@ function App() {
       setAuthenticated(false);
       setCurrentUser(null);
     }
-  };
-
-  useEffect(() => {
-    loadCurrentUser();
   }, []);
 
   useEffect(() => {
     if (authenticated && currentUser) {
-      if (location.pathname === '/login' || location.pathname === '/signup' || location.pathname === '/') {
+      if (location.pathname === '/login' || location.pathname === '/signup' || location.pathname === '/' || location.pathname === '/forgot-password' || location.pathname.startsWith('/reset-password') || location.pathname.startsWith('/verify-email')) {
         navigate('/profile', { replace: true });
       }
     } else if (!authenticated && (location.pathname === '/profile')) {
@@ -72,7 +71,6 @@ function App() {
     setAuthenticated(true);
   };
 
-  // New handler to update currentUser state from child components
   const handleUserUpdate = (updatedUser: any) => {
     setCurrentUser(updatedUser);
   };
@@ -93,6 +91,9 @@ function App() {
               element={authenticated && currentUser ? <Profile currentUser={currentUser} onUserUpdate={handleUserUpdate} /> : <Navigate to="/login" replace />} 
             />
             <Route path="/oauth2/redirect" element={<OAuth2RedirectHandler onLoginSuccess={handleLoginSuccess} />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/verify-email" element={<VerifyEmail />} /> {/* New route for email verification */}
             <Route path="/impressum" element={<Impressum />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/user-data-deletion" element={<UserDataDeletion />} />
@@ -102,7 +103,7 @@ function App() {
           </Routes>
       </div>
       <AppFooter />
-      <CookieConsentBanner /> {/* Render the CookieConsentBanner */}
+      <CookieConsentBanner />
       <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );

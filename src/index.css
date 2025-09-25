@@ -415,19 +415,44 @@ fieldset[disabled] .form-control {
   clear: both;
 }
 
-/* Adjustments for LanguageSwitcher within navbar */
-.navbar-nav .form-group {
-  margin-top: 0; /* Reset margin-top */
-  margin-bottom: 0; /* Reset margin-bottom */
-  margin-left: 15px; /* Spacing from other nav items */
+/* New styles for language switcher item */
+.navbar-nav .language-switcher-item {
+  display: flex; /* Use flex to align content inside li */
+  align-items: center; /* Vertically center the select */
+  padding: 0; /* Reset padding, handled by parent li */
 }
 
-.navbar-nav .form-control {
+.navbar-nav .language-switcher-item .form-group {
+  margin-bottom: 0; /* Remove bottom margin from form-group */
+  display: inline-block; /* Keep it inline-block for select */
+  vertical-align: middle; /* Align with other nav items */
+}
+
+.navbar-nav .language-switcher-item .form-control {
   height: 34px; /* Standard height for form controls in navbar */
   padding: 6px 12px;
   font-size: 14px;
   line-height: 1.42857143; /* Match Bootstrap default */
 }
+
+/* New styles for authentication links group */
+.navbar-nav .auth-links-group {
+  display: flex; /* Use flexbox to put links on the same line */
+  align-items: center; /* Vertically center links */
+  padding: 0; /* Reset padding, handled by parent li */
+}
+
+.navbar-nav .auth-links-group .nav-link-item {
+  /* Inherits styles from .navbar-nav > li > a */
+  padding: 15px 0; /* Match existing nav link padding */
+  display: block; /* Make it block within the flex container for padding */
+  color: #2098f3; /* Match existing nav link color */
+}
+
+.navbar-nav .auth-links-group .nav-link-item:not(:last-child) {
+  margin-right: 15px; /* Add space between login and signup links */
+}
+
 
 /* New styles for authentication forms */
 .auth-card {
@@ -572,6 +597,17 @@ fieldset[disabled] .form-control {
   width: 2px;
 }
 
+/* New class for auth form bottom links */
+.auth-link-block {
+  display: block;
+  margin-bottom: 10px; /* Space between each link block */
+}
+
+.auth-link-block:last-child {
+  margin-bottom: 0; /* No bottom margin for the last one */
+}
+
+
 /* Media query for small screens (e.g., mobile phones) */
 @media (max-width: 767px) {
   .app-content {
@@ -678,24 +714,46 @@ fieldset[disabled] .form-control {
   }
 
   /* Adjustments for LanguageSwitcher within navbar */
-  .navbar-nav .form-group {
+  .navbar-nav .language-switcher-item {
     width: 100%; /* Full width for form-group */
     padding: 10px 15px; /* Consistent padding for the form group */
     margin: 0; /* Reset margins */
     border-bottom: 1px solid #eee; /* Separator for language switcher */
     text-align: left;
-    display: block !important; /* Override inline-block from LanguageSwitcher component */
+    display: flex !important; /* Override inline-block from LanguageSwitcher component */
     vertical-align: top !important; /* Reset vertical-align */
+    justify-content: flex-start; /* Align content to start */
   }
 
-  .navbar-nav .form-group:last-child {
+  .navbar-nav .language-switcher-item:last-child {
     border-bottom: none; /* No border on the last form group */
   }
 
-  .navbar-nav .form-control { /* This is the select element */
+  .navbar-nav .language-switcher-item .form-control { /* This is the select element */
     width: 100%; /* Make it full width within its container */
     display: block;
     margin: 0; /* Ensure no extra margin on the select itself */
+  }
+
+  /* Mobile adjustments for auth links group */
+  .navbar-nav .auth-links-group {
+    flex-direction: column; /* Stack links vertically in mobile menu */
+    align-items: flex-start; /* Align to the left */
+    width: 100%;
+    padding: 0; /* Reset padding, children will have it */
+    margin-left: 0; /* Reset margin */
+    border-bottom: 1px solid #eee; /* Separator for the group */
+  }
+
+  .navbar-nav .auth-links-group .nav-link-item {
+    width: 100%; /* Full width for each link */
+    padding: 10px 15px; /* Consistent padding for each link */
+    margin-right: 0; /* Remove horizontal margin */
+    border-bottom: none; /* No individual border, group has one */
+  }
+
+  .navbar-nav .auth-links-group .nav-link-item:not(:last-child) {
+    margin-bottom: 5px; /* Add vertical space between stacked links */
   }
 
   .auth-card {
@@ -729,6 +787,16 @@ fieldset[disabled] .form-control {
   .footer-copyright strong {
     margin-right: 0;
     margin-bottom: 5px;
+  }
+
+  .footer-copyright a {
+    color: #6c757d; /* Darker color for copyright links */
+    text-decoration: none;
+  }
+
+  .footer-copyright a:hover {
+    color: #40a9ff;
+    text-decoration: underline;
   }
 
   .d-none.d-sm-inline.float-right {

@@ -48,6 +48,9 @@ export default defineConfig({
         // Ensure the generated service worker is named service-worker.js
         // This will output to dist/service-worker.js
         swDest: 'dist/service-worker.js',
+        // Allow all navigation routes to be handled by the service worker
+        navigateFallback: 'index.html',
+        navigateFallbackAllowlist: [/.*/], // This will allow all routes
       },
       devOptions: {
         enabled: true, // Enable PWA in development for easier testing

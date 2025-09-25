@@ -37,6 +37,17 @@
   "cancel": "Annulla",
   "name_placeholder": "Il tuo nome",
   "email_placeholder": "La tua email",
+  "github_email_warning": "La tua email attuale è un'email noreply di GitHub. Aggiornala a un indirizzo email reale.",
   "user.update.success": "Profilo aggiornato con successo!",
-  "user.update.error": "Impossibile aggiornare il profilo. Riprova."
+  "user.update.error": "Impossibile aggiornare il profilo. Riprova.",
+  "email.verified": "Verificato",
+  "email.unverified": "Non verificato",
+  "email.verify_button": "Verifica Email",
+  "email.verification.sent": "Un'email di verifica è stata inviata al tuo indirizzo email. Controlla la tua casella di posta.",
+  "email.verification.error": "Impossibile inviare l'email di verifica. Riprova.",
+  "email.verification.title": "Verifica Email",
+  "email.verification.processing": "Elaborazione della verifica email...",
+  "email.verification.success": "La tua email è stata verificata con successo!",
+  "email.verification.error_generic": "Verifica email fallita. Riprova o richiedi un nuovo link.",
+  "email.verification.no_token_found": "Nessun token di verifica trovato nell'URL."
 }
