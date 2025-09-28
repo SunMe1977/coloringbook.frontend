@@ -1,29 +1,42 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
-import page_under_construction from '../img/page_under_construction.png';
+import fundraisingAI from '../img/fundraisingAI.png'; // Import the new image
 
 const Home: React.FC = () => {
-  const { t } = useTranslation('home');
-
   return (
     <div className="container text-center" style={{ minHeight: 'calc(100vh - 60px)', paddingTop: '60px' }}>
-      <div className="jumbotron"> {/* Using Jumbotron for prominent content */}
-        <h1 className="display-4">{t('welcome')}</h1>
-        <p className="lead">{t('description')}</p>
-        <img src={page_under_construction} width="300px" alt="Page under construction" className="img-responsive center-block" />
-        <p style={{ marginTop: '20px', fontSize: '1.1em' }}>
-          {t('fundraising_message')}{" "}
-          <a href="https://www.indiegogo.com/projects/ai-selfpub-coloringbook-studio" target="_blank" rel="noopener noreferrer" style={{ fontWeight: 'bold', color: '#e03a73' }}>
-            {t('fundraising_link_text')}
-          </a>
-        </p>
-        {/* hitwebcounter Code START */}
-        <div style={{ marginTop: '30px' }}>
-          <a href="https://www.hitwebcounter.com/" target="_blank" rel="noopener noreferrer">
-            <img src="https://hitwebcounter.com/counter/counter.php?page=21442109&style=0027&nbdigits=5&type=page&initCount=0" title="Counters" alt="Counters" border="0" />
+      <section className="bg-gradient-to-r from-purple-900 via-blue-900 to-black text-white py-16 text-center relative overflow-hidden">
+        {/* Futuristic Glow Background */}
+        <div className="absolute inset-0 opacity-30">
+          <div className="w-[800px] h-[800px] bg-purple-500 blur-3xl rounded-full absolute -top-40 -left-40"></div>
+          <div className="w-[600px] h-[600px] bg-blue-500 blur-3xl rounded-full absolute bottom-0 right-0"></div>
+        </div>
+
+        <div className="relative z-10 max-w-3xl mx-auto px-6">
+          <h2 className="text-4xl font-extrabold mb-6">🚀 Fund the Future of AI Publishing</h2>
+          <p className="text-lg mb-8 leading-relaxed">
+            AI SelfPub ColoringBook Studio is creating the <span className="text-purple-300">next evolution</span> 
+            of publishing tools. With your support, we can expand features, keep it free for indie authors, 
+            and make self-publishing faster than ever.
+          </p>
+
+          {/* Button */}
+          <a href="https://www.indiegogo.com/projects/ai-selfpub-coloringbook-studio/x/38788543#/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block bg-gradient-to-r from-purple-500 to-blue-500 text-white px-8 py-4 rounded-xl shadow-lg text-lg font-bold hover:scale-105 transform transition">
+            ✨ Support Us on Indiegogo ✨
           </a>
         </div>
-        {/* hitwebcounter Code END */}
+      </section>
+
+      {/* New Fundraising Image */}
+      <div style={{ marginTop: '40px', marginBottom: '40px' }}>
+        <img 
+          src={fundraisingAI} 
+          alt="Fundraising for AI capabilities" 
+          style={{ width: '40%', height: 'auto', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', display: 'block', margin: '0 auto' }} 
+          className="mx-auto"
+        />
       </div>
     </div>
   );
