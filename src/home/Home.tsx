@@ -1,5 +1,5 @@
 import React from 'react';
-import fundraisingAI from '../img/fundraisingAI.png'; // Import the new image
+import fundraisingAI from '../img/fundraisingAI.jpg';
 
 const Home: React.FC = () => {
   return (
