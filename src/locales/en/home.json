@@ -1,4 +1,6 @@
 {
     "welcome": "Welcome to AI SelfPub ColoringBook Studio",
-    "description": "Easily create personalized coloring books with AI assistance."
+    "description": "Easily create personalized coloring books with AI assistance.",
+    "fundraising_message": "We are currently fundraising to implement Google and Microsoft AI capabilities.",
+    "fundraising_link_text": "Support us on Indiegogo!"
 }

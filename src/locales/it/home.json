@@ -1,4 +1,6 @@
 {
     "welcome": "Benvenuti to AI SelfPub ColoringBook Studio",
-    "description": "Crea facilmente libri da colorare personalizzati con l'assistenza dell'IA."
+    "description": "Crea facilmente libri da colorare personalizzati con l'assistenza dell'IA.",
+    "fundraising_message": "Stiamo attualmente raccogliendo fondi per implementare le capacità AI di Google e Microsoft.",
+    "fundraising_link_text": "Sostienici su Indiegogo!"
 }

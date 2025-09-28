@@ -23,6 +23,7 @@ import Bookshelf from '@pages/Bookshelf'; // Import new Bookshelf component
 import BookDetails from '@pages/BookDetails'; // Import new BookDetails component
 import CookieConsentBanner from '../components/CookieConsentBanner';
 import { ToastContainer } from 'react-toastify';
+import { useGoogleAnalytics } from '../hooks/useGoogleAnalytics'; // Changed to named import
 
 
 function App() {
@@ -30,6 +31,9 @@ function App() {
   const [currentUser, setCurrentUser] = useState<any>(null);
   const location = useLocation();
   const navigate = useNavigate();
+
+  // Use the Google Analytics hook
+  useGoogleAnalytics();
 
   useEffect(() => {
     const token = localStorage.getItem(ACCESS_TOKEN);

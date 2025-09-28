@@ -1,4 +1,6 @@
 {
     "welcome": "Willkommen bei AI SelfPub ColoringBook Studio",
-    "description": "Erstellen Sie mühelos personalisierte Malbücher mit KI-Unterstützung."
+    "description": "Erstellen Sie mühelos personalisierte Malbücher mit KI-Unterstützung.",
+    "fundraising_message": "Wir sammeln derzeit Spenden, um Google- und Microsoft-KI-Funktionen zu implementieren.",
+    "fundraising_link_text": "Unterstützen Sie uns auf Indiegogo!"
 }
