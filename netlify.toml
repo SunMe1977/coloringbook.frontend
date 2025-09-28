@@ -1,8 +1,17 @@
+# Basic settings for the Netlify build
 [build]
   command = "npm run build"
   publish = "dist"
 
+# Redirects for client-side routing and service worker
 [[redirects]]
   from = "/service-worker.js"
   to = "/service-worker.js"
+  status = 200
+  force = true # Ensure this rule takes precedence
+  headers = {Content-Type = "application/javascript"} # Explicitly set content type
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
   status = 200
