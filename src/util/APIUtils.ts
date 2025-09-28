@@ -1,7 +1,7 @@
 // Placeholder for environment variables. You should ensure these are correctly loaded from your Vite environment.
 // For example, if you have a `src/config.ts` or similar:
 // export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-import { ACCESS_TOKEN, API_BASE_URL } from '@constants'; // Import ACCESS_TOKEN and API_BASE_URL from constants file
+import { ACCESS_TOKEN, API_BASE_URL, BOOKS_API_BASE_URL, PAGES_API_BASE_URL } from '@constants'; // Import new constants
 
 
 interface RequestOptions extends RequestInit {
@@ -131,5 +131,152 @@ export function confirmEmailVerification(token: string): Promise<any> {
   return request({
     url: `${API_BASE_URL}/user/verify-email/confirm?token=${token}`,
     method: 'GET',
+  });
+}
+
+// --- Book API Calls ---
+
+interface BookRequest {
+  languageIso: string;
+  title: string;
+  subtitle?: string;
+  authorName?: string;
+  description?: string;
+  keywords?: string;
+  coverImageFilename?: string;
+}
+
+interface BookResponse {
+  id: number;
+  userId: number;
+  coverImageFilename?: string;
+  languageIso: string;
+  title: string;
+  subtitle?: string;
+  authorName?: string;
+  description?: string;
+  keywords?: string;
+  pages?: PageResponse[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface PageRequest {
+  pageNumber: number;
+  imageFilename?: string;
+  description?: string;
+}
+
+interface PageResponse {
+  id: number;
+  bookId: number;
+  pageNumber: number;
+  imageFilename?: string;
+  description?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface PaginatedResponse<T> {
+  content: T[];
+  totalElements: number;
+  totalPages: number;
+  size: number;
+  number: number; // current page number (0-indexed)
+  first: boolean;
+  last: boolean;
+  empty: boolean;
+}
+
+export function getAllBooks(page: number, size: number, sort: string, search?: string): Promise<PaginatedResponse<BookResponse>> {
+  let url = `${BOOKS_API_BASE_URL}?page=${page}&size=${size}&sort=${sort}`;
+  if (search) {
+    url += `&search=${encodeURIComponent(search)}`;
+  }
+  return request({
+    url: url,
+    method: 'GET',
+  });
+}
+
+export function getBookById(bookId: number): Promise<BookResponse> {
+  return request({
+    url: `${BOOKS_API_BASE_URL}/${bookId}`,
+    method: 'GET',
+  });
+}
+
+export function createBook(bookRequest: CreateBookRequest): Promise<BookResponse> {
+  return request({
+    url: BOOKS_API_BASE_URL,
+    method: 'POST',
+    body: JSON.stringify(bookRequest),
+  });
+}
+
+export function updateBook(bookId: number, bookRequest: UpdateBookRequest): Promise<BookResponse> {
+  return request({
+    url: `${BOOKS_API_BASE_URL}/${bookId}`,
+    method: 'PUT',
+    body: JSON.stringify(bookRequest),
+  });
+}
+
+export function deleteBook(bookId: number): Promise<any> {
+  return request({
+    url: `${BOOKS_API_BASE_URL}/${bookId}`,
+    method: 'DELETE',
+  });
+}
+
+// --- Page API Calls ---
+
+export function getPagesByBookId(bookId: number): Promise<PageResponse[]> {
+  return request({
+    url: PAGES_API_BASE_URL(bookId),
+    method: 'GET',
+  });
+}
+
+export function getPageById(bookId: number, pageId: number): Promise<PageResponse> {
+  return request({
+    url: `${PAGES_API_BASE_URL(bookId)}/${pageId}`,
+    method: 'GET',
+  });
+}
+
+export function addPageToBook(bookId: number, pageRequest: CreatePageRequest): Promise<PageResponse> {
+  return request({
+    url: PAGES_API_BASE_URL(bookId),
+    method: 'POST',
+    body: JSON.stringify(pageRequest),
+  });
+}
+
+export function updatePage(bookId: number, pageId: number, pageRequest: UpdatePageRequest): Promise<PageResponse> {
+  return request({
+    url: `${PAGES_API_BASE_URL(bookId)}/${pageId}`,
+    method: 'PUT',
+    body: JSON.stringify(pageRequest),
+  });
+}
+
+export function deletePage(bookId: number, pageId: number): Promise<any> {
+  return request({
+    url: `${PAGES_API_BASE_URL(bookId)}/${pageId}`,
+    method: 'DELETE',
+  });
+}
+
+interface MovePageRequest {
+  oldPageNumber: number;
+  newPageNumber: number;
+}
+
+export function reorderPages(bookId: number, movePageRequest: MovePageRequest): Promise<any> {
+  return request({
+    url: `${PAGES_API_BASE_URL(bookId)}/reorder`,
+    method: 'POST',
+    body: JSON.stringify(movePageRequest),
   });
 }

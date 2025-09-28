@@ -56,6 +56,11 @@ const AppHeader: React.FC<AppHeaderProps> = ({ authenticated, onLogout }) => {
             {authenticated ? (
               <>
                 <li>
+                  <NavLink to="/bookshelf" onClick={() => setIsNavCollapsed(true)}>
+                    {tCommon('bookshelf')}
+                  </NavLink>
+                </li>
+                <li>
                   <NavLink to="/profile" onClick={() => setIsNavCollapsed(true)}>
                     {tCommon('profile')}
                   </NavLink>

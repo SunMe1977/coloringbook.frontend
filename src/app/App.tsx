@@ -13,12 +13,14 @@ import NotFound from '@common/NotFound';
 import OAuth2RedirectHandler from '@user/oauth2/OAuth2RedirectHandler';
 import ForgotPassword from '@user/password/ForgotPassword';
 import ResetPassword from '@user/password/ResetPassword';
-import VerifyEmail from '@user/email/VerifyEmail'; // Import new component
+import VerifyEmail from '@user/email/VerifyEmail';
 import Impressum from '@pages/Impressum';
 import PrivacyPolicy from '@pages/PrivacyPolicy';
 import UserDataDeletion from '@pages/UserDataDeletion';
 import TermsOfService from '@pages/TermsOfService';
 import CookiePolicy from '@pages/CookiePolicy';
+import Bookshelf from '@pages/Bookshelf'; // Import new Bookshelf component
+import BookDetails from '@pages/BookDetails'; // Import new BookDetails component
 import CookieConsentBanner from '../components/CookieConsentBanner';
 import { ToastContainer } from 'react-toastify';
 
@@ -53,7 +55,7 @@ function App() {
       if (location.pathname === '/login' || location.pathname === '/signup' || location.pathname === '/' || location.pathname === '/forgot-password' || location.pathname.startsWith('/reset-password') || location.pathname.startsWith('/verify-email')) {
         navigate('/profile', { replace: true });
       }
-    } else if (!authenticated && (location.pathname === '/profile')) {
+    } else if (!authenticated && (location.pathname === '/profile' || location.pathname === '/bookshelf' || location.pathname.startsWith('/books/'))) {
       navigate('/login', { replace: true });
     }
   }, [authenticated, currentUser, location.pathname, navigate]);
@@ -90,10 +92,13 @@ function App() {
               path="/profile" 
               element={authenticated && currentUser ? <Profile currentUser={currentUser} onUserUpdate={handleUserUpdate} /> : <Navigate to="/login" replace />} 
             />
+            <Route path="/bookshelf" element={authenticated ? <Bookshelf /> : <Navigate to="/login" replace />} />
+            <Route path="/books/:bookId" element={authenticated ? <BookDetails /> : <Navigate to="/login" replace />} />
+            <Route path="/books/new" element={authenticated ? <BookDetails /> : <Navigate to="/login" replace />} /> {/* Route for creating new book */}
             <Route path="/oauth2/redirect" element={<OAuth2RedirectHandler onLoginSuccess={handleLoginSuccess} />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
-            <Route path="/verify-email" element={<VerifyEmail />} /> {/* New route for email verification */}
+            <Route path="/verify-email" element={<VerifyEmail />} />
             <Route path="/impressum" element={<Impressum />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/user-data-deletion" element={<UserDataDeletion />} />
