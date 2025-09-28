@@ -17,7 +17,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({ authenticated, onLogout }) => {
 
   const handleLogout = () => {
     onLogout();
-    navigate('/login', { replace: true });
+    navigate('/', { replace: true }); // Changed redirect to home page
     setIsNavCollapsed(true);
   };
 
