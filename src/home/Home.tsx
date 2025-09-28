@@ -12,11 +12,13 @@ const Home: React.FC = () => {
         </div>
 
         <div className="relative z-10 max-w-3xl mx-auto px-6">
-          <h2 className="text-4xl font-extrabold mb-6">🚀 Fund the Future of AI Publishing</h2>
+          <h2 className="text-4xl font-extrabold mb-6">💡 Help Us Power AI SelfPub ColoringBook Studio!</h2>
           <p className="text-lg mb-8 leading-relaxed">
-            AI SelfPub ColoringBook Studio is creating the <span className="text-purple-300">next evolution</span> 
-            of publishing tools. With your support, we can expand features, keep it free for indie authors, 
-            and make self-publishing faster than ever.
+            Your support is crucial for covering essential <span className="text-purple-300">server costs</span> 
+            (Java, PostgreSQL) and enabling powerful AI image generation features like 
+            <span className="text-blue-300"> Microsoft DALL-E 3</span> and <span className="text-green-300">Google Imagen/Krita</span>. 
+            While our tool is designed to be low-cost, generating high-quality AI images consumes significant resources. 
+            Help us keep creating!
           </p>
 
           {/* Button */}
