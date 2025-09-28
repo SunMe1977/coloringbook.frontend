@@ -23,8 +23,7 @@ import Bookshelf from '@pages/Bookshelf'; // Import new Bookshelf component
 import BookDetails from '@pages/BookDetails'; // Import new BookDetails component
 import CookieConsentBanner from '../components/CookieConsentBanner';
 import { ToastContainer } from 'react-toastify';
-import { useGoogleAnalytics } from '../hooks/useGoogleAnalytics'; // Changed to named import
-
+import { useGoogleAnalytics } from '../hooks/useGoogleAnalytics';
 
 function App() {
   const [authenticated, setAuthenticated] = useState<boolean>(false);
