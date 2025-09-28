@@ -1,17 +1,28 @@
-# Basic settings for the Netlify build
+# Netlify build settings
 [build]
   command = "npm run build"
   publish = "dist"
 
-# Redirects for client-side routing and service worker
-[[redirects]]
-  from = "/service-worker.js"
-  to = "/service-worker.js"
-  status = 200
-  force = true # Ensure this rule takes precedence
-  headers = {Content-Type = "application/javascript"} # Explicitly set content type
-
+# Redirects for Single Page Application (SPA) routing
+# This ensures that all routes are handled by index.html
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
+
+# Headers for Service Worker to ensure it updates correctly
+[[headers]]
+  for = "/service-worker.js"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+# Headers for other static assets (optional, but good practice)
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "no-cache"

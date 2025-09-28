@@ -8,6 +8,8 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
+      // Explicitly set the filename for the service worker registration script
+      filename: 'service-worker.js', 
       // Ensure all PWA related assets are included for precaching
       includeAssets: [
         'favicon.ico',
