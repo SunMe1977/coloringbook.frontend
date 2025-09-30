@@ -21,28 +21,40 @@ interface RequestOptions extends RequestInit {
   isAuthCheck?: boolean; // New option to indicate an authentication check
 }
 
+// Helper to determine if an endpoint is on the backend's CSRF ignore list
+const isCsrfIgnoredEndpoint = (requestUrl: string) => {
+  const url = new URL(requestUrl);
+  const path = url.pathname;
+  // These paths are ignored by Spring Security's CSRF filter in SecurityConfig.java
+  return path.startsWith('/auth/') || 
+         path.startsWith('/user/verify-email/request') || 
+         path.startsWith('/user/verify-email/confirm') ||
+         path.startsWith('/user/me'); // /user/me is also ignored
+};
+
 const request = async (options: RequestOptions): Promise<any> => {
   const headers = new Headers({
     'Content-Type': 'application/json',
   });
 
-  // Determine if the request URL is an auth endpoint
-  const isAuthEndpoint = options.url.startsWith(`${API_BASE_URL}/auth/`);
+  const { url, followRedirect = false, isAuthCheck = false, ...rest } = options; // Destructure new isAuthCheck
 
-  // For state-changing requests (POST, PUT, DELETE) AND if it's NOT an auth endpoint, add CSRF token
-  if (options.method && ['POST', 'PUT', 'DELETE'].includes(options.method.toUpperCase()) && !isAuthEndpoint) {
-    console.log('Attempting to add CSRF token. Current cookies:', document.cookie); // ADDED THIS LINE
+  console.log('APIUtils.ts: Current cookies before request:', document.cookie); // Log all cookies
+
+  // For state-changing requests (POST, PUT, DELETE) AND if the endpoint is NOT on the CSRF ignore list, add CSRF token
+  if (options.method && ['POST', 'PUT', 'DELETE'].includes(options.method.toUpperCase()) && !isCsrfIgnoredEndpoint(url)) {
     const csrfToken = getCookie('XSRF-TOKEN');
     if (csrfToken) {
       headers.append('X-XSRF-TOKEN', csrfToken);
+      console.log('APIUtils.ts: X-XSRF-TOKEN header added.');
     } else {
-      console.warn('CSRF token (XSRF-TOKEN) not found in cookies for state-changing request. This might be expected for public endpoints.');
-      // Depending on your security policy, you might want to throw an error here
-      // or redirect to login if CSRF token is mandatory.
+      console.warn('APIUtils.ts: CSRF token (XSRF-TOKEN) not found in cookies for state-changing request to a protected endpoint. This might cause a 403 Forbidden.');
     }
+  } else if (options.method && ['POST', 'PUT', 'DELETE'].includes(options.method.toUpperCase()) && isCsrfIgnoredEndpoint(url)) {
+    console.log(`APIUtils.ts: CSRF token not sent for ignored endpoint: ${url}`);
   }
 
-  const { url, followRedirect = false, isAuthCheck = false, ...rest } = options; // Destructure new isAuthCheck
+
   const fetchOptions: RequestInit = {
     ...rest,
     headers,
