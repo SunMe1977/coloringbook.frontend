@@ -9,7 +9,7 @@ const Home: React.FC = () => {
   const { t } = useTranslation('home');
 
   return (
-    <div className="container text-center" style={{ minHeight: 'calc(100vh - 60px)', paddingTop: '60px' }}>
+    <div className="container text-center" style={{ minHeight: 'calc(100vh - 60px)' }}> {/* Removed paddingTop: '60px' */}
       <section className="bg-gradient-to-r from-purple-900 via-blue-900 to-black text-white py-16 text-center relative overflow-hidden">
         {/* Futuristic Glow Background */}
         <div className="absolute inset-0 opacity-30">
