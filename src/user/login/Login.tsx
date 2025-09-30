@@ -125,6 +125,7 @@ function LoginForm({ onLoginSuccess }: { onLoginSuccess: (user: any) => void }) 
           onChange={(e) => setEmail(e.target.value)}
           required
           disabled={isLoading}
+          autoComplete="email" {/* Added autocomplete */}
         />
       </div>
       <div className="form-group" style={{ position: 'relative' }}> {/* Added relative positioning for icon */}
@@ -137,6 +138,7 @@ function LoginForm({ onLoginSuccess }: { onLoginSuccess: (user: any) => void }) 
           onChange={(e) => setPassword(e.target.value)}
           required
           disabled={isLoading}
+          autoComplete="current-password" {/* Added autocomplete */}
         />
         <button
           type="button"

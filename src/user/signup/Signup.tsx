@@ -96,6 +96,7 @@ function Signup({ onSignupSuccess }: SignupProps) {
                   value={formData.name}
                   onChange={handleChange}
                   required
+                  autoComplete="name" {/* Added autocomplete */}
                 />
               </div>
               <div className="form-group">
@@ -107,6 +108,7 @@ function Signup({ onSignupSuccess }: SignupProps) {
                   value={formData.email}
                   onChange={handleChange}
                   required
+                  autoComplete="email" {/* Added autocomplete */}
                 />
               </div>
               <div className="form-group password-input-container"> {/* Added container for positioning */}
@@ -118,6 +120,7 @@ function Signup({ onSignupSuccess }: SignupProps) {
                   value={formData.password}
                   onChange={handleChange}
                   required
+                  autoComplete="new-password" {/* Added autocomplete */}
                 />
                 <button
                   type="button"
@@ -137,6 +140,7 @@ function Signup({ onSignupSuccess }: SignupProps) {
                   value={confirmPassword}
                   onChange={handleConfirmPasswordChange}
                   required
+                  autoComplete="new-password" {/* Added autocomplete */}
                 />
                 <button
                   type="button"
