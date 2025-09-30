@@ -23,7 +23,7 @@ i18n
     de: { common: de, login: deLogin , home: deHome, signup: deSignup },
     it: { common: it, login: itLogin , home: itHome, signup: itSignup  },
     },
-    lng: localStorage.getItem('lang') || 'en',
+    // Removed explicit 'lng' setting to allow LanguageDetector to work
     fallbackLng: 'en',
     ns: ['login', 'common', 'home', 'signup'],
     defaultNS: 'common',
