@@ -1,8 +1,19 @@
 // Placeholder for environment variables. You should ensure these are correctly loaded from your Vite environment.
 // For example, if you have a `src/config.ts` or similar:
 // export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-import { ACCESS_TOKEN, API_BASE_URL, BOOKS_API_BASE_URL, PAGES_API_BASE_URL } from '@constants'; // Import new constants
+import { API_BASE_URL, BOOKS_API_BASE_URL, PAGES_API_BASE_URL } from '@constants'; // Import new constants
 
+// Utility to get a cookie by name
+function getCookie(name: string): string | null {
+  const nameEQ = name + "=";
+  const ca = document.cookie.split(';');
+  for(let i=0; i < ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+    if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+  }
+  return null;
+}
 
 interface RequestOptions extends RequestInit {
   url: string;
@@ -14,9 +25,16 @@ const request = async (options: RequestOptions): Promise<any> => {
     'Content-Type': 'application/json',
   });
 
-  const accessToken = localStorage.getItem(ACCESS_TOKEN);
-  if (accessToken) {
-    headers.append('Authorization', `Bearer ${accessToken}`);
+  // For state-changing requests (POST, PUT, DELETE), add CSRF token
+  if (options.method && ['POST', 'PUT', 'DELETE'].includes(options.method.toUpperCase())) {
+    const csrfToken = getCookie('XSRF-TOKEN');
+    if (csrfToken) {
+      headers.append('X-XSRF-TOKEN', csrfToken);
+    } else {
+      console.warn('CSRF token (XSRF-TOKEN) not found in cookies for state-changing request.');
+      // Depending on your security policy, you might want to throw an error here
+      // or redirect to login if CSRF token is mandatory.
+    }
   }
 
   const { url, followRedirect = false, ...rest } = options;
@@ -24,6 +42,7 @@ const request = async (options: RequestOptions): Promise<any> => {
     ...rest,
     headers,
     redirect: followRedirect ? 'follow' : 'manual',
+    credentials: 'include', // <--- ADDED THIS LINE
   };
 
   try {
@@ -68,11 +87,7 @@ const request = async (options: RequestOptions): Promise<any> => {
 
 
 export function getCurrentUser(): Promise<any> {
-  const token = localStorage.getItem(ACCESS_TOKEN);
-  if (!token) {
-    console.warn('getCurrentUser: No access token found in localStorage.');
-    return Promise.reject('No access token set.');
-  }
+  // No need to check localStorage for token, browser sends HttpOnly cookie automatically
   return request({
     url: `${API_BASE_URL}/user/me`,
     method: 'GET',
@@ -96,11 +111,18 @@ export function signup(signupRequest: Record<string, any>): Promise<any> {
   });
 }
 
-export function forgotPassword(email: string): Promise<any> {
+export function logout(): Promise<any> {
+  return request({
+    url: `${API_BASE_URL}/auth/logout`,
+    method: 'POST', // Logout is a state-changing operation
+  });
+}
+
+export function forgotPassword(email: string, lang: string): Promise<any> {
   return request({
     url: `${API_BASE_URL}/auth/forgot-password`,
     method: 'POST',
-    body: JSON.stringify({ email }),
+    body: JSON.stringify({ email, lang }),
   });
 }
 
@@ -129,8 +151,9 @@ export function requestEmailVerification(): Promise<any> {
 
 export function confirmEmailVerification(token: string): Promise<any> {
   return request({
-    url: `${API_BASE_URL}/user/verify-email/confirm?token=${token}`,
-    method: 'GET',
+    url: `${API_BASE_URL}/user/verify-email/confirm`, // No token in URL
+    method: 'POST', // Changed to POST
+    body: JSON.stringify({ token }), // Token in body
   });
 }
 
@@ -206,7 +229,7 @@ export function getBookById(bookId: number): Promise<BookResponse> {
   });
 }
 
-export function createBook(bookRequest: CreateBookRequest): Promise<BookResponse> {
+export function createBook(bookRequest: BookRequest): Promise<BookResponse> {
   return request({
     url: BOOKS_API_BASE_URL,
     method: 'POST',
@@ -214,7 +237,7 @@ export function createBook(bookRequest: CreateBookRequest): Promise<BookResponse
   });
 }
 
-export function updateBook(bookId: number, bookRequest: UpdateBookRequest): Promise<BookResponse> {
+export function updateBook(bookId: number, bookRequest: BookRequest): Promise<BookResponse> {
   return request({
     url: `${BOOKS_API_BASE_URL}/${bookId}`,
     method: 'PUT',
@@ -245,7 +268,7 @@ export function getPageById(bookId: number, pageId: number): Promise<PageRespons
   });
 }
 
-export function addPageToBook(bookId: number, pageRequest: CreatePageRequest): Promise<PageResponse> {
+export function addPageToBook(bookId: number, pageRequest: PageRequest): Promise<PageResponse> {
   return request({
     url: PAGES_API_BASE_URL(bookId),
     method: 'POST',
@@ -253,7 +276,7 @@ export function addPageToBook(bookId: number, pageRequest: CreatePageRequest): P
   });
 }
 
-export function updatePage(bookId: number, pageId: number, pageRequest: UpdatePageRequest): Promise<PageResponse> {
+export function updatePage(bookId: number, pageId: number, pageRequest: PageRequest): Promise<PageResponse> {
   return request({
     url: `${PAGES_API_BASE_URL(bookId)}/${pageId}`,
     method: 'PUT',

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { ACCESS_TOKEN } from '@constants';
+// import { ACCESS_TOKEN } from '@constants'; // No longer needed for local storage
 import { toast } from 'react-toastify';
 import { getCurrentUser } from '@util/APIUtils';
 import { useTranslation } from 'react-i18next';
@@ -13,9 +13,13 @@ const OAuth2RedirectHandler: React.FC<OAuth2RedirectHandlerProps> = ({ onLoginSu
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useTranslation('login');
-  const hasProcessedToken = useRef(false); // Add a ref to track if token has been processed
+  const hasProcessedRedirect = useRef(false); // Add a ref to track if redirect has been processed
 
   useEffect(() => {
+    // The backend now sets an HttpOnly cookie directly.
+    // We no longer expect a 'token' parameter in the URL.
+    // We only need to check for an 'error' parameter.
+
     const getUrlParameter = (name: string) => {
       name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
       const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
@@ -23,39 +27,39 @@ const OAuth2RedirectHandler: React.FC<OAuth2RedirectHandlerProps> = ({ onLoginSu
       return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
     };
 
-    const token = getUrlParameter('token');
     const error = getUrlParameter('error');
 
-    // Only proceed if there's a token or an error in the URL AND we haven't processed it yet
-    if ((token || error) && !hasProcessedToken.current) {
-      hasProcessedToken.current = true; // Mark as processed
+    // Only proceed if there's an error in the URL AND we haven't processed it yet
+    if (error && !hasProcessedRedirect.current) {
+      hasProcessedRedirect.current = true; // Mark as processed
 
       // Clear the URL parameters immediately to prevent re-processing on re-renders/re-visits
-      // This navigate should happen first to ensure the URL is clean for subsequent renders
       navigate(location.pathname, { replace: true, state: {} });
 
-      if (token) {
-        localStorage.setItem(ACCESS_TOKEN, token);
-        
-        getCurrentUser()
-          .then((user) => {
-            onLoginSuccess(user);
-            toast.success(t('oauth_login_success'), { autoClose: 3000 });
-            navigate('/', { replace: true });
-          })
-          .catch((err) => {
-            console.error('OAuth2RedirectHandler: Failed to fetch user after token:', err);
-            toast.error(t('oauth_fetch_profile_error'), { autoClose: 5000 });
-            navigate('/login', { state: { error: t('oauth_fetch_profile_error') }, replace: true });
-          });
-      } else {
-        const errorMessage = error || t('oauth_generic_error');
-        toast.error(errorMessage, { autoClose: 5000 });
-        navigate('/login', { state: { error: errorMessage }, replace: true });
-      }
-    } else if (!token && !error && location.pathname === '/oauth2/redirect') {
-      // If no token or error, and we are on the redirect path, navigate away
-      // This handles cases where the user might directly access /oauth2/redirect without params
+      const errorMessage = error || t('oauth_generic_error');
+      toast.error(errorMessage, { autoClose: 5000 });
+      navigate('/login', { state: { error: errorMessage }, replace: true });
+    } else if (!error && location.pathname === '/oauth2/redirect' && !hasProcessedRedirect.current) {
+      // If no error, and we are on the redirect path, it means OAuth2 login was successful
+      // and the backend set the HttpOnly cookie. Now, fetch user profile.
+      hasProcessedRedirect.current = true; // Mark as processed
+
+      // Clear the URL parameters immediately
+      navigate(location.pathname, { replace: true, state: {} });
+
+      getCurrentUser()
+        .then((user) => {
+          onLoginSuccess(user);
+          toast.success(t('oauth_login_success'), { autoClose: 3000 });
+          navigate('/', { replace: true }); // Redirect to home or profile
+        })
+        .catch((err) => {
+          console.error('OAuth2RedirectHandler: Failed to fetch user after OAuth2 login:', err);
+          toast.error(t('oauth_fetch_profile_error'), { autoClose: 5000 });
+          navigate('/login', { state: { error: t('oauth_fetch_profile_error') }, replace: true });
+        });
+    } else if (!error && location.pathname === '/oauth2/redirect' && hasProcessedRedirect.current) {
+      // If already processed, just navigate away if still on redirect path
       navigate('/', { replace: true });
     }
   }, [location, navigate, onLoginSuccess, t]);

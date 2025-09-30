@@ -6,7 +6,7 @@ import githubLogo from '../../img/github-logo.png';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 import { login, getCurrentUser } from '../../util/APIUtils';
-import { ACCESS_TOKEN, GOOGLE_AUTH_URL, FACEBOOK_AUTH_URL, GITHUB_AUTH_URL } from '../../constants';
+import { GOOGLE_AUTH_URL, FACEBOOK_AUTH_URL, GITHUB_AUTH_URL } from '../../constants'; // ACCESS_TOKEN no longer needed
 import LoadingIndicator from '../../common/LoadingIndicator';
 import { Eye, EyeOff } from 'lucide-react'; // Import icons
 
@@ -90,21 +90,20 @@ function LoginForm({ onLoginSuccess }: { onLoginSuccess: (user: any) => void }) 
     try {
       const response = await login({ email, password });
       
-      if (response && response.accessToken) {
-        localStorage.setItem(ACCESS_TOKEN, response.accessToken);
-        toast.success(t('login_success'), { autoClose: 3000 });
+      // Backend now sets HttpOnly cookie, so no need to store accessToken in localStorage
+      // if (response && response.accessToken) {
+      //   localStorage.setItem(ACCESS_TOKEN, response.accessToken);
+      // }
 
-        const user = await getCurrentUser();
-       
-        if (user) {
-          onLoginSuccess(user);
-        } else {
-          console.error('LoginForm: getCurrentUser returned no user data.');
-          toast.error(t('fetch_profile_error'), { autoClose: 5000 });
-        }
+      toast.success(t('login_success'), { autoClose: 3000 });
+
+      const user = await getCurrentUser(); // This will now implicitly use the HttpOnly cookie
+      
+      if (user) {
+        onLoginSuccess(user);
       } else {
-        console.error('LoginForm: Login response did not contain accessToken:', response);
-        toast.error(t('no_access_token_error'), { autoClose: 5000 });
+        console.error('LoginForm: getCurrentUser returned no user data.');
+        toast.error(t('fetch_profile_error'), { autoClose: 5000 });
       }
     } catch (error: any) {
       console.error('LoginForm: Login failed:', error);

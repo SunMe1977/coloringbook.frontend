@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { signup, getCurrentUser } from '@util/APIUtils';
-import { ACCESS_TOKEN } from '@constants';
+// import { ACCESS_TOKEN } from '@constants'; // No longer needed for local storage
 import { useTranslation } from 'react-i18next';
 import { Eye, EyeOff } from 'lucide-react'; // Import icons
 
@@ -58,22 +58,21 @@ function Signup({ onSignupSuccess }: SignupProps) {
 
     try {
       const response = await signup(formData);
-      if (response && response.accessToken) {
-        localStorage.setItem(ACCESS_TOKEN, response.accessToken);
-        toast.success(t('success'));
+      // Backend now sets HttpOnly cookie, so no need to store accessToken in localStorage
+      // if (response && response.accessToken) {
+      //   localStorage.setItem(ACCESS_TOKEN, response.accessToken);
+      // }
 
-        const user = await getCurrentUser();
-        if (user) {
-          if (onSignupSuccess) onSignupSuccess(user);
-          navigate('/profile');
-        } else {
-          console.error('Signup: getCurrentUser returned no user data after signup.');
-          toast.error(t('fetch_profile_error_after_signup'), { autoClose: 5000 });
-          navigate('/');
-        }
+      toast.success(t('success'));
+
+      const user = await getCurrentUser(); // This will now implicitly use the HttpOnly cookie
+      if (user) {
+        if (onSignupSuccess) onSignupSuccess(user);
+        navigate('/profile');
       } else {
-        console.error('Signup: Signup response did not contain accessToken:', response);
-        toast.error(t('no_access_token_error'), { autoClose: 5000 });
+        console.error('Signup: getCurrentUser returned no user data after signup.');
+        toast.error(t('fetch_profile_error_after_signup'), { autoClose: 5000 });
+        navigate('/');
       }
     } catch (error: any) {
       console.error('Signup failed:', error);

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
-import { getCurrentUser } from '@util/APIUtils';
-import { ACCESS_TOKEN } from '@constants';
+import { getCurrentUser, logout } from '@util/APIUtils'; // Import logout
+// import { ACCESS_TOKEN } from '@constants'; // No longer needed for local storage
 
 import AppHeader from '@common/AppHeader';
 import AppFooter from '@common/AppFooter';
@@ -36,26 +36,22 @@ function App() {
   useGoogleAnalytics();
 
   useEffect(() => {
-    const token = localStorage.getItem(ACCESS_TOKEN);
-    if (token) {
-      getCurrentUser()
-        .then((user) => {
-          setCurrentUser(user);
-          setAuthenticated(true);
-          console.log('App.tsx: User authenticated, fetching current user.');
-        })
-        .catch((error) => {
-          console.error('❌ App.tsx: getCurrentUser failed:', error);
-          setAuthenticated(false);
-          localStorage.removeItem(ACCESS_TOKEN); // Clear invalid token
-          console.log('App.tsx: Cleared token, set authenticated to false.');
-        });
-    } else {
-      setAuthenticated(false);
-      setCurrentUser(null);
-      console.log('App.tsx: No access token found, set authenticated to false.');
-    }
-  }, []);
+    // Check authentication status by trying to fetch current user
+    // The browser will automatically send the HttpOnly JWT cookie if present
+    getCurrentUser()
+      .then((user) => {
+        setCurrentUser(user);
+        setAuthenticated(true);
+        console.log('App.tsx: User authenticated, fetching current user.');
+      })
+      .catch((error) => {
+        console.error('❌ App.tsx: getCurrentUser failed (likely unauthenticated):', error);
+        setAuthenticated(false);
+        setCurrentUser(null);
+        // No need to remove token from localStorage as it's now in HttpOnly cookie
+        console.log('App.tsx: No valid authentication cookie, set authenticated to false.');
+      });
+  }, []); // Run once on component mount
 
   useEffect(() => {
     // This effect's primary purpose is to redirect authenticated users from the home page to their profile.
@@ -67,15 +63,21 @@ function App() {
   }, [authenticated, currentUser, location.pathname, navigate]);
 
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     console.log('App.tsx: handleLogout called.');
-    localStorage.removeItem(ACCESS_TOKEN);
-    // IMPORTANT: Navigate to a public route *before* updating the authentication state.
-    // This ensures the current protected route is unmounted or bypassed before
-    // state changes trigger its internal Navigate component to /login.
-    navigate('/', { replace: true, state: {} }); 
-    setAuthenticated(false);
-    setCurrentUser(null);
+    try {
+      await logout(); // Call backend logout endpoint
+      console.log('App.tsx: Backend logout successful.');
+    } catch (error) {
+      console.error('❌ App.tsx: Backend logout failed:', error);
+      // Even if backend logout fails, clear frontend state for consistency
+    } finally {
+      // IMPORTANT: Navigate to a public route *before* updating the authentication state.
+      navigate('/', { replace: true, state: {} }); 
+      setAuthenticated(false);
+      setCurrentUser(null);
+      console.log('App.tsx: Frontend state cleared after logout.');
+    }
   };
 
   const handleLoginSuccess = (user: any) => {
