@@ -41,16 +41,23 @@ function App() {
     // The browser will automatically send the HttpOnly JWT cookie if present
     getCurrentUser()
       .then((user) => {
-        setCurrentUser(user);
-        setAuthenticated(true);
-        console.log('App.tsx: User authenticated, fetching current user.');
+        if (user) {
+          setCurrentUser(user);
+          setAuthenticated(true);
+          console.log('App.tsx: User authenticated, fetching current user.');
+        } else {
+          // If getCurrentUser returns null (due to 401), it means not authenticated
+          setAuthenticated(false);
+          setCurrentUser(null);
+          console.log('App.tsx: No valid authentication cookie, set authenticated to false.');
+        }
       })
       .catch((error) => {
-        console.error('❌ App.tsx: getCurrentUser failed (likely unauthenticated):', error);
+        // This catch block will now only be hit for actual network errors or other non-401 API errors
+        console.error('❌ App.tsx: getCurrentUser failed (network error or unexpected API error):', error);
         setAuthenticated(false);
         setCurrentUser(null);
-        // No need to remove token from localStorage as it's now in HttpOnly cookie
-        console.log('App.tsx: No valid authentication cookie, set authenticated to false.');
+        console.log('App.tsx: Error during authentication check, set authenticated to false.');
       });
   }, []); // Run once on component mount
 

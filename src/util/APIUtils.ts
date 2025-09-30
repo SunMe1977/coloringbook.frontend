@@ -18,6 +18,7 @@ function getCookie(name: string): string | null {
 interface RequestOptions extends RequestInit {
   url: string;
   followRedirect?: boolean;
+  isAuthCheck?: boolean; // New option to indicate an authentication check
 }
 
 const request = async (options: RequestOptions): Promise<any> => {
@@ -41,12 +42,12 @@ const request = async (options: RequestOptions): Promise<any> => {
     }
   }
 
-  const { url, followRedirect = false, ...rest } = options;
+  const { url, followRedirect = false, isAuthCheck = false, ...rest } = options; // Destructure new isAuthCheck
   const fetchOptions: RequestInit = {
     ...rest,
     headers,
     redirect: followRedirect ? 'follow' : 'manual',
-    credentials: 'include', // <--- ADDED THIS LINE
+    credentials: 'include',
   };
 
   try {
@@ -59,6 +60,12 @@ const request = async (options: RequestOptions): Promise<any> => {
         window.location.href = redirectUrl;
         return new Promise(() => {}); // Stop further execution
       }
+    }
+
+    // Handle 401 specifically for authentication checks
+    if (response.status === 401 && isAuthCheck) {
+      console.log('Frontend: Received 401 for authentication check, returning null.');
+      return null; // Return null for unauthenticated state
     }
 
     const responseText = await response.text();
@@ -95,6 +102,7 @@ export function getCurrentUser(): Promise<any> {
   return request({
     url: `${API_BASE_URL}/user/me`,
     method: 'GET',
+    isAuthCheck: true, // Indicate this is an auth check
   });
 }
 
