@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
-import { getCurrentUser, logout } from '@util/APIUtils'; // Import logout
-// import { ACCESS_TOKEN } from '@constants'; // No longer needed for local storage
+import { getCurrentUser, logout } from '@util/APIUtils';
 
 import AppHeader from '@common/AppHeader';
 import AppFooter from '@common/AppFooter';
@@ -19,13 +18,13 @@ import PrivacyPolicy from '@pages/PrivacyPolicy';
 import UserDataDeletion from '@pages/UserDataDeletion';
 import TermsOfService from '@pages/TermsOfService';
 import CookiePolicy from '@pages/CookiePolicy';
-import Sponsor from '@pages/Sponsor'; // Import the new Sponsor page
+import Sponsor from '@pages/Sponsor';
 import Bookshelf from '@user/Bookshelf';
 import BookDetails from '@user/BookDetails';
 import CookieConsentBanner from '../components/CookieConsentBanner';
 import { ToastContainer } from 'react-toastify';
 import { useGoogleAnalytics } from '../hooks/useGoogleAnalytics';
-import PrivateRoute from '@common/PrivateRoute'; // Import PrivateRoute
+import PrivateRoute from '@common/PrivateRoute';
 
 function App() {
   const [authenticated, setAuthenticated] = useState<boolean>(false);
@@ -33,72 +32,66 @@ function App() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Use the Google Analytics hook
   useGoogleAnalytics();
 
-  useEffect(() => {
-    // Check authentication status by trying to fetch current user
-    // The browser will automatically send the HttpOnly JWT cookie if present
-    getCurrentUser()
-      .then((user) => {
-        if (user) {
-          setCurrentUser(user);
-          setAuthenticated(true);
-          console.log('App.tsx: User authenticated, fetching current user.');
-        } else {
-          // If getCurrentUser returns null (due to 401), it means not authenticated
-          setAuthenticated(false);
-          setCurrentUser(null);
-          console.log('App.tsx: No valid authentication cookie, set authenticated to false.');
-        }
-      })
-      .catch((error) => {
-        // This catch block will now only be hit for actual network errors or other non-401 API errors
-        console.error('❌ App.tsx: getCurrentUser failed (network error or unexpected API error):', error);
+  // New function to fetch and set current user
+  const fetchAndSetCurrentUser = useCallback(async () => {
+    try {
+      const user = await getCurrentUser();
+      if (user) {
+        setCurrentUser(user);
+        setAuthenticated(true);
+        console.log('App.tsx: User authenticated, fetching current user.');
+        return user;
+      } else {
         setAuthenticated(false);
         setCurrentUser(null);
-        console.log('App.tsx: Error during authentication check, set authenticated to false.');
-      });
-  }, []); // Run once on component mount
+        console.log('App.tsx: No valid authentication cookie, set authenticated to false.');
+        return null;
+      }
+    } catch (error) {
+      console.error('❌ App.tsx: getCurrentUser failed (network error or unexpected API error):', error);
+      setAuthenticated(false);
+      setCurrentUser(null);
+      console.log('App.tsx: Error during authentication check, set authenticated to false.');
+      return null;
+    }
+  }, []);
 
   useEffect(() => {
-    // This effect's primary purpose is to redirect authenticated users from the home page to their profile.
-    // Other route protections are handled by the <Route> components directly.
+    fetchAndSetCurrentUser();
+  }, [fetchAndSetCurrentUser]);
+
+  useEffect(() => {
     if (authenticated && currentUser && location.pathname === '/') {
       console.log(`App.tsx useEffect: Authenticated user on home page, redirecting to /profile.`);
       navigate('/profile', { replace: true });
     }
   }, [authenticated, currentUser, location.pathname, navigate]);
 
-
   const handleLogout = async () => {
     console.log('App.tsx: handleLogout called.');
     try {
-      await logout(); // Call backend logout endpoint
+      await logout();
       console.log('App.tsx: Backend logout successful.');
     } catch (error) {
       console.error('❌ App.tsx: Backend logout failed:', error);
-      // Even if backend logout fails, clear frontend state for consistency
     } finally {
-      // IMPORTANT: Navigate to a public route *before* updating the authentication state.
-      navigate('/', { replace: true, state: {} }); 
+      navigate('/', { replace: true, state: {} });
       setAuthenticated(false);
       setCurrentUser(null);
       console.log('App.tsx: Frontend state cleared after logout.');
     }
   };
 
-  const handleLoginSuccess = (user: any) => {
+  const handleLoginSuccess = async (user: any) => {
     console.log('App.tsx: handleLoginSuccess called.');
-    setCurrentUser(user);
-    setAuthenticated(true);
-    // After successful login, the useEffect above will handle redirection from '/' to '/profile'
-    // or the <Navigate> components in routes will handle it if they landed on /login or /signup.
+    await fetchAndSetCurrentUser();
   };
 
-  const handleUserUpdate = (updatedUser: any) => {
+  const handleUserUpdate = async (updatedUser: any) => {
     console.log('App.tsx: handleUserUpdate called.');
-    setCurrentUser(updatedUser);
+    await fetchAndSetCurrentUser();
   };
 
   return (
@@ -113,7 +106,6 @@ function App() {
             />
             <Route path="/signup" element={<Signup onSignupSuccess={handleLoginSuccess} />} />
             
-            {/* Protected Routes using PrivateRoute */}
             <Route element={<PrivateRoute authenticated={authenticated} redirectPath="/" />}>
               <Route path="/profile" element={<Profile currentUser={currentUser} onUserUpdate={handleUserUpdate} />} />
               <Route path="/bookshelf" element={<Bookshelf />} />
@@ -124,13 +116,13 @@ function App() {
             <Route path="/oauth2/redirect" element={<OAuth2RedirectHandler onLoginSuccess={handleLoginSuccess} />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
-            <Route path="/verify-email" element={<VerifyEmail />} />
+            <Route path="/verify-email" element={<VerifyEmail onVerificationSuccess={fetchAndSetCurrentUser} />} />
             <Route path="/impressum" element={<Impressum />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/user-data-deletion" element={<UserDataDeletion />} />
             <Route path="/terms-of-service" element={<TermsOfService />} />
             <Route path="/cookie-policy" element={<CookiePolicy />} />
-            <Route path="/sponsor" element={<Sponsor />} /> {/* New Sponsor route */}
+            <Route path="/sponsor" element={<Sponsor />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
       </div>

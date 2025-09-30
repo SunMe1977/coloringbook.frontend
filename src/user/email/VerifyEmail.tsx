@@ -1,18 +1,27 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 import { confirmEmailVerification } from '@util/APIUtils';
 import LoadingIndicator from '@common/LoadingIndicator';
 
-const VerifyEmail: React.FC = () => {
+interface VerifyEmailProps {
+  onVerificationSuccess: () => Promise<any>; // Callback to refresh user data in App.tsx
+}
+
+const VerifyEmail: React.FC<VerifyEmailProps> = ({ onVerificationSuccess }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { t } = useTranslation('common');
   const [verificationStatus, setVerificationStatus] = useState<'loading' | 'success' | 'error'>('loading');
   const [message, setMessage] = useState('');
+  const isVerificationAttempted = useRef(false); // Ref to track if verification has been attempted
 
   useEffect(() => {
+    if (isVerificationAttempted.current) {
+      return; // Prevent running the effect again if already attempted
+    }
+
     const queryParams = new URLSearchParams(location.search);
     const token = queryParams.get('token');
 
@@ -20,10 +29,11 @@ const VerifyEmail: React.FC = () => {
       setVerificationStatus('error');
       setMessage(t('email.verification.no_token_found'));
       toast.error(t('email.verification.no_token_found'), { autoClose: 5000 });
-      // Optionally redirect after a short delay
       setTimeout(() => navigate('/profile', { replace: true }), 3000);
       return;
     }
+
+    isVerificationAttempted.current = true; // Mark as attempted
 
     const verifyEmail = async () => {
       try {
@@ -31,6 +41,11 @@ const VerifyEmail: React.FC = () => {
         setVerificationStatus('success');
         setMessage(response.message || t('email.verification.success'));
         toast.success(response.message || t('email.verification.success'), { autoClose: 5000 });
+        
+        // Call the callback to refresh user data in App.tsx
+        await onVerificationSuccess(); 
+        
+        // Then navigate
         setTimeout(() => navigate('/profile', { replace: true }), 3000);
       } catch (error: any) {
         setVerificationStatus('error');
@@ -41,7 +56,7 @@ const VerifyEmail: React.FC = () => {
     };
 
     verifyEmail();
-  }, [location, navigate, t]);
+  }, [location, navigate, t, onVerificationSuccess]);
 
   return (
     <div className="container">
