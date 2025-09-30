@@ -10,7 +10,7 @@ const AppFooter: React.FC = () => {
       <div className="container">
         <div className="footer-content">
           <div className="footer-links">
-            <Link to="/sponsor">{t('partner_wall')}</Link> {/* New Partner-Wall link */}
+            <Link to="/sponsor">{t('partner_wall')}</Link>
             <Link to="/impressum">{t('impressum')}</Link>
             <Link to="/privacy-policy">{t('privacy_policy')}</Link>
             <Link to="/user-data-deletion">{t('user_data_deletion')}</Link>
@@ -31,6 +31,13 @@ const AppFooter: React.FC = () => {
                 title="free web counter"
                 alt="free web counter"
               />
+            </a>
+          </div>
+
+          {/* Netlify Deploy Status Badge */}
+          <div className="netlify-badge" style={{ textAlign: 'center', marginTop: '1rem' }}>
+            <a href="https://app.netlify.com/projects/aiselfpubcoloringbook/deploys" target="_blank" rel="noopener noreferrer">
+              <img src="https://api.netlify.com/api/v1/badges/4faaf769-995f-494a-af91-6459fa25ee56/deploy-status" alt="Netlify Status" />
             </a>
           </div>
 

@@ -30,6 +30,7 @@ const request = async (options: RequestOptions): Promise<any> => {
 
   // For state-changing requests (POST, PUT, DELETE) AND if it's NOT an auth endpoint, add CSRF token
   if (options.method && ['POST', 'PUT', 'DELETE'].includes(options.method.toUpperCase()) && !isAuthEndpoint) {
+    console.log('Attempting to add CSRF token. Current cookies:', document.cookie); // ADDED THIS LINE
     const csrfToken = getCookie('XSRF-TOKEN');
     if (csrfToken) {
       headers.append('X-XSRF-TOKEN', csrfToken);
