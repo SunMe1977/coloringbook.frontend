@@ -1,9 +1,18 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
 const NotFound: React.FC = () => {
   const { t } = useTranslation('common');
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      navigate('/', { replace: true });
+    }, 5000); // Redirect to home after 5 seconds
+
+    return () => clearTimeout(timer);
+  }, [navigate]);
 
   return (
     <div className="container text-center" style={{ marginTop: '50px', padding: '40px', border: '1px solid #c8c8c8', borderRadius: '4px' }}>

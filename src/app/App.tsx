@@ -19,11 +19,12 @@ import PrivacyPolicy from '@pages/PrivacyPolicy';
 import UserDataDeletion from '@pages/UserDataDeletion';
 import TermsOfService from '@pages/TermsOfService';
 import CookiePolicy from '@pages/CookiePolicy';
-import Bookshelf from '@pages/Bookshelf'; // Import new Bookshelf component
-import BookDetails from '@pages/BookDetails'; // Import new BookDetails component
+import Bookshelf from '@user/Bookshelf';
+import BookDetails from '@user/BookDetails';
 import CookieConsentBanner from '../components/CookieConsentBanner';
 import { ToastContainer } from 'react-toastify';
 import { useGoogleAnalytics } from '../hooks/useGoogleAnalytics';
+import PrivateRoute from '@common/PrivateRoute'; // Import PrivateRoute
 
 function App() {
   const [authenticated, setAuthenticated] = useState<boolean>(false);
@@ -41,42 +42,52 @@ function App() {
         .then((user) => {
           setCurrentUser(user);
           setAuthenticated(true);
+          console.log('App.tsx: User authenticated, fetching current user.');
         })
         .catch((error) => {
-          console.error('❌ getCurrentUser failed:', error);
+          console.error('❌ App.tsx: getCurrentUser failed:', error);
           setAuthenticated(false);
           localStorage.removeItem(ACCESS_TOKEN); // Clear invalid token
+          console.log('App.tsx: Cleared token, set authenticated to false.');
         });
     } else {
       setAuthenticated(false);
       setCurrentUser(null);
+      console.log('App.tsx: No access token found, set authenticated to false.');
     }
   }, []);
 
   useEffect(() => {
-    if (authenticated && currentUser) {
-      if (location.pathname === '/login' || location.pathname === '/signup' || location.pathname === '/' || location.pathname === '/forgot-password' || location.pathname.startsWith('/reset-password') || location.pathname.startsWith('/verify-email')) {
-        navigate('/profile', { replace: true });
-      }
-    } else if (!authenticated && (location.pathname === '/profile' || location.pathname === '/bookshelf' || location.pathname.startsWith('/books/'))) {
-      navigate('/login', { replace: true });
+    // This effect's primary purpose is to redirect authenticated users from the home page to their profile.
+    // Other route protections are handled by the <Route> components directly.
+    if (authenticated && currentUser && location.pathname === '/') {
+      console.log(`App.tsx useEffect: Authenticated user on home page, redirecting to /profile.`);
+      navigate('/profile', { replace: true });
     }
   }, [authenticated, currentUser, location.pathname, navigate]);
 
 
   const handleLogout = () => {
+    console.log('App.tsx: handleLogout called.');
     localStorage.removeItem(ACCESS_TOKEN);
+    // IMPORTANT: Navigate to a public route *before* updating the authentication state.
+    // This ensures the current protected route is unmounted or bypassed before
+    // state changes trigger its internal Navigate component to /login.
+    navigate('/', { replace: true, state: {} }); 
     setAuthenticated(false);
     setCurrentUser(null);
-    navigate('/login', { replace: true });
   };
 
   const handleLoginSuccess = (user: any) => {
+    console.log('App.tsx: handleLoginSuccess called.');
     setCurrentUser(user);
     setAuthenticated(true);
+    // After successful login, the useEffect above will handle redirection from '/' to '/profile'
+    // or the <Navigate> components in routes will handle it if they landed on /login or /signup.
   };
 
   const handleUserUpdate = (updatedUser: any) => {
+    console.log('App.tsx: handleUserUpdate called.');
     setCurrentUser(updatedUser);
   };
 
@@ -88,16 +99,18 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route 
               path="/login" 
-              element={authenticated ? <Navigate to="/" replace /> : <Login authenticated={authenticated} onLoginSuccess={handleLoginSuccess} />} 
+              element={authenticated ? <Navigate to="/profile" replace /> : <Login authenticated={authenticated} onLoginSuccess={handleLoginSuccess} />} 
             />
             <Route path="/signup" element={<Signup onSignupSuccess={handleLoginSuccess} />} />
-            <Route 
-              path="/profile" 
-              element={authenticated && currentUser ? <Profile currentUser={currentUser} onUserUpdate={handleUserUpdate} /> : <Navigate to="/login" replace />} 
-            />
-            <Route path="/bookshelf" element={authenticated ? <Bookshelf /> : <Navigate to="/login" replace />} />
-            <Route path="/books/:bookId" element={authenticated ? <BookDetails /> : <Navigate to="/login" replace />} />
-            <Route path="/books/new" element={authenticated ? <BookDetails /> : <Navigate to="/login" replace />} /> {/* Route for creating new book */}
+            
+            {/* Protected Routes using PrivateRoute */}
+            <Route element={<PrivateRoute authenticated={authenticated} redirectPath="/" />}>
+              <Route path="/profile" element={<Profile currentUser={currentUser} onUserUpdate={handleUserUpdate} />} />
+              <Route path="/bookshelf" element={<Bookshelf />} />
+              <Route path="/books/new" element={<BookDetails />} />
+              <Route path="/books/:bookId" element={<BookDetails />} />
+            </Route>
+
             <Route path="/oauth2/redirect" element={<OAuth2RedirectHandler onLoginSuccess={handleLoginSuccess} />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
