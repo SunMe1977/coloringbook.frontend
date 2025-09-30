@@ -10,6 +10,7 @@ const AppFooter: React.FC = () => {
       <div className="container">
         <div className="footer-content">
           <div className="footer-links">
+            <Link to="/sponsor">{t('partner_wall')}</Link> {/* New Partner-Wall link */}
             <Link to="/impressum">{t('impressum')}</Link>
             <Link to="/privacy-policy">{t('privacy_policy')}</Link>
             <Link to="/user-data-deletion">{t('user_data_deletion')}</Link>

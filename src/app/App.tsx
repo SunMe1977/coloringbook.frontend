@@ -19,6 +19,7 @@ import PrivacyPolicy from '@pages/PrivacyPolicy';
 import UserDataDeletion from '@pages/UserDataDeletion';
 import TermsOfService from '@pages/TermsOfService';
 import CookiePolicy from '@pages/CookiePolicy';
+import Sponsor from '@pages/Sponsor'; // Import the new Sponsor page
 import Bookshelf from '@user/Bookshelf';
 import BookDetails from '@user/BookDetails';
 import CookieConsentBanner from '../components/CookieConsentBanner';
@@ -122,6 +123,7 @@ function App() {
             <Route path="/user-data-deletion" element={<UserDataDeletion />} />
             <Route path="/terms-of-service" element={<TermsOfService />} />
             <Route path="/cookie-policy" element={<CookiePolicy />} />
+            <Route path="/sponsor" element={<Sponsor />} /> {/* New Sponsor route */}
             <Route path="*" element={<NotFound />} />
           </Routes>
       </div>

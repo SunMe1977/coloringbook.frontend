@@ -112,5 +112,10 @@
   "error.page.pageNumberConflict": "Seitennummer {0} existiert bereits in diesem Buch.",
   "error.page.pageNotFound": "Seite mit Nummer {0} nicht gefunden.",
   "error.page.invalidNewPageNumber": "Neue Seitennummer {0} ist ungültig. Muss zwischen 1 und {1} liegen.",
-  "page.reorder.noChange": "Keine Änderung in der Seitenreihenfolge."
+  "page.reorder.noChange": "Keine Änderung in der Seitenreihenfolge.",
+  "partner_wall": "Partner-Wall",
+  "sponsor.title": "🎉 Hier könnte Ihr Logo und Firmenname stehen!",
+  "sponsor.content_p1": "Unterstützen Sie unser Projekt und helfen Sie mit, kreative KI-Werkzeuge für Self-Publisher zugänglich zu machen.",
+  "sponsor.content_p2": "Ihr Logo und Firmenname könnten hier sichtbar sein – als Zeichen Ihrer Förderung und Partnerschaft.",
+  "sponsor.call_to_action": "Machen Sie es möglich – vielen Dank!"
 }

@@ -112,5 +112,10 @@
   "error.page.pageNumberConflict": "Page number {0} already exists in this book.",
   "error.page.pageNotFound": "Page with number {0} not found.",
   "error.page.invalidNewPageNumber": "New page number {0} is invalid. Must be between 1 and {1}.",
-  "page.reorder.noChange": "No change in page order."
+  "page.reorder.noChange": "No change in page order.",
+  "partner_wall": "Partner-Wall",
+  "sponsor.title": "🎉 Your Logo and Company Name Could Be Here!",
+  "sponsor.content_p1": "Support our project and help make creative AI tools accessible to self-publishers.",
+  "sponsor.content_p2": "Your logo and company name could be prominently displayed here – as a sign of your sponsorship and partnership.",
+  "sponsor.call_to_action": "Make it possible – thank you very much!"
 }
