@@ -607,6 +607,50 @@ fieldset[disabled] .form-control {
   margin-bottom: 0; /* No bottom margin for the last one */
 }
 
+/* Copilot Images Section Styling */
+.copilot-images-section {
+  margin-top: 40px;
+  margin-bottom: 40px;
+  padding: 20px;
+  background: linear-gradient(135deg, #f0f2f5 0%, #e0e5ec 100%); /* Light gradient background */
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); /* More pronounced shadow */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.copilot-image-gallery {
+  display: flex;
+  flex-wrap: wrap; /* Allow images to wrap on smaller screens */
+  justify-content: center;
+  gap: 25px; /* Space between images */
+  max-width: 1000px; /* Limit overall width of the gallery */
+}
+
+.copilot-image-wrapper {
+  flex: 1 1 280px; /* Allow items to grow, shrink, and have a base width of 280px */
+  max-width: 300px; /* Max width for each image wrapper */
+  border: 3px solid #a7d9f7; /* Blue border */
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  background-color: #ffffff; /* White background for images */
+}
+
+.copilot-image-wrapper:hover {
+  transform: translateY(-5px); /* Slight lift effect on hover */
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+.copilot-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover; /* Ensure images cover their area without distortion */
+}
+
 
 /* Media query for small screens (e.g., mobile phones) */
 @media (max-width: 767px) {

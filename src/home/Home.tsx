@@ -1,5 +1,8 @@
 import React from 'react';
 import fundraisingAI from '../img/fundraisingAI.jpg';
+import Copilot_1 from '../img/Copilot_20250827_085847.png';
+import Copilot_2 from '../img/Copilot_20250827_091303.png';
+import Copilot_3 from '../img/Copilot_20250827_094145.png';
 import { useTranslation } from 'react-i18next';
 
 const Home: React.FC = () => {
@@ -13,14 +16,6 @@ const Home: React.FC = () => {
           <div className="w-[800px] h-[800px] bg-purple-500 blur-3xl rounded-full absolute -top-40 -left-40"></div>
           <div className="w-[600px] h-[600px] bg-blue-500 blur-3xl rounded-full absolute bottom-0 right-0"></div>
         </div>
-                {/* Button */}
-        <a href="https://www.indiegogo.com/projects/ai-selfpub-coloringbook-studio/x/38788543#/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-block bg-gradient-to-r from-purple-500 to-blue-500 text-white px-8 py-4 rounded-xl shadow-lg text-lg font-bold hover:scale-105 transform transition"
-          style={{ position: 'relative', zIndex: 1, marginTop: '2rem' }}>
-          {t('home.support_button_text')}
-        </a>
 
         {/* Main content from translation */}
         <div dangerouslySetInnerHTML={{ __html: t('home.main_content') }} style={{ position: 'relative', zIndex: 1, fontFamily: 'sans-serif', maxWidth: '700px', margin: 'auto', padding: '2rem' }}></div>
@@ -35,12 +30,27 @@ const Home: React.FC = () => {
         </a>
       </section>
 
-      {/* New Fundraising Image */}
+      {/* New Copilot Images Section */}
+      <div className="copilot-images-section">
+        <div className="copilot-image-gallery">
+          <div className="copilot-image-wrapper">
+            <img src={Copilot_1} alt="Copilot Image 1" className="copilot-image" />
+          </div>
+          <div className="copilot-image-wrapper">
+            <img src={Copilot_2} alt="Copilot Image 2" className="copilot-image" />
+          </div>
+          <div className="copilot-image-wrapper">
+            <img src={Copilot_3} alt="Copilot Image 3" className="copilot-image" />
+          </div>
+        </div>
+      </div>
+
+      {/* Existing Fundraising Image */}
       <div style={{ marginTop: '40px', marginBottom: '40px' }}>
         <img
           src={fundraisingAI}
           alt={t('home.fundraising_image_alt')}
-          style={{ width: '20%', height: 'auto', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', display: 'block', margin: '0 auto' }}
+          style={{ width: '40%', height: 'auto', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', display: 'block', margin: '0 auto' }}
           className="mx-auto"
         />
       </div>
