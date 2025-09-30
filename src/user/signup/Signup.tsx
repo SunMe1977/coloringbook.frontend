@@ -88,6 +88,7 @@ function Signup({ onSignupSuccess }: SignupProps) {
             <h1 className="auth-card-title">{t('title')}</h1>
             <form onSubmit={handleSubmit}>
               <div className="form-group">
+                {/* Added autocomplete */}
                 <input
                   type="text"
                   name="name"
@@ -96,10 +97,11 @@ function Signup({ onSignupSuccess }: SignupProps) {
                   value={formData.name}
                   onChange={handleChange}
                   required
-                  autoComplete="name" {/* Added autocomplete */}
+                  autoComplete="name"
                 />
               </div>
               <div className="form-group">
+                {/* Added autocomplete */}
                 <input
                   type="email"
                   name="email"
@@ -108,10 +110,12 @@ function Signup({ onSignupSuccess }: SignupProps) {
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  autoComplete="email" {/* Added autocomplete */}
+                  autoComplete="email"
                 />
               </div>
-              <div className="form-group password-input-container"> {/* Added container for positioning */}
+              {/* Added container for positioning */}
+              <div className="form-group password-input-container">
+                {/* Added autocomplete */}
                 <input
                   type={showPassword ? 'text' : 'password'}
                   name="password"
@@ -120,7 +124,7 @@ function Signup({ onSignupSuccess }: SignupProps) {
                   value={formData.password}
                   onChange={handleChange}
                   required
-                  autoComplete="new-password" {/* Added autocomplete */}
+                  autoComplete="new-password"
                 />
                 <button
                   type="button"
@@ -131,7 +135,9 @@ function Signup({ onSignupSuccess }: SignupProps) {
                   {showPassword ? t('hide') : t('show')}
                 </button>
               </div>
-              <div className="form-group password-input-container"> {/* Added container for positioning */}
+              {/* Added container for positioning */}
+              <div className="form-group password-input-container">
+                {/* Added autocomplete */}
                 <input
                   type={showPassword ? 'text' : 'password'}
                   name="confirmPassword"
@@ -140,7 +146,7 @@ function Signup({ onSignupSuccess }: SignupProps) {
                   value={confirmPassword}
                   onChange={handleConfirmPasswordChange}
                   required
-                  autoComplete="new-password" {/* Added autocomplete */}
+                  autoComplete="new-password"
                 />
                 <button
                   type="button"

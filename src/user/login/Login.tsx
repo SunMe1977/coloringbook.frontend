@@ -116,6 +116,7 @@ function LoginForm({ onLoginSuccess }: { onLoginSuccess: (user: any) => void }) 
   return (
     <form onSubmit={handleSubmit}>
       <div className="form-group">
+        {/* Added autocomplete */}
         <input
           type="email"
           name="email"
@@ -125,10 +126,12 @@ function LoginForm({ onLoginSuccess }: { onLoginSuccess: (user: any) => void }) 
           onChange={(e) => setEmail(e.target.value)}
           required
           disabled={isLoading}
-          autoComplete="email" {/* Added autocomplete */}
+          autoComplete="email"
         />
       </div>
-      <div className="form-group" style={{ position: 'relative' }}> {/* Added relative positioning for icon */}
+      {/* Added relative positioning for icon */}
+      <div className="form-group" style={{ position: 'relative' }}>
+        {/* Added autocomplete */}
         <input
           type={showPassword ? 'text' : 'password'} // Toggle type based on state
           name="password"
@@ -138,7 +141,7 @@ function LoginForm({ onLoginSuccess }: { onLoginSuccess: (user: any) => void }) 
           onChange={(e) => setPassword(e.target.value)}
           required
           disabled={isLoading}
-          autoComplete="current-password" {/* Added autocomplete */}
+          autoComplete="current-password"
         />
         <button
           type="button"
