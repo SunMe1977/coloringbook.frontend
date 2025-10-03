@@ -3,13 +3,31 @@ import fundraisingAI from '../img/fundraisingAI.jpg';
 import Copilot_1 from '../img/Copilot_20250827_085847.png';
 import Copilot_2 from '../img/Copilot_20250827_091303.png';
 import Copilot_3 from '../img/Copilot_20250827_094145.png';
+import Copilot_4 from '../img/Copilot_20251003_094323.png';
+import Copilot_5 from '../img/Copilot_20251003_091303.png';
+import Copilot_6 from '../img/Copilot_20251003_093409.png';
 import { useTranslation } from 'react-i18next';
 
 const Home: React.FC = () => {
   const { t } = useTranslation('home');
 
   return (
-    <div className="container text-center" style={{ minHeight: 'calc(100vh - 60px)' }}> {/* Removed paddingTop: '60px' */}
+    <div className="container text-center" style={{ minHeight: 'calc(100vh - 60px)' }}>
+      {}
+      <div className="copilot-images-section" style={{ marginTop: '40px', marginBottom: '40px' }}>
+        <div className="copilot-image-gallery">
+          <div className="copilot-image-wrapper">
+            <img src={Copilot_4} alt="Copilot Image 4" className="copilot-image" />
+          </div>
+          <div className="copilot-image-wrapper">
+            <img src={Copilot_5} alt="Copilot Image 5" className="copilot-image" />
+          </div>
+          <div className="copilot-image-wrapper">
+            <img src={Copilot_6} alt="Copilot Image 6" className="copilot-image" />
+          </div>
+        </div>
+      </div>
+
       <section className="bg-gradient-to-r from-purple-900 via-blue-900 to-black text-white py-16 text-center relative overflow-hidden">
         {/* Futuristic Glow Background */}
         <div className="absolute inset-0 opacity-30">
@@ -30,7 +48,7 @@ const Home: React.FC = () => {
         </a>
       </section>
 
-      {/* New Copilot Images Section */}
+      {/* Existing Copilot Images Section */}
       <div className="copilot-images-section">
         <div className="copilot-image-gallery">
           <div className="copilot-image-wrapper">
