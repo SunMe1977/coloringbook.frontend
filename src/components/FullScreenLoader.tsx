@@ -1,33 +1,38 @@
 import React from 'react';
-import LoadingIndicator from '@common/LoadingIndicator';
 
-interface FullScreenLoaderProps {
-  isLoading: boolean;
-}
-
-const FullScreenLoader: React.FC<FullScreenLoaderProps> = ({ isLoading }) => {
-  console.log('FullScreenLoader rendering, isLoading:', isLoading); // Debugging log
-  if (!isLoading) return null;
-
+export default function LoadingIndicator(): JSX.Element {
   return (
-    <div 
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999]"
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        zIndex: 9999 // Ensure it's on top of other content
-      }}
+    <div
+      className="loading-indicator"
+      style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}
     >
-      <LoadingIndicator />
+      <svg width="50" height="50" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+        <circle
+          cx="25"
+          cy="25"
+          r="20"
+          fill="none"
+          stroke="#2098f3"
+          strokeWidth="4"
+          strokeLinecap="round"
+        >
+          <animateTransform
+            attributeName="transform"
+            type="rotate"
+            from="0 25 25"
+            to="360 25 25"
+            dur="1s"
+            repeatCount="indefinite"
+          />
+          <animate
+            attributeName="cy"
+            values="25; 20; 25; 30; 25"
+            keyTimes="0; 0.25; 0.5; 0.75; 1"
+            dur="2s"
+            repeatCount="indefinite"
+          />
+        </circle>
+      </svg>
     </div>
   );
-};
-
-export default FullScreenLoader;
+}
