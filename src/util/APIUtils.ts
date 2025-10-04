@@ -19,6 +19,7 @@ interface RequestOptions extends RequestInit {
   url: string;
   followRedirect?: boolean;
   isAuthCheck?: boolean; // New option to indicate an authentication check
+  isMultipart?: boolean; // New option for multipart form data
 }
 
 // Helper to determine if an endpoint is on the backend's CSRF ignore list
@@ -28,18 +29,15 @@ const isCsrfIgnoredEndpoint = (requestUrl: string) => {
   // These paths are ignored by Spring Security's CSRF filter in SecurityConfig.java
   return path.startsWith('/auth/') || 
          path.startsWith('/user/verify-email/request') || 
-         path.startsWith('/user/verify-email/confirm') ||
-         path.startsWith('/user/me'); // /user/me is also ignored
+         path.startsWith('/user/verify-email/confirm');
 };
 
 const request = async (options: RequestOptions): Promise<any> => {
-  const headers = new Headers({
-    'Content-Type': 'application/json',
-  });
+  const headers = new Headers();
 
-  const { url, followRedirect = false, isAuthCheck = false, ...rest } = options; // Destructure new isAuthCheck
+  const { url, followRedirect = false, isAuthCheck = false, isMultipart = false, ...rest } = options;
 
-  console.log('APIUtils.ts: Current cookies before request:', document.cookie); // Log all cookies
+  console.log('APIUtils.ts: Current cookies before request:', document.cookie);
 
   // For state-changing requests (POST, PUT, DELETE) AND if the endpoint is NOT on the CSRF ignore list, add CSRF token
   if (options.method && ['POST', 'PUT', 'DELETE'].includes(options.method.toUpperCase()) && !isCsrfIgnoredEndpoint(url)) {
@@ -54,6 +52,10 @@ const request = async (options: RequestOptions): Promise<any> => {
     console.log(`APIUtils.ts: CSRF token not sent for ignored endpoint: ${url}`);
   }
 
+  // Set Content-Type only if it's not a multipart request
+  if (!isMultipart) {
+    headers.append('Content-Type', 'application/json');
+  }
 
   const fetchOptions: RequestInit = {
     ...rest,
@@ -193,7 +195,7 @@ interface BookRequest {
   coverImageFilename?: string;
 }
 
-interface BookResponse {
+export interface BookResponse {
   id: number;
   userId: number;
   coverImageFilename?: string;
@@ -214,7 +216,7 @@ interface PageRequest {
   description?: string;
 }
 
-interface PageResponse {
+export interface PageResponse {
   id: number;
   bookId: number;
   pageNumber: number;
@@ -325,5 +327,24 @@ export function reorderPages(bookId: number, movePageRequest: MovePageRequest): 
     url: `${PAGES_API_BASE_URL(bookId)}/reorder`,
     method: 'POST',
     body: JSON.stringify(movePageRequest),
+  });
+}
+
+export function uploadPageImage(bookId: number, pageId: number, file: File): Promise<PageResponse> {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  return request({
+    url: `${PAGES_API_BASE_URL(bookId)}/${pageId}/upload-image`,
+    method: 'POST',
+    body: formData,
+    isMultipart: true, // Indicate multipart form data
+  });
+}
+
+export function deletePageImage(bookId: number, pageId: number): Promise<any> {
+  return request({
+    url: `${PAGES_API_BASE_URL(bookId)}/${pageId}/image`,
+    method: 'DELETE',
   });
 }

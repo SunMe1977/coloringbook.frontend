@@ -117,5 +117,13 @@
   "sponsor.title": "🎉 Hier könnte Ihr Logo und Firmenname stehen!",
   "sponsor.content_p1": "Unterstützen Sie unser Projekt und helfen Sie mit, kreative KI-Werkzeuge für Self-Publisher zugänglich zu machen.",
   "sponsor.content_p2": "Ihr Logo und Firmenname könnten hier sichtbar sein – als Zeichen Ihrer Förderung und Partnerschaft.",
-  "sponsor.call_to_action": "Machen Sie es möglich – vielen Dank!"
+  "sponsor.call_to_action": "Machen Sie es möglich – vielen Dank!",
+  "upload_image": "Bild hochladen",
+  "delete_page_image": "Bild löschen",
+  "page.image.upload.success": "Bild erfolgreich hochgeladen!",
+  "page.image.upload.error": "Fehler beim Hochladen des Bildes. Bitte versuchen Sie es erneut.",
+  "page.image.delete.success": "Seitenbild erfolgreich gelöscht!",
+  "page.image.delete.error": "Fehler beim Löschen des Bildes. Bitte versuchen Sie es erneut.",
+  "confirm_delete_page_image": "Sind Sie sicher, dass Sie dieses Bild löschen möchten?",
+  "ai_feature_funding_message": "Die KI-Bildgenerierung ist eine leistungsstarke Funktion, die erhebliche Rechenressourcen erfordert. Wir benötigen Ihre Unterstützung, um diese Funktionalität zu finanzieren. Bitte erwägen Sie, uns zu sponsern!"
 }

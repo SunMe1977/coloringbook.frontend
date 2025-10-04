@@ -1,13 +1,11 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
-import { getBookById, updateBook, deleteBook, addPageToBook, updatePage, deletePage, reorderPages, createBook, BookResponse, PageResponse } from '@util/APIUtils';
+import { getBookById, updateBook, deleteBook, addPageToBook, updatePage, deletePage, reorderPages, createBook, uploadPageImage, deletePageImage, BookResponse, PageResponse } from '@util/APIUtils';
 import LoadingIndicator from '@common/LoadingIndicator';
-import { Edit, Save, X, PlusCircle, Trash2, ChevronUp, ChevronDown, Image as ImageIcon } from 'lucide-react';
-
-// Placeholder for Cloudinary base URL - replace with your actual Cloudinary cloud name
-const CLOUDINARY_BASE_URL = 'https://res.cloudinary.com/your_cloud_name/image/upload/';
+import { Edit, Save, X, PlusCircle, Trash2, ChevronUp, ChevronDown, Image as ImageIcon, Upload, ImageOff } from 'lucide-react';
+import { CLOUDINARY_BASE_URL } from '@constants'; // Import CLOUDINARY_BASE_URL from constants
 
 interface BookDetailsFormData {
   languageIso: string;
@@ -52,6 +50,7 @@ const BookDetails: React.FC = () => {
     description: '',
   });
   const [isPageLoading, setIsPageLoading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null); // Ref for file input
 
   const fetchBookDetails = useCallback(async () => {
     if (isNewBook) {
@@ -236,6 +235,64 @@ const BookDetails: React.FC = () => {
     }
   };
 
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>, pageId: number) => {
+    if (!bookId || !event.target.files || event.target.files.length === 0) {
+      return;
+    }
+
+    const file = event.target.files[0];
+    setIsPageLoading(true);
+    try {
+      const updatedPage = await uploadPageImage(Number(bookId), pageId, file);
+      toast.success(t('page.image.upload.success'), { autoClose: 3000 });
+      // Update the specific page in the local state
+      setBook((prevBook) => {
+        if (!prevBook) return null;
+        const updatedPages = prevBook.pages?.map((p) =>
+          p.id === pageId ? { ...p, imageFilename: updatedPage.imageFilename } : p
+        );
+        return { ...prevBook, pages: updatedPages };
+      });
+    } catch (error: any) {
+      console.error('Failed to upload image:', error);
+      toast.error(error.message || t('page.image.upload.error'), { autoClose: 5000 });
+    } finally {
+      setIsPageLoading(false);
+      // Reset file input to allow re-uploading the same file
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    };
+  };
+
+  const handleDeleteImage = async (pageId: number) => {
+    if (!bookId) return;
+    if (window.confirm(t('confirm_delete_page_image'))) {
+      setIsPageLoading(true);
+      try {
+        await deletePageImage(Number(bookId), pageId);
+        toast.success(t('page.image.delete.success'), { autoClose: 3000 });
+        // Clear the image filename in the local state
+        setBook((prevBook) => {
+          if (!prevBook) return null;
+          const updatedPages = prevBook.pages?.map((p) =>
+            p.id === pageId ? { ...p, imageFilename: undefined } : p
+          );
+          return { ...prevBook, pages: updatedPages };
+        });
+      } catch (error: any) {
+        console.error('Failed to delete image:', error);
+        toast.error(error.message || t('page.image.delete.error'), { autoClose: 5000 });
+    } finally {
+        setIsPageLoading(false);
+      }
+    }
+  };
+
+  const handleRecreateWithAI = () => {
+    toast.info(t('ai_feature_funding_message'), { autoClose: 8000 });
+  };
+
   if (isLoading) {
     return <LoadingIndicator />;
   }
@@ -396,11 +453,25 @@ const BookDetails: React.FC = () => {
                             </div>
                             <div className="form-group">
                               <label htmlFor={`pageImageFilename-${page.id}`}>{t('page_image')} (Cloudinary Filename)</label>
-                              <input type="text" id={`pageImageFilename-${page.id}`} name="imageFilename" className="form-control" value={pageFormData.imageFilename} onChange={handlePageFormChange} placeholder="e.g., page_1_image.png" />
+                              <input type="text" id={`pageImageFilename-${page.id}`} name="imageFilename" className="form-control" value={pageFormData.imageFilename} readOnly /> {/* Made readOnly */}
                               <small className="form-text text-muted">{t('cloudinary_upload_note')}</small>
                             </div>
                             <div className="form-group" style={{ marginTop: '15px' }}>
-                              <button type="button" className="btn btn-info btn-sm" style={{ display: 'flex', alignItems: 'center' }}>
+                                <label htmlFor={`fileUpload-${page.id}`} className="btn btn-success btn-sm" style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', width: 'fit-content' }}> {/* Changed to btn-success */}
+                                    <Upload size={16} style={{ marginRight: '5px' }} /> {t('upload_image')}
+                                </label>
+                                <input
+                                    type="file"
+                                    id={`fileUpload-${page.id}`}
+                                    ref={fileInputRef}
+                                    style={{ display: 'none' }}
+                                    onChange={(e) => handleImageUpload(e, page.id)}
+                                    accept="image/png, image/jpeg, image/jpg"
+                                    disabled={isPageLoading}
+                                />
+                            </div>
+                            <div className="form-group" style={{ marginTop: '15px' }}>
+                              <button type="button" className="btn btn-primary btn-sm" onClick={handleRecreateWithAI} disabled={isPageLoading} style={{ display: 'flex', alignItems: 'center' }}> {/* Changed to btn-primary */}
                                 <ImageIcon size={16} style={{ marginRight: '5px' }} /> {t('create_image')}
                               </button>
                             </div>
@@ -408,14 +479,35 @@ const BookDetails: React.FC = () => {
                         ) : (
                           <>
                             <p><strong>{t('page_description')}:</strong> {page.description || '-'}</p>
-                            {page.imageFilename && (
-                              <div style={{ marginTop: '10px' }}>
-                                <strong>{t('page_image')}:</strong>
-                                <img src={`${CLOUDINARY_BASE_URL}${page.imageFilename}`} alt={`Page ${page.pageNumber}`} style={{ maxWidth: '150px', maxHeight: '150px', display: 'block', marginTop: '5px', border: '1px solid #ddd', borderRadius: '4px' }} />
-                              </div>
-                            )}
-                            <div className="canvas-container" style={{ border: '1px dashed #ccc', padding: '20px', marginTop: '15px', minHeight: '100px', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#f0f0f0' }}>
-                              <p className="text-muted">{t('canvas_container')}</p>
+                            <div className="canvas-container" style={{ border: '1px dashed #ccc', padding: '20px', marginTop: '15px', minHeight: '100px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', backgroundColor: '#f0f0f0' }}>
+                              {page.imageFilename ? (
+                                <>
+                                  <img src={`${CLOUDINARY_BASE_URL}${page.imageFilename}`} alt={`Page ${page.pageNumber}`} style={{ maxWidth: '100%', maxHeight: '200px', display: 'block', marginBottom: '10px', border: '1px solid #ddd', borderRadius: '4px' }} />
+                                  <button className="btn btn-danger btn-sm" onClick={() => handleDeleteImage(page.id)} disabled={isPageLoading} style={{ display: 'flex', alignItems: 'center' }}>
+                                    <ImageOff size={16} style={{ marginRight: '5px' }} /> {t('delete_page_image')}
+                                  </button>
+                                </>
+                              ) : (
+                                <p className="text-muted">{t('canvas_container')}</p>
+                              )}
+                            </div>
+                            {/* Upload and AI buttons always visible in view mode */}
+                            <div className="form-group" style={{ marginTop: '15px', display: 'flex', gap: '10px', justifyContent: 'center' }}>
+                                <label htmlFor={`fileUpload-${page.id}-view`} className="btn btn-success btn-sm" style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', width: 'fit-content' }}> {/* Changed to btn-success */}
+                                    <Upload size={16} style={{ marginRight: '5px' }} /> {t('upload_image')}
+                                </label>
+                                <input
+                                    type="file"
+                                    id={`fileUpload-${page.id}-view`}
+                                    ref={fileInputRef}
+                                    style={{ display: 'none' }}
+                                    onChange={(e) => handleImageUpload(e, page.id)}
+                                    accept="image/png, image/jpeg, image/jpg"
+                                    disabled={isPageLoading}
+                                />
+                                <button type="button" className="btn btn-primary btn-sm" onClick={handleRecreateWithAI} disabled={isPageLoading} style={{ display: 'flex', alignItems: 'center' }}> {/* Changed to btn-primary */}
+                                  <ImageIcon size={16} style={{ marginRight: '5px' }} /> {t('create_image')}
+                                </button>
                             </div>
                           </>
                         )}

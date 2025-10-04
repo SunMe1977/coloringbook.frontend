@@ -2,15 +2,15 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import path from 'path';
 import { VitePWA } from 'vite-plugin-pwa';
+import basicSsl from '@vitejs/plugin-basic-ssl'; // Import the plugin
 
 export default defineConfig({
   plugins: [
     react(),
+    basicSsl(), // Add this plugin for HTTPS
     VitePWA({
       registerType: 'autoUpdate',
-      // Explicitly set the filename for the service worker registration script
       filename: 'service-worker.js', 
-      // Ensure all PWA related assets are included for precaching
       includeAssets: [
         'favicon.ico',
         'favicon.svg',
@@ -19,7 +19,6 @@ export default defineConfig({
         'web-app-manifest-192x192.png',
         'web-app-manifest-512x512.png',
         'robots.txt',
-        // Add any other static assets that should be precached
       ],
       manifest: {
         name: 'AI SelfPub ColoringBook Studio',
@@ -28,36 +27,31 @@ export default defineConfig({
         theme_color: '#ffffff',
         background_color: '#ffffff',
         display: 'standalone',
-        start_url: '/', // Recommended to use '/' for start_url
+        start_url: '/',
         icons: [
           {
-            src: '/web-app-manifest-192x192.png', // Corrected icon path to match existing public assets
+            src: '/web-app-manifest-192x192.png',
             sizes: '192x192',
             type: 'image/png',
             purpose: 'any maskable',
           },
           {
-            src: '/web-app-manifest-512x512.png', // Corrected icon path to match existing public assets
+            src: '/web-app-manifest-512x512.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'any maskable',
           },
         ],
       },
-      // Configure workbox to generate service worker
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,webmanifest}'],
-        // Ensure the generated service worker is named service-worker.js
-        // This will output to dist/service-worker.js
         swDest: 'dist/service-worker.js',
-        // Allow all navigation routes to be handled by the service worker
         navigateFallback: 'index.html',
-        navigateFallbackAllowlist: [/.*/], // This will allow all routes
+        navigateFallbackAllowlist: [/.*/],
       },
       devOptions: {
-        enabled: true, // Enable PWA in development for easier testing
+        enabled: true,
       },
-      // Configure the manifest filename to match what index.html expects
       manifestFilename: 'site.webmanifest',
     }),
   ],
@@ -81,6 +75,7 @@ export default defineConfig({
   server: {
     port: 5173,
     open: true,
+    https: true, // Changed to true to enable HTTPS
     fs: {
       strict: false,
     },

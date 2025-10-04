@@ -25,7 +25,7 @@
   "terms_of_service_content_p1": "Benvenuto in AI SelfPub ColoringBook Studio! Questi Termini di servizio regolano l'uso della nostra applicazione. Accedendo o utilizzando il nostro servizio, accetti di essere vincolato da questi termini.",
   "terms_of_service_content_p2": "Devi avere almeno 13 anni per utilizzare i nostri servizi. Sei responsabile della riservatezza del tuo account e della tua password. Tutti i contenuti generati o caricati da te rimangono di tua proprietà, ma ci concedi una licenza per utilizzarli per il funzionamento e il miglioramento del servizio. Ci riserviamo il diritto di terminare o sospendere il tuo account per qualsiasi violazione di questi termini. Il nostro servizio è fornito 'così com'è' senza garanzie. Per i termini completi, fai riferimento a questa pagina.",
   "cookie_policy": "Informativa sui cookie",
-  "cookie_policy_content_p1": "Questa Informativa sui cookie spiega come AI SelfPub ColoringBook Studio utilizza i cookie e tecnologie simili per riconoscerti quando visiti la nostra applicazione.",
+  "cookie_policy_content_p1": "Questa Informativa sui cookie spiega how AI SelfPub ColoringBook Studio uses cookies and similar technologies to recognize you when you visit our application.",
   "cookie_policy_content_p2": "Utilizziamo i cookie per migliorare la tua esperienza, analizzare l'utilizzo del sito e fornire contenuti personalizzati. Ciò include i cookie essenziali per la funzionalità dell'app, i cookie di performance per l'analisi e i cookie pubblicitari per annunci pertinenti. Hai il diritto di decidere se accettare o rifiutare i cookie. Puoi esercitare le tue preferenze sui cookie impostandole nel tuo browser. Si prega di notare che se scegli di rifiutare i cookie, potresti comunque utilizzare la nostra applicazione, sebbene l'accesso ad alcune funzionalità e aree della nostra applicazione potrebbe essere limitato.",
   "footer_anything_you_want": "Tutto quello che vuoi",
   "cookie_consent_text": "Questo sito web utilizza i cookie per migliorare l'esperienza dell'utente.",
@@ -112,5 +112,13 @@
   "error.page.pageNumberConflict": "Il numero di pagina {0} esiste già in questo libro.",
   "error.page.pageNotFound": "Pagina con numero {0} non trovata.",
   "error.page.invalidNewPageNumber": "Il nuovo numero di pagina {0} non è valido. Deve essere compreso tra 1 e {1}.",
-  "page.reorder.noChange": "Nessun cambiamento nell'ordine delle pagine."
+  "page.reorder.noChange": "Nessun cambiamento nell'ordine delle pagine.",
+  "upload_image": "Carica Immagine",
+  "delete_page_image": "Elimina Immagine",
+  "page.image.upload.success": "Immagine caricata con successo!",
+  "page.image.upload.error": "Impossibile caricare l'immagine. Riprova.",
+  "page.image.delete.success": "Immagine della pagina eliminata con successo!",
+  "page.image.delete.error": "Impossibile eliminare l'immagine. Riprova.",
+  "confirm_delete_page_image": "Sei sicuro di voler eliminare questa immagine?",
+  "ai_feature_funding_message": "La generazione di immagini AI è una funzionalità potente che richiede risorse di calcolo significative. Abbiamo bisogno del tuo supporto per finanziare questa funzionalità. Considera di sponsorizzarci!"
 }

@@ -75,7 +75,7 @@ export default defineConfig({
   server: {
     port: 5173,
     open: true,
-    https: true, // Enable HTTPS for local development
+    https: true, // Re-enabled HTTPS for local development
     fs: {
       strict: false,
     },
