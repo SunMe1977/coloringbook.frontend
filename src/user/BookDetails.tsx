@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 import { getBookById, updateBook, deleteBook, addPageToBook, updatePage, deletePage, reorderPages, createBook, uploadPageImage, deletePageImage, massUploadPages, deleteAllPages, BookResponse, PageResponse } from '@util/APIUtils';
-import { CLOUDINARY_BASE_URL } from '@constants'; // Import CLOUDINARY_BASE_URL from constants
+import { CLOUDINARY_BASE_URL } from '@constants'; // Import new constants
 import { Edit, Save, X, PlusCircle, Trash2, ChevronUp, ChevronDown, Image as ImageIcon, Upload, ImageOff, Files } from 'lucide-react'; // Added Files icon
 
 interface BookDetailsFormData {
@@ -34,7 +34,7 @@ const BookDetails: React.FC<BookDetailsProps> = ({ setPageActionLoading }) => {
   const isNewBook = bookId === undefined || bookId === 'new';
 
   const [book, setBook] = useState<BookResponse | null>(null);
-  const [isLoading, setIsLoading] = useState(true); // Keep local loading for data fetch
+  // Removed local isLoading state, now using setPageActionLoading from props
   const [isEditingBook, setIsEditingBook] = useState(isNewBook); // Start in edit mode if it's a new book
   const [bookFormData, setBookFormData] = useState<BookDetailsFormData>({
     languageIso: 'en', // Default language
@@ -52,16 +52,15 @@ const BookDetails: React.FC<BookDetailsProps> = ({ setPageActionLoading }) => {
     imageFilename: '',
     description: '',
   });
-  // Removed local isPageLoading state, now using setPageActionLoading from props
   const fileInputRef = useRef<HTMLInputElement>(null); // Ref for single file input
   const massFileInputRef = useRef<HTMLInputElement>(null); // Ref for mass file input
 
   const fetchBookDetails = useCallback(async () => {
     if (isNewBook) {
-      setIsLoading(false); // No need to fetch for a new book
+      setPageActionLoading(false); // No need to fetch for a new book, so stop loading
       return;
     }
-    setIsLoading(true);
+    setPageActionLoading(true); // Activate global loader for initial fetch
     try {
       const fetchedBook = await getBookById(Number(bookId));
       setBook(fetchedBook);
@@ -79,9 +78,9 @@ const BookDetails: React.FC<BookDetailsProps> = ({ setPageActionLoading }) => {
       toast.error(error.message || t('book.fetch.error'), { autoClose: 5000 });
       navigate('/bookshelf', { replace: true });
     } finally {
-      setIsLoading(false);
+      setPageActionLoading(false); // Deactivate global loader
     }
-  }, [bookId, isNewBook, navigate, t]);
+  }, [bookId, isNewBook, navigate, t, setPageActionLoading]);
 
   useEffect(() => {
     fetchBookDetails();
@@ -94,7 +93,7 @@ const BookDetails: React.FC<BookDetailsProps> = ({ setPageActionLoading }) => {
 
   const handleSaveBook = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true); // Use local isLoading for this action
+    setPageActionLoading(true); // Activate global loader for this action
     try {
       let resultBook: BookResponse;
       if (isNewBook) {
@@ -112,7 +111,7 @@ const BookDetails: React.FC<BookDetailsProps> = ({ setPageActionLoading }) => {
       console.error('Failed to save book:', error);
       toast.error(error.message || (isNewBook ? t('book.create.error') : t('book.update.error')), { autoClose: 5000 });
     } finally {
-      setIsLoading(false);
+      setPageActionLoading(false); // Deactivate global loader
     }
   };
 
@@ -136,7 +135,7 @@ const BookDetails: React.FC<BookDetailsProps> = ({ setPageActionLoading }) => {
   const handleDeleteBook = async () => {
     if (!bookId) return;
     if (window.confirm(t('confirm_delete_book'))) {
-      setIsLoading(true); // Use local isLoading for this action
+      setPageActionLoading(true); // Activate global loader for this action
       try {
         await deleteBook(Number(bookId));
         toast.success(t('book.delete.success'), { autoClose: 3000 });
@@ -145,7 +144,7 @@ const BookDetails: React.FC<BookDetailsProps> = ({ setPageActionLoading }) => {
         console.error('Failed to delete book:', error);
         toast.error(error.message || t('book.delete.error'), { autoClose: 5000 });
       } finally {
-        setIsLoading(false);
+        setPageActionLoading(false); // Deactivate global loader
       }
     }
   };
@@ -345,7 +344,10 @@ const BookDetails: React.FC<BookDetailsProps> = ({ setPageActionLoading }) => {
   // The FullScreenLoader in App.tsx will handle the initial loading state
   // No need for a local `if (isLoading) return <LoadingIndicator />` here.
 
-  if (!book && !isNewBook && !isLoading) { // Only show error if not loading and no book
+  // Use setPageActionLoading for disabling buttons and conditional rendering
+  const isAnyActionLoading = setPageActionLoading; // This is a function, need to check the actual state from App.tsx
+
+  if (!book && !isNewBook && !isAnyActionLoading) { // Only show error if not loading and no book
     return <p className="text-center">{t('error.resourceNotFound', { resourceName: 'Book', fieldName: 'id', fieldValue: bookId })}</p>;
   }
 
@@ -366,10 +368,10 @@ const BookDetails: React.FC<BookDetailsProps> = ({ setPageActionLoading }) => {
                   </button>
                 ) : (
                   <div>
-                    <button className="btn btn-success btn-sm" onClick={handleSaveBook} disabled={isLoading} style={{ marginRight: '10px', display: 'flex', alignItems: 'center' }}>
-                      {isLoading ? t('loading') : <><Save size={16} style={{ marginRight: '5px' }} /> {t('save')}</>}
+                    <button className="btn btn-success btn-sm" onClick={handleSaveBook} disabled={isAnyActionLoading} style={{ marginRight: '10px', display: 'flex', alignItems: 'center' }}>
+                      {isAnyActionLoading ? t('loading') : <><Save size={16} style={{ marginRight: '5px' }} /> {t('save')}</>}
                     </button>
-                    <button className="btn btn-default btn-sm" onClick={handleCancelEditBook} disabled={isLoading} style={{ display: 'flex', alignItems: 'center' }}>
+                    <button className="btn btn-default btn-sm" onClick={handleCancelEditBook} disabled={isAnyActionLoading} style={{ display: 'flex', alignItems: 'center' }}>
                       <X size={16} style={{ marginRight: '5px' }} /> {t('cancel')}
                     </button>
                   </div>
@@ -412,10 +414,10 @@ const BookDetails: React.FC<BookDetailsProps> = ({ setPageActionLoading }) => {
                     <small className="form-text text-muted">{t('cloudinary_upload_note')}</small>
                   </div>
                   <div className="form-group" style={{ marginTop: '20px' }}>
-                    <button type="submit" className="btn btn-success" disabled={isLoading} style={{ marginRight: '10px' }}>
-                      {isLoading ? t('loading') : <><Save size={16} style={{ marginRight: '5px' }} /> {t('save')}</>}
+                    <button type="submit" className="btn btn-success" disabled={isAnyActionLoading} style={{ marginRight: '10px' }}>
+                      {isAnyActionLoading ? t('loading') : <><Save size={16} style={{ marginRight: '5px' }} /> {t('save')}</>}
                     </button>
-                    <button type="button" className="btn btn-default" onClick={handleCancelEditBook} disabled={isLoading}>
+                    <button type="button" className="btn btn-default" onClick={handleCancelEditBook} disabled={isAnyActionLoading} style={{ display: 'flex', alignItems: 'center' }}>
                       <X size={16} style={{ marginRight: '5px' }} /> {t('cancel')}
                     </button>
                   </div>
@@ -433,8 +435,8 @@ const BookDetails: React.FC<BookDetailsProps> = ({ setPageActionLoading }) => {
                       <img src={`${CLOUDINARY_BASE_URL}${book.coverImageFilename}`} alt={book.title} style={{ maxWidth: '200px', maxHeight: '200px', display: 'block', marginTop: '10px', border: '1px solid #ddd', borderRadius: '4px' }} />
                     </div>
                   )}
-                  <button className="btn btn-danger" onClick={handleDeleteBook} disabled={isLoading} style={{ marginTop: '20px', display: 'flex', alignItems: 'center' }}>
-                    {isLoading ? t('loading') : <><Trash2 size={16} style={{ marginRight: '5px' }} /> {t('delete_book')}</>}
+                  <button className="btn btn-danger" onClick={handleDeleteBook} disabled={isAnyActionLoading} style={{ marginTop: '20px', display: 'flex', alignItems: 'center' }}>
+                    {isAnyActionLoading ? t('loading') : <><Trash2 size={16} style={{ marginRight: '5px' }} /> {t('delete_book')}</>}
                   </button>
                 </div>
               )}
@@ -446,10 +448,14 @@ const BookDetails: React.FC<BookDetailsProps> = ({ setPageActionLoading }) => {
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '10px' }}>
                   <h2 style={{ margin: 0, fontSize: '1.5em', color: '#333' }}>{t('pages')}</h2>
                   <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-                    <button className="btn btn-primary btn-sm" onClick={handleAddPage} disabled={isLoading} style={{ display: 'flex', alignItems: 'center' }}>
-                      {isLoading ? t('loading') : <><PlusCircle size={16} style={{ marginRight: '5px' }} /> {t('add_page')}</>}
+                    <button className="btn btn-primary btn-sm" onClick={handleAddPage} disabled={isAnyActionLoading} style={{ display: 'flex', alignItems: 'center' }}>
+                      {isAnyActionLoading ? t('loading') : <><PlusCircle size={16} style={{ marginRight: '5px' }} /> {t('add_page')}</>}
                     </button>
-                    <label htmlFor="massFileUpload" className="btn btn-info btn-sm" style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', width: 'fit-content' }}>
+                    <label 
+                      htmlFor="massFileUpload" 
+                      className={`btn btn-info btn-sm ${isAnyActionLoading ? 'disabled' : ''}`} 
+                      style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', width: 'fit-content' }}
+                    >
                       <Files size={16} style={{ marginRight: '5px' }} /> {t('mass_upload_images')}
                     </label>
                     <input
@@ -460,15 +466,16 @@ const BookDetails: React.FC<BookDetailsProps> = ({ setPageActionLoading }) => {
                       onChange={handleMassImageUpload}
                       accept="image/png, image/jpeg, image/jpg"
                       multiple
-                      disabled={isLoading}
+                      disabled={isAnyActionLoading}
                     />
-                    <button className="btn btn-danger btn-sm" onClick={handleDeleteAllPages} disabled={isLoading || (book.pages && book.pages.length === 0)} style={{ display: 'flex', alignItems: 'center' }}>
-                      {isLoading ? t('loading') : <><Trash2 size={16} style={{ marginRight: '5px' }} /> {t('delete_all_pages')}</>}
+                    <button className="btn btn-danger btn-sm" onClick={handleDeleteAllPages} disabled={isAnyActionLoading || (book.pages && book.pages.length === 0)} style={{ display: 'flex', alignItems: 'center' }}>
+                      {isAnyActionLoading ? t('loading') : <><Trash2 size={16} style={{ marginRight: '5px' }} /> {t('delete_all_pages')}</>}
                     </button>
                   </div>
                 </div>
 
-                {isLoading ? ( // Use local isLoading for content within the page
+                {/* Conditional rendering based on isAnyActionLoading for the entire pages section content */}
+                {isAnyActionLoading && !isNewBook ? ( 
                   <p className="text-center">{t('loading')}...</p>
                 ) : book.pages && book.pages.length > 0 ? (
                   <div className="page-list" style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '20px' }}>
@@ -480,7 +487,7 @@ const BookDetails: React.FC<BookDetailsProps> = ({ setPageActionLoading }) => {
                             <button
                               className="btn btn-default btn-sm"
                               onClick={() => handleMovePage(page.id, page.pageNumber, 'up')}
-                              disabled={page.pageNumber === 1 || isLoading}
+                              disabled={page.pageNumber === 1 || isAnyActionLoading}
                               title={t('move_page_up')}
                             >
                               <ChevronUp size={16} />
@@ -488,26 +495,26 @@ const BookDetails: React.FC<BookDetailsProps> = ({ setPageActionLoading }) => {
                             <button
                               className="btn btn-default btn-sm"
                               onClick={() => handleMovePage(page.id, page.pageNumber, 'down')}
-                              disabled={page.pageNumber === book.pages.length || isLoading}
+                              disabled={page.pageNumber === book.pages.length || isAnyActionLoading}
                               title={t('move_page_down')}
                             >
                               <ChevronDown size={16} />
                             </button>
                             {isEditingPage === page.id ? (
                               <>
-                                <button className="btn btn-success btn-sm" onClick={() => handleSavePage(page.id)} disabled={isLoading} title={t('save')}>
-                                  {isLoading ? t('loading') : <Save size={16} />}
+                                <button className="btn btn-success btn-sm" onClick={() => handleSavePage(page.id)} disabled={isAnyActionLoading} title={t('save')}>
+                                  {isAnyActionLoading ? t('loading') : <Save size={16} />}
                                 </button>
-                                <button className="btn btn-default btn-sm" onClick={() => handleCancelEditPage(page)} disabled={isLoading} title={t('cancel')}>
+                                <button className="btn btn-default btn-sm" onClick={() => handleCancelEditPage(page)} disabled={isAnyActionLoading} title={t('cancel')}>
                                   <X size={16} />
                                 </button>
                               </>
                             ) : (
-                              <button className="btn btn-primary btn-sm" onClick={() => handleEditPage(page)} title={t('edit_page')}>
+                              <button className="btn btn-primary btn-sm" onClick={() => handleEditPage(page)} disabled={isAnyActionLoading} title={t('edit_page')}>
                                 <Edit size={16} />
                               </button>
                             )}
-                            <button className="btn btn-danger btn-sm" onClick={() => handleDeletePage(page.id)} disabled={isLoading} title={t('delete_page')}>
+                            <button className="btn btn-danger btn-sm" onClick={() => handleDeletePage(page.id)} disabled={isAnyActionLoading} title={t('delete_page')}>
                               <Trash2 size={16} />
                             </button>
                           </div>
@@ -525,8 +532,8 @@ const BookDetails: React.FC<BookDetailsProps> = ({ setPageActionLoading }) => {
                               <small className="form-text text-muted">{t('cloudinary_upload_note')}</small>
                             </div>
                             <div className="form-group" style={{ marginTop: '15px' }}>
-                                <label htmlFor={`fileUpload-${page.id}`} className="btn btn-success btn-sm" style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', width: 'fit-content' }}> {/* Changed to btn-success */}
-                                    {isLoading ? t('loading') : <><Upload size={16} style={{ marginRight: '5px' }} /> {t('upload_image')}</>}
+                                <label htmlFor={`fileUpload-${page.id}`} className={`btn btn-success btn-sm ${isAnyActionLoading ? 'disabled' : ''}`} style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', width: 'fit-content' }}> {/* Changed to btn-success */}
+                                    {isAnyActionLoading ? t('loading') : <><Upload size={16} style={{ marginRight: '5px' }} /> {t('upload_image')}</>}
                                 </label>
                                 <input
                                     type="file"
@@ -535,12 +542,12 @@ const BookDetails: React.FC<BookDetailsProps> = ({ setPageActionLoading }) => {
                                     style={{ display: 'none' }}
                                     onChange={(e) => handleImageUpload(e, page.id)}
                                     accept="image/png, image/jpeg, image/jpg"
-                                    disabled={isLoading}
+                                    disabled={isAnyActionLoading}
                                 />
                             </div>
                             <div className="form-group" style={{ marginTop: '15px' }}>
-                              <button type="button" className="btn btn-primary btn-sm" onClick={handleRecreateWithAI} disabled={isLoading} style={{ display: 'flex', alignItems: 'center' }}> {/* Changed to btn-primary */}
-                                {isLoading ? t('loading') : <><ImageIcon size={16} style={{ marginRight: '5px' }} /> {t('create_image')}</>}
+                              <button type="button" className="btn btn-primary btn-sm" onClick={handleRecreateWithAI} disabled={isAnyActionLoading} style={{ display: 'flex', alignItems: 'center' }}> {/* Changed to btn-primary */}
+                                {isAnyActionLoading ? t('loading') : <><ImageIcon size={16} style={{ marginRight: '5px' }} /> {t('create_image')}</>}
                               </button>
                             </div>
                           </form>
@@ -551,8 +558,8 @@ const BookDetails: React.FC<BookDetailsProps> = ({ setPageActionLoading }) => {
                               {page.imageFilename ? (
                                 <>
                                   <img src={`${CLOUDINARY_BASE_URL}${page.imageFilename}`} alt={`Page ${page.pageNumber}`} style={{ maxWidth: '100%', maxHeight: '200px', display: 'block', marginBottom: '10px', border: '1px solid #ddd', borderRadius: '4px' }} />
-                                  <button className="btn btn-danger btn-sm" onClick={() => handleDeleteImage(page.id)} disabled={isLoading} style={{ display: 'flex', alignItems: 'center' }}>
-                                    {isLoading ? t('loading') : <><ImageOff size={16} style={{ marginRight: '5px' }} /> {t('delete_page_image')}</>}
+                                  <button className="btn btn-danger btn-sm" onClick={() => handleDeleteImage(page.id)} disabled={isAnyActionLoading} style={{ display: 'flex', alignItems: 'center' }}>
+                                    {isAnyActionLoading ? t('loading') : <><ImageOff size={16} style={{ marginRight: '5px' }} /> {t('delete_page_image')}</>}
                                   </button>
                                 </>
                               ) : (
@@ -561,8 +568,8 @@ const BookDetails: React.FC<BookDetailsProps> = ({ setPageActionLoading }) => {
                             </div>
                             {/* Upload and AI buttons always visible in view mode */}
                             <div className="form-group" style={{ marginTop: '15px', display: 'flex', gap: '10px', justifyContent: 'center' }}>
-                                <label htmlFor={`fileUpload-${page.id}-view`} className="btn btn-success btn-sm" style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', width: 'fit-content' }}> {/* Changed to btn-success */}
-                                    {isLoading ? t('loading') : <><Upload size={16} style={{ marginRight: '5px' }} /> {t('upload_image')}</>}
+                                <label htmlFor={`fileUpload-${page.id}-view`} className={`btn btn-success btn-sm ${isAnyActionLoading ? 'disabled' : ''}`} style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', width: 'fit-content' }}> {/* Changed to btn-success */}
+                                    {isAnyActionLoading ? t('loading') : <><Upload size={16} style={{ marginRight: '5px' }} /> {t('upload_image')}</>}
                                 </label>
                                 <input
                                     type="file"
@@ -571,10 +578,10 @@ const BookDetails: React.FC<BookDetailsProps> = ({ setPageActionLoading }) => {
                                     style={{ display: 'none' }}
                                     onChange={(e) => handleImageUpload(e, page.id)}
                                     accept="image/png, image/jpeg, image/jpg"
-                                    disabled={isLoading}
+                                    disabled={isAnyActionLoading}
                                 />
-                                <button type="button" className="btn btn-primary btn-sm" onClick={handleRecreateWithAI} disabled={isLoading} style={{ display: 'flex', alignItems: 'center' }}> {/* Changed to btn-primary */}
-                                  {isLoading ? t('loading') : <><ImageIcon size={16} style={{ marginRight: '5px' }} /> {t('create_image')}</>}
+                                <button type="button" className="btn btn-primary btn-sm" onClick={handleRecreateWithAI} disabled={isAnyActionLoading} style={{ display: 'flex', alignItems: 'center' }}> {/* Changed to btn-primary */}
+                                  {isAnyActionLoading ? t('loading') : <><ImageIcon size={16} style={{ marginRight: '5px' }} /> {t('create_image')}</>}
                                 </button>
                             </div>
                           </>

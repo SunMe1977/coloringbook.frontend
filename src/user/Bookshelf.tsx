@@ -8,12 +8,16 @@ import SortDropdown from '@components/SortDropdown';
 import ItemsPerPageDropdown from '@components/ItemsPerPageDropdown';
 import { PlusCircle, Search, Edit, Trash2 } from 'lucide-react';
 
-const Bookshelf: React.FC = () => {
+interface BookshelfProps {
+  setPageActionLoading: (isLoading: boolean) => void; // New prop to control global page action loading
+}
+
+const Bookshelf: React.FC<BookshelfProps> = ({ setPageActionLoading }) => {
   const { t } = useTranslation('common');
   const navigate = useNavigate();
 
   const [books, setBooks] = useState<BookResponse[]>([]);
-  const [isLoading, setIsLoading] = useState(true); // Keep local loading for data fetch
+  // Removed local isLoading state, now using setPageActionLoading from props
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [pageSize, setPageSize] = useState(10);
@@ -22,7 +26,7 @@ const Bookshelf: React.FC = () => {
   const [totalElements, setTotalElements] = useState(0);
 
   const fetchBooks = useCallback(async () => {
-    setIsLoading(true);
+    setPageActionLoading(true); // Activate global loader
     try {
       const response = await getAllBooks(currentPage, pageSize, sort, searchTerm);
       setBooks(response.content);
@@ -32,9 +36,9 @@ const Bookshelf: React.FC = () => {
       console.error('Failed to fetch books:', error);
       toast.error(error.message || t('book.fetch.error'), { autoClose: 5000 });
     } finally {
-      setIsLoading(false);
+      setPageActionLoading(false); // Deactivate global loader
     }
-  }, [currentPage, pageSize, sort, searchTerm, t]);
+  }, [currentPage, pageSize, sort, searchTerm, t, setPageActionLoading]);
 
   useEffect(() => {
     fetchBooks();
@@ -66,13 +70,16 @@ const Bookshelf: React.FC = () => {
 
   const handleDeleteBook = async (bookId: number) => {
     if (window.confirm(t('confirm_delete_book'))) {
+      setPageActionLoading(true); // Activate global loader
       try {
         await deleteBook(bookId);
         toast.success(t('book.delete.success'), { autoClose: 3000 });
-        fetchBooks(); // Re-fetch books after deletion
+        await fetchBooks(); // Re-fetch books after deletion
       } catch (error: any) {
         console.error('Failed to delete book:', error);
         toast.error(error.message || t('book.delete.error'), { autoClose: 5000 });
+      } finally {
+        setPageActionLoading(false); // Deactivate global loader
       }
     }
   };
@@ -115,9 +122,8 @@ const Bookshelf: React.FC = () => {
               <SortDropdown currentSort={sort} onSortChange={handleSortChange} />
             </div>
 
-            {isLoading ? ( // Use local isLoading for content within the page
-              <p className="text-center">{t('loading')}...</p>
-            ) : books.length === 0 ? (
+            {/* Removed local isLoading check here, FullScreenLoader handles it globally */}
+            {books.length === 0 ? (
               <p className="text-center">{t('no_books_found')}</p>
             ) : (
               <div className="book-list" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '20px' }}>
@@ -126,7 +132,7 @@ const Bookshelf: React.FC = () => {
                     <div className="book-cover" style={{ height: '200px', backgroundColor: '#f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
                       {book.coverImageFilename ? (
                         <img
-                          src={`https://res.cloudinary.com/your_cloud_name/image/upload/${book.coverImageFilename}`} // Placeholder Cloudinary URL
+                          src={`${CLOUDINARY_BASE_URL}${book.coverImageFilename}`} // Placeholder Cloudinary URL
                           alt={book.title || t('book_cover_image')}
                           style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                         />
