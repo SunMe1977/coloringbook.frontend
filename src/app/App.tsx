@@ -102,6 +102,8 @@ function App() {
     await fetchAndSetCurrentUser();
   };
 
+  console.log('App Loading State:', appLoading, 'Page Action Loading State:', isPageActionLoading); // Added log
+
   return (
     <div className="app">
       <FullScreenLoader isLoading={appLoading || isPageActionLoading} /> {/* Now responds to both global and page-action loading */}
