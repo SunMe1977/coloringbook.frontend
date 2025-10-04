@@ -9,15 +9,15 @@ import ItemsPerPageDropdown from '@components/ItemsPerPageDropdown';
 import { PlusCircle, Search, Edit, Trash2 } from 'lucide-react';
 
 interface BookshelfProps {
-  setPageActionLoading: (isLoading: boolean) => void; // New prop to control global page action loading
+  setPageActionLoading: (isLoading: boolean) => void; // Setter for global loader
+  isPageActionLoading: boolean; // Current state of global loader
 }
 
-const Bookshelf: React.FC<BookshelfProps> = ({ setPageActionLoading }) => {
+const Bookshelf: React.FC<BookshelfProps> = ({ setPageActionLoading, isPageActionLoading }) => {
   const { t } = useTranslation('common');
   const navigate = useNavigate();
 
   const [books, setBooks] = useState<BookResponse[]>([]);
-  // Removed local isLoading state, now using setPageActionLoading from props
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [pageSize, setPageSize] = useState(10);
@@ -88,9 +88,6 @@ const Bookshelf: React.FC<BookshelfProps> = ({ setPageActionLoading }) => {
     navigate('/books/new');
   };
 
-  // The FullScreenLoader in App.tsx will handle the initial loading state
-  // No need for a local `if (isLoading) return <LoadingIndicator />` here.
-
   return (
     <div className="container" style={{ paddingTop: '30px' }}>
       <div className="row">
@@ -99,7 +96,7 @@ const Bookshelf: React.FC<BookshelfProps> = ({ setPageActionLoading }) => {
             <h1 className="auth-card-title" style={{ marginBottom: '20px' }}>{t('bookshelf')}</h1>
 
             <div className="d-flex justify-content-between align-items-center" style={{ marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap' }}>
-              <button className="btn btn-primary" onClick={handleAddBook} style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+              <button className="btn btn-primary" onClick={handleAddBook} disabled={isPageActionLoading} style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
                 <PlusCircle size={20} style={{ marginRight: '8px' }} /> {t('add_book')}
               </button>
 
@@ -111,10 +108,11 @@ const Bookshelf: React.FC<BookshelfProps> = ({ setPageActionLoading }) => {
                     placeholder={t('search_by_title')}
                     value={searchTerm}
                     onChange={handleSearchChange}
+                    disabled={isPageActionLoading}
                     style={{ height: '34px', fontSize: '14px' }}
                   />
                 </div>
-                <button type="submit" className="btn btn-default" style={{ height: '34px', display: 'flex', alignItems: 'center' }}>
+                <button type="submit" className="btn btn-default" disabled={isPageActionLoading} style={{ height: '34px', display: 'flex', alignItems: 'center' }}>
                   <Search size={16} />
                 </button>
               </form>
@@ -122,8 +120,9 @@ const Bookshelf: React.FC<BookshelfProps> = ({ setPageActionLoading }) => {
               <SortDropdown currentSort={sort} onSortChange={handleSortChange} />
             </div>
 
-            {/* Removed local isLoading check here, FullScreenLoader handles it globally */}
-            {books.length === 0 ? (
+            {isPageActionLoading ? (
+              <p className="text-center">{t('loading')}...</p>
+            ) : books.length === 0 ? (
               <p className="text-center">{t('no_books_found')}</p>
             ) : (
               <div className="book-list" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '20px' }}>
@@ -150,7 +149,7 @@ const Bookshelf: React.FC<BookshelfProps> = ({ setPageActionLoading }) => {
                         <Link to={`/books/${book.id}`} className="btn btn-primary btn-sm" style={{ flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                           <Edit size={16} style={{ marginRight: '5px' }} /> {t('edit_book')}
                         </Link>
-                        <button onClick={() => handleDeleteBook(book.id)} className="btn btn-danger btn-sm" style={{ flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <button onClick={() => handleDeleteBook(book.id)} className="btn btn-danger btn-sm" disabled={isPageActionLoading} style={{ flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                           <Trash2 size={16} style={{ marginRight: '5px' }} /> {t('delete_book')}
                         </button>
                       </div>

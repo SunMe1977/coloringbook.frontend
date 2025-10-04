@@ -31,7 +31,7 @@ function App() {
   const [authenticated, setAuthenticated] = useState<boolean>(false);
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [appLoading, setAppLoading] = useState<boolean>(true);
-  const [isPageActionLoading, setPageActionLoading] = useState<boolean>(false); // New state for page-specific actions
+  const [isPageActionLoading, setPageActionLoading] = useState<boolean>(false); // State for page-specific actions
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -130,10 +130,22 @@ function App() {
             <Route path="/signup" element={<Signup onSignupSuccess={handleLoginSuccess} />} />
             
             <Route element={<PrivateRoute authenticated={authenticated} redirectPath="/" />}>
-              <Route path="/profile" element={<Profile currentUser={currentUser} onUserUpdate={handleUserUpdate} />} />
-              <Route path="/bookshelf" element={<Bookshelf setPageActionLoading={setPageActionLoading} />} /> {/* Pass setter */}
-              <Route path="/books/new" element={<BookDetails setPageActionLoading={setPageActionLoading} />} /> {/* Pass setter */}
-              <Route path="/books/:bookId" element={<BookDetails setPageActionLoading={setPageActionLoading} />} /> {/* Pass setter */}
+              <Route 
+                path="/profile" 
+                element={<Profile currentUser={currentUser} onUserUpdate={handleUserUpdate} />} 
+              />
+              <Route 
+                path="/bookshelf" 
+                element={<Bookshelf setPageActionLoading={setPageActionLoading} isPageActionLoading={isPageActionLoading} />} 
+              />
+              <Route 
+                path="/books/new" 
+                element={<BookDetails setPageActionLoading={setPageActionLoading} isPageActionLoading={isPageActionLoading} />} 
+              />
+              <Route 
+                path="/books/:bookId" 
+                element={<BookDetails setPageActionLoading={setPageActionLoading} isPageActionLoading={isPageActionLoading} />} 
+              />
             </Route>
 
             <Route path="/oauth2/redirect" element={<OAuth2RedirectHandler onLoginSuccess={handleLoginSuccess} />} />
