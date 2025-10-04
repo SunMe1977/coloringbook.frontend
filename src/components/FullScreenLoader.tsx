@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import loaderGif from '../img/loader.gif'; // Import the GIF
+import loaderGif from '../img/loader.gif';
 
 interface FullScreenLoaderProps {
   isLoading: boolean;
