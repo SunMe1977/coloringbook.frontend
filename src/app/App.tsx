@@ -131,7 +131,7 @@ function App() {
             
             <Route element={<PrivateRoute authenticated={authenticated} redirectPath="/" />}>
               <Route path="/profile" element={<Profile currentUser={currentUser} onUserUpdate={handleUserUpdate} />} />
-              <Route path="/bookshelf" element={<Bookshelf />} />
+              <Route path="/bookshelf" element={<Bookshelf setPageActionLoading={setPageActionLoading} />} /> {/* Pass setter */}
               <Route path="/books/new" element={<BookDetails setPageActionLoading={setPageActionLoading} />} /> {/* Pass setter */}
               <Route path="/books/:bookId" element={<BookDetails setPageActionLoading={setPageActionLoading} />} /> {/* Pass setter */}
             </Route>
