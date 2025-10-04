@@ -3,7 +3,6 @@ import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 import { confirmEmailVerification } from '@util/APIUtils';
-import LoadingIndicator from '@common/LoadingIndicator';
 
 interface VerifyEmailProps {
   onVerificationSuccess: () => Promise<any>; // Callback to refresh user data in App.tsx
@@ -67,7 +66,7 @@ const VerifyEmail: React.FC<VerifyEmailProps> = ({ onVerificationSuccess }) => {
             {verificationStatus === 'loading' && (
               <>
                 <p>{t('email.verification.processing')}</p>
-                <LoadingIndicator />
+                <p>{t('loading')}...</p> {/* Replaced LoadingIndicator with text */}
               </>
             )}
             {verificationStatus === 'success' && (

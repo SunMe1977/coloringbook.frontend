@@ -125,5 +125,13 @@
   "page.image.delete.success": "Image deleted successfully!",
   "page.image.delete.error": "Failed to delete image. Please try again.",
   "confirm_delete_page_image": "Are you sure you want to delete this image?",
-  "ai_feature_funding_message": "AI image generation is a powerful feature that requires significant computing resources. We need your support to fund this functionality. Please consider sponsoring us!"
+  "ai_feature_funding_message": "AI image generation is a powerful feature that requires significant computing resources. We need your support to fund this functionality. Please consider sponsoring us!",
+  "mass_upload_images": "Mass Upload Images",
+  "page.massUpload.success": "{{count}} pages uploaded successfully!",
+  "page.massUpload.error": "Failed to mass upload pages. Please try again.",
+  "delete_all_pages": "Delete All Pages",
+  "confirm_delete_all_pages": "Are you sure you want to delete ALL pages for this book? This action cannot be undone.",
+  "page.deleteAll.success": "All pages deleted successfully!",
+  "page.deleteAll.error": "Failed to delete all pages. Please try again.",
+  "loading": "Loading"
 }

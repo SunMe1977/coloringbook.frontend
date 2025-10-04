@@ -22,6 +22,7 @@ import Sponsor from '@pages/Sponsor';
 import Bookshelf from '@user/Bookshelf';
 import BookDetails from '@user/BookDetails';
 import CookieConsentBanner from '../components/CookieConsentBanner';
+import FullScreenLoader from '../components/FullScreenLoader';
 import { ToastContainer } from 'react-toastify';
 import { useGoogleAnalytics } from '../hooks/useGoogleAnalytics';
 import PrivateRoute from '@common/PrivateRoute';
@@ -29,13 +30,18 @@ import PrivateRoute from '@common/PrivateRoute';
 function App() {
   const [authenticated, setAuthenticated] = useState<boolean>(false);
   const [currentUser, setCurrentUser] = useState<any>(null);
+  const [appLoading, setAppLoading] = useState<boolean>(true);
+  const [isPageActionLoading, setPageActionLoading] = useState<boolean>(false); // New state for page-specific actions
   const location = useLocation();
   const navigate = useNavigate();
 
   useGoogleAnalytics();
 
-  // New function to fetch and set current user
   const fetchAndSetCurrentUser = useCallback(async () => {
+    console.log('App.tsx: fetchAndSetCurrentUser started. Setting appLoading to TRUE.');
+    setAppLoading(true);
+    const startTime = Date.now(); // Record start time
+
     try {
       const user = await getCurrentUser();
       if (user) {
@@ -55,6 +61,20 @@ function App() {
       setCurrentUser(null);
       console.log('App.tsx: Error during authentication check, set authenticated to false.');
       return null;
+    } finally {
+      const endTime = Date.now();
+      const elapsedTime = endTime - startTime;
+      const minDisplayTime = 3000; // Increased to 3 seconds for clear visibility
+
+      console.log(`App.tsx: fetchAndSetCurrentUser finished. Elapsed time: ${elapsedTime}ms. Minimum display time: ${minDisplayTime}ms.`);
+
+      if (elapsedTime < minDisplayTime) {
+        const remainingTime = minDisplayTime - elapsedTime;
+        console.log(`App.tsx: Delaying appLoading to FALSE by ${remainingTime}ms.`);
+        await new Promise(resolve => setTimeout(resolve, remainingTime));
+      }
+      console.log('App.tsx: Setting appLoading to FALSE.');
+      setAppLoading(false);
     }
   }, []);
 
@@ -70,7 +90,8 @@ function App() {
   }, [authenticated, currentUser, location.pathname, navigate]);
 
   const handleLogout = async () => {
-    console.log('App.tsx: handleLogout called.');
+    console.log('App.tsx: handleLogout called. Setting appLoading to TRUE.');
+    setAppLoading(true);
     try {
       await logout();
       console.log('App.tsx: Backend logout successful.');
@@ -80,7 +101,8 @@ function App() {
       navigate('/', { replace: true, state: {} });
       setAuthenticated(false);
       setCurrentUser(null);
-      console.log('App.tsx: Frontend state cleared after logout.');
+      console.log('App.tsx: Frontend state cleared after logout. Setting appLoading to FALSE.');
+      setAppLoading(false);
     }
   };
 
@@ -96,6 +118,7 @@ function App() {
 
   return (
     <div className="app">
+      <FullScreenLoader isLoading={appLoading || isPageActionLoading} /> {/* Now responds to both global and page-action loading */}
       <AppHeader authenticated={authenticated} onLogout={handleLogout} />
       <div className="app-content">
           <Routes>
@@ -109,8 +132,8 @@ function App() {
             <Route element={<PrivateRoute authenticated={authenticated} redirectPath="/" />}>
               <Route path="/profile" element={<Profile currentUser={currentUser} onUserUpdate={handleUserUpdate} />} />
               <Route path="/bookshelf" element={<Bookshelf />} />
-              <Route path="/books/new" element={<BookDetails />} />
-              <Route path="/books/:bookId" element={<BookDetails />} />
+              <Route path="/books/new" element={<BookDetails setPageActionLoading={setPageActionLoading} />} /> {/* Pass setter */}
+              <Route path="/books/:bookId" element={<BookDetails setPageActionLoading={setPageActionLoading} />} /> {/* Pass setter */}
             </Route>
 
             <Route path="/oauth2/redirect" element={<OAuth2RedirectHandler onLoginSuccess={handleLoginSuccess} />} />

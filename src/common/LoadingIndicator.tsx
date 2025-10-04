@@ -1,12 +1,11 @@
-import React from 'react';
+import React, { JSX } from 'react';
 
 export default function LoadingIndicator(): JSX.Element {
   return (
     <div
       className="loading-indicator"
-      style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginTop: '30px' }}
+      style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}
     >
-      Loading ...
       <svg width="50" height="50" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
         <circle
           cx="25"

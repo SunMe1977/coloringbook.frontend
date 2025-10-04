@@ -3,7 +3,6 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 import { resetPassword } from '@util/APIUtils';
-import LoadingIndicator from '@common/LoadingIndicator';
 import { Eye, EyeOff } from 'lucide-react';
 
 const ResetPassword: React.FC = () => {
@@ -109,7 +108,7 @@ const ResetPassword: React.FC = () => {
               </div>
               <div className="form-group">
                 <button type="submit" className="btn btn-block btn-primary" disabled={isLoading}>
-                  {isLoading ? <LoadingIndicator /> : t('reset_password_submit')}
+                  {isLoading ? tCommon('loading') : t('reset_password_submit')}
                 </button>
               </div>
             </form>

@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 import { getAllBooks, deleteBook, BookResponse } from '@util/APIUtils';
-import LoadingIndicator from '@common/LoadingIndicator';
 import Pagination from '@components/Pagination';
 import SortDropdown from '@components/SortDropdown';
 import ItemsPerPageDropdown from '@components/ItemsPerPageDropdown';
@@ -14,7 +13,7 @@ const Bookshelf: React.FC = () => {
   const navigate = useNavigate();
 
   const [books, setBooks] = useState<BookResponse[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true); // Keep local loading for data fetch
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [pageSize, setPageSize] = useState(10);
@@ -82,9 +81,8 @@ const Bookshelf: React.FC = () => {
     navigate('/books/new');
   };
 
-  if (isLoading) {
-    return <LoadingIndicator />;
-  }
+  // The FullScreenLoader in App.tsx will handle the initial loading state
+  // No need for a local `if (isLoading) return <LoadingIndicator />` here.
 
   return (
     <div className="container" style={{ paddingTop: '30px' }}>
@@ -117,7 +115,9 @@ const Bookshelf: React.FC = () => {
               <SortDropdown currentSort={sort} onSortChange={handleSortChange} />
             </div>
 
-            {books.length === 0 ? (
+            {isLoading ? ( // Use local isLoading for content within the page
+              <p className="text-center">{t('loading')}...</p>
+            ) : books.length === 0 ? (
               <p className="text-center">{t('no_books_found')}</p>
             ) : (
               <div className="book-list" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '20px' }}>

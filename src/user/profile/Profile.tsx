@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
-import { updateUserProfile, requestEmailVerification } from '@util/APIUtils'; // New API call
-import LoadingIndicator from '@common/LoadingIndicator'; // Assuming you have a LoadingIndicator component
+import { updateUserProfile, requestEmailVerification } from '@util/APIUtils';
 
 interface User {
   id: number; // Assuming user has an ID
@@ -26,7 +25,7 @@ const Profile: React.FC<ProfileProps> = ({ currentUser, onUserUpdate }) => {
   const [editedEmail, setEditedEmail] = useState(currentUser.email || '');
   const [currentImageUrl, setCurrentImageUrl] = useState<string | undefined>(currentUser.imageUrl);
   const [retryCount, setRetryCount] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false); // For save/cancel actions
   const [isRequestingVerification, setIsRequestingVerification] = useState(false); // New state for verification loading
   const [showGithubEmailWarning, setShowGithubEmailWarning] = useState(false);
 
@@ -100,7 +99,7 @@ const Profile: React.FC<ProfileProps> = ({ currentUser, onUserUpdate }) => {
   const handleRequestVerification = async () => {
     setIsRequestingVerification(true);
     try {
-      const response = await requestEmailVerification(i18n.language); // Pass current language
+      const response = await requestEmailVerification(); // Pass current language
       toast.success(response.message || t('email.verification.sent'), { autoClose: 5000 });
     } catch (error: any) {
       console.error('Failed to request email verification:', error);
@@ -169,7 +168,7 @@ const Profile: React.FC<ProfileProps> = ({ currentUser, onUserUpdate }) => {
                   </div>
                   <div className="form-group">
                     <button type="submit" className="btn btn-primary" disabled={isLoading} style={{ marginRight: '10px' }}>
-                      {isLoading ? <LoadingIndicator /> : t('save')}
+                      {isLoading ? t('loading') : t('save')}
                     </button>
                     <button type="button" className="btn btn-default" onClick={handleCancel} disabled={isLoading}>
                       {t('cancel')}
@@ -197,7 +196,7 @@ const Profile: React.FC<ProfileProps> = ({ currentUser, onUserUpdate }) => {
                       disabled={isRequestingVerification}
                       style={{ marginTop: '10px', marginBottom: '10px' }}
                     >
-                      {isRequestingVerification ? <LoadingIndicator /> : t('email.verify_button')}
+                      {isRequestingVerification ? t('loading') : t('email.verify_button')}
                     </button>
                   )}
                   <button type="button" className="btn btn-primary" onClick={handleEdit} style={{ marginTop: '20px' }}>

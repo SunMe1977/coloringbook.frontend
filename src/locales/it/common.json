@@ -120,5 +120,13 @@
   "page.image.delete.success": "Immagine della pagina eliminata con successo!",
   "page.image.delete.error": "Impossibile eliminare l'immagine. Riprova.",
   "confirm_delete_page_image": "Sei sicuro di voler eliminare questa immagine?",
-  "ai_feature_funding_message": "La generazione di immagini AI è una funzionalità potente che richiede risorse di calcolo significative. Abbiamo bisogno del tuo supporto per finanziare questa funzionalità. Considera di sponsorizzarci!"
+  "ai_feature_funding_message": "La generazione di immagini AI è una funzionalità potente che richiede risorse di calcolo significative. Abbiamo bisogno del tuo supporto per finanziare questa funzionalità. Considera di sponsorizzarci!",
+  "mass_upload_images": "Carica Immagini in Massa",
+  "page.massUpload.success": "{{count}} pagine caricate con successo!",
+  "page.massUpload.error": "Impossibile caricare in massa le pagine. Riprova.",
+  "delete_all_pages": "Elimina Tutte le Pagine",
+  "confirm_delete_all_pages": "Sei sicuro di voler eliminare TUTTE le pagine di questo libro? Questa azione non può essere annullata.",
+  "page.deleteAll.success": "Tutte le pagine eliminate con successo!",
+  "page.deleteAll.error": "Impossibile eliminare tutte le pagine. Riprova.",
+  "loading": "Caricamento"
 }

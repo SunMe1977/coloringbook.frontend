@@ -2,10 +2,9 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
-import { getBookById, updateBook, deleteBook, addPageToBook, updatePage, deletePage, reorderPages, createBook, uploadPageImage, deletePageImage, BookResponse, PageResponse } from '@util/APIUtils';
-import LoadingIndicator from '@common/LoadingIndicator';
-import { Edit, Save, X, PlusCircle, Trash2, ChevronUp, ChevronDown, Image as ImageIcon, Upload, ImageOff } from 'lucide-react';
+import { getBookById, updateBook, deleteBook, addPageToBook, updatePage, deletePage, reorderPages, createBook, uploadPageImage, deletePageImage, massUploadPages, deleteAllPages, BookResponse, PageResponse } from '@util/APIUtils';
 import { CLOUDINARY_BASE_URL } from '@constants'; // Import CLOUDINARY_BASE_URL from constants
+import { Edit, Save, X, PlusCircle, Trash2, ChevronUp, ChevronDown, Image as ImageIcon, Upload, ImageOff, Files } from 'lucide-react'; // Added Files icon
 
 interface BookDetailsFormData {
   languageIso: string;
@@ -23,7 +22,11 @@ interface PageDetailsFormData {
   description: string;
 }
 
-const BookDetails: React.FC = () => {
+interface BookDetailsProps {
+  setPageActionLoading: (isLoading: boolean) => void; // New prop to control global page action loading
+}
+
+const BookDetails: React.FC<BookDetailsProps> = ({ setPageActionLoading }) => {
   const { bookId } = useParams<{ bookId: string }>();
   const navigate = useNavigate();
   const { t } = useTranslation('common');
@@ -31,7 +34,7 @@ const BookDetails: React.FC = () => {
   const isNewBook = bookId === undefined || bookId === 'new';
 
   const [book, setBook] = useState<BookResponse | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true); // Keep local loading for data fetch
   const [isEditingBook, setIsEditingBook] = useState(isNewBook); // Start in edit mode if it's a new book
   const [bookFormData, setBookFormData] = useState<BookDetailsFormData>({
     languageIso: 'en', // Default language
@@ -49,8 +52,9 @@ const BookDetails: React.FC = () => {
     imageFilename: '',
     description: '',
   });
-  const [isPageLoading, setIsPageLoading] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null); // Ref for file input
+  // Removed local isPageLoading state, now using setPageActionLoading from props
+  const fileInputRef = useRef<HTMLInputElement>(null); // Ref for single file input
+  const massFileInputRef = useRef<HTMLInputElement>(null); // Ref for mass file input
 
   const fetchBookDetails = useCallback(async () => {
     if (isNewBook) {
@@ -90,7 +94,7 @@ const BookDetails: React.FC = () => {
 
   const handleSaveBook = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
+    setIsLoading(true); // Use local isLoading for this action
     try {
       let resultBook: BookResponse;
       if (isNewBook) {
@@ -132,6 +136,7 @@ const BookDetails: React.FC = () => {
   const handleDeleteBook = async () => {
     if (!bookId) return;
     if (window.confirm(t('confirm_delete_book'))) {
+      setIsLoading(true); // Use local isLoading for this action
       try {
         await deleteBook(Number(bookId));
         toast.success(t('book.delete.success'), { autoClose: 3000 });
@@ -139,13 +144,15 @@ const BookDetails: React.FC = () => {
       } catch (error: any) {
         console.error('Failed to delete book:', error);
         toast.error(error.message || t('book.delete.error'), { autoClose: 5000 });
+      } finally {
+        setIsLoading(false);
       }
     }
   };
 
   const handleAddPage = async () => {
     if (!bookId) return;
-    setIsPageLoading(true);
+    setPageActionLoading(true); // Activate global loader
     try {
       // Page number will be assigned by backend
       await addPageToBook(Number(bookId), { pageNumber: 0, imageFilename: '', description: '' });
@@ -155,7 +162,7 @@ const BookDetails: React.FC = () => {
       console.error('Failed to add page:', error);
       toast.error(error.message || t('page.create.error'), { autoClose: 5000 });
     } finally {
-      setIsPageLoading(false);
+      setPageActionLoading(false); // Deactivate global loader
     }
   };
 
@@ -175,7 +182,7 @@ const BookDetails: React.FC = () => {
 
   const handleSavePage = async (pageId: number) => {
     if (!bookId) return;
-    setIsPageLoading(true);
+    setPageActionLoading(true); // Activate global loader
     try {
       await updatePage(Number(bookId), pageId, pageFormData);
       toast.success(t('page.update.success'), { autoClose: 3000 });
@@ -185,7 +192,7 @@ const BookDetails: React.FC = () => {
       console.error('Failed to update page:', error);
       toast.error(error.message || t('page.update.error'), { autoClose: 5000 });
     } finally {
-      setIsPageLoading(false);
+      setPageActionLoading(false); // Deactivate global loader
     }
   };
 
@@ -201,6 +208,7 @@ const BookDetails: React.FC = () => {
   const handleDeletePage = async (pageId: number) => {
     if (!bookId) return;
     if (window.confirm(t('confirm_delete_page'))) {
+      setPageActionLoading(true); // Activate global loader
       try {
         await deletePage(Number(bookId), pageId);
         toast.success(t('page.delete.success'), { autoClose: 3000 });
@@ -208,6 +216,8 @@ const BookDetails: React.FC = () => {
       } catch (error: any) {
         console.error('Failed to delete page:', error);
         toast.error(error.message || t('page.delete.error'), { autoClose: 5000 });
+      } finally {
+        setPageActionLoading(false); // Deactivate global loader
       }
     }
   };
@@ -222,7 +232,7 @@ const BookDetails: React.FC = () => {
       return;
     }
 
-    setIsPageLoading(true);
+    setPageActionLoading(true); // Activate global loader
     try {
       await reorderPages(Number(bookId), { oldPageNumber, newPageNumber });
       toast.success(t('page.reorder.success'), { autoClose: 3000 });
@@ -231,7 +241,7 @@ const BookDetails: React.FC = () => {
       console.error('Failed to reorder pages:', error);
       toast.error(error.message || t('page.reorder.error'), { autoClose: 5000 });
     } finally {
-      setIsPageLoading(false);
+      setPageActionLoading(false); // Deactivate global loader
     }
   };
 
@@ -241,7 +251,7 @@ const BookDetails: React.FC = () => {
     }
 
     const file = event.target.files[0];
-    setIsPageLoading(true);
+    setPageActionLoading(true); // Activate global loader
     try {
       const updatedPage = await uploadPageImage(Number(bookId), pageId, file);
       toast.success(t('page.image.upload.success'), { autoClose: 3000 });
@@ -257,7 +267,7 @@ const BookDetails: React.FC = () => {
       console.error('Failed to upload image:', error);
       toast.error(error.message || t('page.image.upload.error'), { autoClose: 5000 });
     } finally {
-      setIsPageLoading(false);
+      setPageActionLoading(false); // Deactivate global loader
       // Reset file input to allow re-uploading the same file
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
@@ -268,7 +278,7 @@ const BookDetails: React.FC = () => {
   const handleDeleteImage = async (pageId: number) => {
     if (!bookId) return;
     if (window.confirm(t('confirm_delete_page_image'))) {
-      setIsPageLoading(true);
+      setPageActionLoading(true); // Activate global loader
       try {
         await deletePageImage(Number(bookId), pageId);
         toast.success(t('page.image.delete.success'), { autoClose: 3000 });
@@ -284,7 +294,46 @@ const BookDetails: React.FC = () => {
         console.error('Failed to delete image:', error);
         toast.error(error.message || t('page.image.delete.error'), { autoClose: 5000 });
     } finally {
-        setIsPageLoading(false);
+        setPageActionLoading(false); // Deactivate global loader
+      }
+    }
+  };
+
+  const handleMassImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!bookId || !event.target.files || event.target.files.length === 0) {
+      return;
+    }
+
+    const files = Array.from(event.target.files);
+    setPageActionLoading(true); // Activate global loader
+    try {
+      await massUploadPages(Number(bookId), files);
+      toast.success(t('page.massUpload.success', { count: files.length }), { autoClose: 3000 });
+      await fetchBookDetails(); // Re-fetch book to get all new pages
+    } catch (error: any) {
+      console.error('Failed to mass upload images:', error);
+      toast.error(error.message || t('page.massUpload.error'), { autoClose: 5000 });
+    } finally {
+      setPageActionLoading(false); // Deactivate global loader
+      if (massFileInputRef.current) {
+        massFileInputRef.current.value = ''; // Clear file input
+      }
+    }
+  };
+
+  const handleDeleteAllPages = async () => {
+    if (!bookId) return;
+    if (window.confirm(t('confirm_delete_all_pages'))) {
+      setPageActionLoading(true); // Activate global loader
+      try {
+        await deleteAllPages(Number(bookId));
+        toast.success(t('page.deleteAll.success'), { autoClose: 3000 });
+        await fetchBookDetails(); // Re-fetch book to show no pages
+      } catch (error: any) {
+        console.error('Failed to delete all pages:', error);
+        toast.error(error.message || t('page.deleteAll.error'), { autoClose: 5000 });
+      } finally {
+        setPageActionLoading(false); // Deactivate global loader
       }
     }
   };
@@ -293,11 +342,10 @@ const BookDetails: React.FC = () => {
     toast.info(t('ai_feature_funding_message'), { autoClose: 8000 });
   };
 
-  if (isLoading) {
-    return <LoadingIndicator />;
-  }
+  // The FullScreenLoader in App.tsx will handle the initial loading state
+  // No need for a local `if (isLoading) return <LoadingIndicator />` here.
 
-  if (!book && !isNewBook) {
+  if (!book && !isNewBook && !isLoading) { // Only show error if not loading and no book
     return <p className="text-center">{t('error.resourceNotFound', { resourceName: 'Book', fieldName: 'id', fieldValue: bookId })}</p>;
   }
 
@@ -319,7 +367,7 @@ const BookDetails: React.FC = () => {
                 ) : (
                   <div>
                     <button className="btn btn-success btn-sm" onClick={handleSaveBook} disabled={isLoading} style={{ marginRight: '10px', display: 'flex', alignItems: 'center' }}>
-                      {isLoading ? <LoadingIndicator /> : <><Save size={16} style={{ marginRight: '5px' }} /> {t('save')}</>}
+                      {isLoading ? t('loading') : <><Save size={16} style={{ marginRight: '5px' }} /> {t('save')}</>}
                     </button>
                     <button className="btn btn-default btn-sm" onClick={handleCancelEditBook} disabled={isLoading} style={{ display: 'flex', alignItems: 'center' }}>
                       <X size={16} style={{ marginRight: '5px' }} /> {t('cancel')}
@@ -365,7 +413,7 @@ const BookDetails: React.FC = () => {
                   </div>
                   <div className="form-group" style={{ marginTop: '20px' }}>
                     <button type="submit" className="btn btn-success" disabled={isLoading} style={{ marginRight: '10px' }}>
-                      {isLoading ? <LoadingIndicator /> : <><Save size={16} style={{ marginRight: '5px' }} /> {t('save')}</>}
+                      {isLoading ? t('loading') : <><Save size={16} style={{ marginRight: '5px' }} /> {t('save')}</>}
                     </button>
                     <button type="button" className="btn btn-default" onClick={handleCancelEditBook} disabled={isLoading}>
                       <X size={16} style={{ marginRight: '5px' }} /> {t('cancel')}
@@ -385,8 +433,8 @@ const BookDetails: React.FC = () => {
                       <img src={`${CLOUDINARY_BASE_URL}${book.coverImageFilename}`} alt={book.title} style={{ maxWidth: '200px', maxHeight: '200px', display: 'block', marginTop: '10px', border: '1px solid #ddd', borderRadius: '4px' }} />
                     </div>
                   )}
-                  <button className="btn btn-danger" onClick={handleDeleteBook} style={{ marginTop: '20px', display: 'flex', alignItems: 'center' }}>
-                    <Trash2 size={16} style={{ marginRight: '5px' }} /> {t('delete_book')}
+                  <button className="btn btn-danger" onClick={handleDeleteBook} disabled={isLoading} style={{ marginTop: '20px', display: 'flex', alignItems: 'center' }}>
+                    {isLoading ? t('loading') : <><Trash2 size={16} style={{ marginRight: '5px' }} /> {t('delete_book')}</>}
                   </button>
                 </div>
               )}
@@ -395,14 +443,34 @@ const BookDetails: React.FC = () => {
             {/* Pages Section - Only visible for existing books */}
             {!isNewBook && book && (
               <div className="pages-section" style={{ padding: '20px', border: '1px solid #eee', borderRadius: '8px', backgroundColor: '#f9f9f9' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '10px' }}>
                   <h2 style={{ margin: 0, fontSize: '1.5em', color: '#333' }}>{t('pages')}</h2>
-                  <button className="btn btn-primary btn-sm" onClick={handleAddPage} disabled={isPageLoading} style={{ display: 'flex', alignItems: 'center' }}>
-                    {isPageLoading ? <LoadingIndicator /> : <><PlusCircle size={16} style={{ marginRight: '5px' }} /> {t('add_page')}</>}
-                  </button>
+                  <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                    <button className="btn btn-primary btn-sm" onClick={handleAddPage} disabled={isLoading} style={{ display: 'flex', alignItems: 'center' }}>
+                      {isLoading ? t('loading') : <><PlusCircle size={16} style={{ marginRight: '5px' }} /> {t('add_page')}</>}
+                    </button>
+                    <label htmlFor="massFileUpload" className="btn btn-info btn-sm" style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', width: 'fit-content' }}>
+                      <Files size={16} style={{ marginRight: '5px' }} /> {t('mass_upload_images')}
+                    </label>
+                    <input
+                      type="file"
+                      id="massFileUpload"
+                      ref={massFileInputRef}
+                      style={{ display: 'none' }}
+                      onChange={handleMassImageUpload}
+                      accept="image/png, image/jpeg, image/jpg"
+                      multiple
+                      disabled={isLoading}
+                    />
+                    <button className="btn btn-danger btn-sm" onClick={handleDeleteAllPages} disabled={isLoading || (book.pages && book.pages.length === 0)} style={{ display: 'flex', alignItems: 'center' }}>
+                      {isLoading ? t('loading') : <><Trash2 size={16} style={{ marginRight: '5px' }} /> {t('delete_all_pages')}</>}
+                    </button>
+                  </div>
                 </div>
 
-                {book.pages && book.pages.length > 0 ? (
+                {isLoading ? ( // Use local isLoading for content within the page
+                  <p className="text-center">{t('loading')}...</p>
+                ) : book.pages && book.pages.length > 0 ? (
                   <div className="page-list" style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '20px' }}>
                     {book.pages.map((page) => (
                       <div key={page.id} className="page-card" style={{ border: '1px solid #ddd', borderRadius: '8px', padding: '15px', display: 'flex', flexDirection: 'column', position: 'relative' }}>
@@ -412,7 +480,7 @@ const BookDetails: React.FC = () => {
                             <button
                               className="btn btn-default btn-sm"
                               onClick={() => handleMovePage(page.id, page.pageNumber, 'up')}
-                              disabled={page.pageNumber === 1 || isPageLoading}
+                              disabled={page.pageNumber === 1 || isLoading}
                               title={t('move_page_up')}
                             >
                               <ChevronUp size={16} />
@@ -420,17 +488,17 @@ const BookDetails: React.FC = () => {
                             <button
                               className="btn btn-default btn-sm"
                               onClick={() => handleMovePage(page.id, page.pageNumber, 'down')}
-                              disabled={page.pageNumber === book.pages.length || isPageLoading}
+                              disabled={page.pageNumber === book.pages.length || isLoading}
                               title={t('move_page_down')}
                             >
                               <ChevronDown size={16} />
                             </button>
                             {isEditingPage === page.id ? (
                               <>
-                                <button className="btn btn-success btn-sm" onClick={() => handleSavePage(page.id)} disabled={isPageLoading} title={t('save')}>
-                                  <Save size={16} />
+                                <button className="btn btn-success btn-sm" onClick={() => handleSavePage(page.id)} disabled={isLoading} title={t('save')}>
+                                  {isLoading ? t('loading') : <Save size={16} />}
                                 </button>
-                                <button className="btn btn-default btn-sm" onClick={() => handleCancelEditPage(page)} disabled={isPageLoading} title={t('cancel')}>
+                                <button className="btn btn-default btn-sm" onClick={() => handleCancelEditPage(page)} disabled={isLoading} title={t('cancel')}>
                                   <X size={16} />
                                 </button>
                               </>
@@ -439,7 +507,7 @@ const BookDetails: React.FC = () => {
                                 <Edit size={16} />
                               </button>
                             )}
-                            <button className="btn btn-danger btn-sm" onClick={() => handleDeletePage(page.id)} disabled={isPageLoading} title={t('delete_page')}>
+                            <button className="btn btn-danger btn-sm" onClick={() => handleDeletePage(page.id)} disabled={isLoading} title={t('delete_page')}>
                               <Trash2 size={16} />
                             </button>
                           </div>
@@ -458,7 +526,7 @@ const BookDetails: React.FC = () => {
                             </div>
                             <div className="form-group" style={{ marginTop: '15px' }}>
                                 <label htmlFor={`fileUpload-${page.id}`} className="btn btn-success btn-sm" style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', width: 'fit-content' }}> {/* Changed to btn-success */}
-                                    <Upload size={16} style={{ marginRight: '5px' }} /> {t('upload_image')}
+                                    {isLoading ? t('loading') : <><Upload size={16} style={{ marginRight: '5px' }} /> {t('upload_image')}</>}
                                 </label>
                                 <input
                                     type="file"
@@ -467,12 +535,12 @@ const BookDetails: React.FC = () => {
                                     style={{ display: 'none' }}
                                     onChange={(e) => handleImageUpload(e, page.id)}
                                     accept="image/png, image/jpeg, image/jpg"
-                                    disabled={isPageLoading}
+                                    disabled={isLoading}
                                 />
                             </div>
                             <div className="form-group" style={{ marginTop: '15px' }}>
-                              <button type="button" className="btn btn-primary btn-sm" onClick={handleRecreateWithAI} disabled={isPageLoading} style={{ display: 'flex', alignItems: 'center' }}> {/* Changed to btn-primary */}
-                                <ImageIcon size={16} style={{ marginRight: '5px' }} /> {t('create_image')}
+                              <button type="button" className="btn btn-primary btn-sm" onClick={handleRecreateWithAI} disabled={isLoading} style={{ display: 'flex', alignItems: 'center' }}> {/* Changed to btn-primary */}
+                                {isLoading ? t('loading') : <><ImageIcon size={16} style={{ marginRight: '5px' }} /> {t('create_image')}</>}
                               </button>
                             </div>
                           </form>
@@ -483,8 +551,8 @@ const BookDetails: React.FC = () => {
                               {page.imageFilename ? (
                                 <>
                                   <img src={`${CLOUDINARY_BASE_URL}${page.imageFilename}`} alt={`Page ${page.pageNumber}`} style={{ maxWidth: '100%', maxHeight: '200px', display: 'block', marginBottom: '10px', border: '1px solid #ddd', borderRadius: '4px' }} />
-                                  <button className="btn btn-danger btn-sm" onClick={() => handleDeleteImage(page.id)} disabled={isPageLoading} style={{ display: 'flex', alignItems: 'center' }}>
-                                    <ImageOff size={16} style={{ marginRight: '5px' }} /> {t('delete_page_image')}
+                                  <button className="btn btn-danger btn-sm" onClick={() => handleDeleteImage(page.id)} disabled={isLoading} style={{ display: 'flex', alignItems: 'center' }}>
+                                    {isLoading ? t('loading') : <><ImageOff size={16} style={{ marginRight: '5px' }} /> {t('delete_page_image')}</>}
                                   </button>
                                 </>
                               ) : (
@@ -494,7 +562,7 @@ const BookDetails: React.FC = () => {
                             {/* Upload and AI buttons always visible in view mode */}
                             <div className="form-group" style={{ marginTop: '15px', display: 'flex', gap: '10px', justifyContent: 'center' }}>
                                 <label htmlFor={`fileUpload-${page.id}-view`} className="btn btn-success btn-sm" style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', width: 'fit-content' }}> {/* Changed to btn-success */}
-                                    <Upload size={16} style={{ marginRight: '5px' }} /> {t('upload_image')}
+                                    {isLoading ? t('loading') : <><Upload size={16} style={{ marginRight: '5px' }} /> {t('upload_image')}</>}
                                 </label>
                                 <input
                                     type="file"
@@ -503,10 +571,10 @@ const BookDetails: React.FC = () => {
                                     style={{ display: 'none' }}
                                     onChange={(e) => handleImageUpload(e, page.id)}
                                     accept="image/png, image/jpeg, image/jpg"
-                                    disabled={isPageLoading}
+                                    disabled={isLoading}
                                 />
-                                <button type="button" className="btn btn-primary btn-sm" onClick={handleRecreateWithAI} disabled={isPageLoading} style={{ display: 'flex', alignItems: 'center' }}> {/* Changed to btn-primary */}
-                                  <ImageIcon size={16} style={{ marginRight: '5px' }} /> {t('create_image')}
+                                <button type="button" className="btn btn-primary btn-sm" onClick={handleRecreateWithAI} disabled={isLoading} style={{ display: 'flex', alignItems: 'center' }}> {/* Changed to btn-primary */}
+                                  {isLoading ? t('loading') : <><ImageIcon size={16} style={{ marginRight: '5px' }} /> {t('create_image')}</>}
                                 </button>
                             </div>
                           </>

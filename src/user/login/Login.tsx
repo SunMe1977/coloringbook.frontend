@@ -7,7 +7,6 @@ import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 import { login, getCurrentUser } from '../../util/APIUtils';
 import { GOOGLE_AUTH_URL, FACEBOOK_AUTH_URL, GITHUB_AUTH_URL } from '../../constants'; // ACCESS_TOKEN no longer needed
-import LoadingIndicator from '../../common/LoadingIndicator';
 import { Eye, EyeOff } from 'lucide-react'; // Import icons
 
 interface LoginProps {
@@ -155,7 +154,7 @@ function LoginForm({ onLoginSuccess }: { onLoginSuccess: (user: any) => void }) 
       </div>
       <div className="form-group">
         <button type="submit" className="btn btn-block btn-primary" disabled={isLoading}>
-          {isLoading ? <LoadingIndicator /> : tCommon('login')}
+          {isLoading ? tCommon('loading') : tCommon('login')}
         </button>
       </div>
     </form>

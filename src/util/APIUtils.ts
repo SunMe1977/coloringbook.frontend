@@ -29,7 +29,9 @@ const isCsrfIgnoredEndpoint = (requestUrl: string) => {
   // These paths are ignored by Spring Security's CSRF filter in SecurityConfig.java
   return path.startsWith('/auth/') || 
          path.startsWith('/user/verify-email/request') || 
-         path.startsWith('/user/verify-email/confirm');
+         path.startsWith('/user/verify-email/confirm') ||
+         path.match(/^\/api\/books\/\d+\/pages\/mass-upload$/) || // Match /api/books/{bookId}/pages/mass-upload
+         path.match(/^\/api\/books\/\d+\/pages\/all$/); // Match /api/books/{bookId}/pages/all
 };
 
 const request = async (options: RequestOptions): Promise<any> => {
@@ -345,6 +347,27 @@ export function uploadPageImage(bookId: number, pageId: number, file: File): Pro
 export function deletePageImage(bookId: number, pageId: number): Promise<any> {
   return request({
     url: `${PAGES_API_BASE_URL(bookId)}/${pageId}/image`,
+    method: 'DELETE',
+  });
+}
+
+export function massUploadPages(bookId: number, files: File[]): Promise<PageResponse[]> {
+  const formData = new FormData();
+  files.forEach(file => {
+    formData.append('files', file); // Use 'files' as the parameter name for multiple files
+  });
+
+  return request({
+    url: `${PAGES_API_BASE_URL(bookId)}/mass-upload`,
+    method: 'POST',
+    body: formData,
+    isMultipart: true,
+  });
+}
+
+export function deleteAllPages(bookId: number): Promise<any> {
+  return request({
+    url: `${PAGES_API_BASE_URL(bookId)}/all`,
     method: 'DELETE',
   });
 }

@@ -125,5 +125,13 @@
   "page.image.delete.success": "Seitenbild erfolgreich gelöscht!",
   "page.image.delete.error": "Fehler beim Löschen des Bildes. Bitte versuchen Sie es erneut.",
   "confirm_delete_page_image": "Sind Sie sicher, dass Sie dieses Bild löschen möchten?",
-  "ai_feature_funding_message": "Die KI-Bildgenerierung ist eine leistungsstarke Funktion, die erhebliche Rechenressourcen erfordert. Wir benötigen Ihre Unterstützung, um diese Funktionalität zu finanzieren. Bitte erwägen Sie, uns zu sponsern!"
+  "ai_feature_funding_message": "Die KI-Bildgenerierung ist eine leistungsstarke Funktion, die erhebliche Rechenressourcen erfordert. Wir benötigen Ihre Unterstützung, um diese Funktionalität zu finanzieren. Bitte erwägen Sie, uns zu sponsern!",
+  "mass_upload_images": "Bilder massenhaft hochladen",
+  "page.massUpload.success": "{{count}} Seiten erfolgreich hochgeladen!",
+  "page.massUpload.error": "Fehler beim Massen-Upload von Seiten. Bitte versuchen Sie es erneut.",
+  "delete_all_pages": "Alle Seiten löschen",
+  "confirm_delete_all_pages": "Sind Sie sicher, dass Sie ALLE Seiten für dieses Buch löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
+  "page.deleteAll.success": "Alle Seiten erfolgreich gelöscht!",
+  "page.deleteAll.error": "Fehler beim Löschen aller Seiten. Bitte versuchen Sie es erneut.",
+  "loading": "Wird geladen"
 }

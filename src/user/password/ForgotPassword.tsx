@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 import { forgotPassword } from '@util/APIUtils';
-import LoadingIndicator from '@common/LoadingIndicator';
 
 const ForgotPassword: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -48,7 +47,7 @@ const ForgotPassword: React.FC = () => {
               </div>
               <div className="form-group">
                 <button type="submit" className="btn btn-block btn-primary" disabled={isLoading}>
-                  {isLoading ? <LoadingIndicator /> : t('forgot_password_send_link')}
+                  {isLoading ? tCommon('loading') : t('forgot_password_send_link')}
                 </button>
               </div>
             </form>
