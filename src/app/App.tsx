@@ -38,7 +38,6 @@ function App() {
   useGoogleAnalytics();
 
   const fetchAndSetCurrentUser = useCallback(async () => {
-    console.log('App.tsx: fetchAndSetCurrentUser started. Setting appLoading to TRUE.');
     setAppLoading(true);
     const startTime = Date.now(); // Record start time
 
@@ -47,33 +46,26 @@ function App() {
       if (user) {
         setCurrentUser(user);
         setAuthenticated(true);
-        console.log('App.tsx: User authenticated, fetching current user.');
         return user;
       } else {
         setAuthenticated(false);
         setCurrentUser(null);
-        console.log('App.tsx: No valid authentication cookie, set authenticated to false.');
         return null;
       }
     } catch (error) {
       console.error('❌ App.tsx: getCurrentUser failed (network error or unexpected API error):', error);
       setAuthenticated(false);
       setCurrentUser(null);
-      console.log('App.tsx: Error during authentication check, set authenticated to false.');
       return null;
     } finally {
       const endTime = Date.now();
       const elapsedTime = endTime - startTime;
       const minDisplayTime = 3000; // Increased to 3 seconds for clear visibility
 
-      console.log(`App.tsx: fetchAndSetCurrentUser finished. Elapsed time: ${elapsedTime}ms. Minimum display time: ${minDisplayTime}ms.`);
-
       if (elapsedTime < minDisplayTime) {
         const remainingTime = minDisplayTime - elapsedTime;
-        console.log(`App.tsx: Delaying appLoading to FALSE by ${remainingTime}ms.`);
         await new Promise(resolve => setTimeout(resolve, remainingTime));
       }
-      console.log('App.tsx: Setting appLoading to FALSE.');
       setAppLoading(false);
     }
   }, []);
@@ -84,35 +76,29 @@ function App() {
 
   useEffect(() => {
     if (authenticated && currentUser && location.pathname === '/') {
-      console.log(`App.tsx useEffect: Authenticated user on home page, redirecting to /profile.`);
       navigate('/profile', { replace: true });
     }
   }, [authenticated, currentUser, location.pathname, navigate]);
 
   const handleLogout = async () => {
-    console.log('App.tsx: handleLogout called. Setting appLoading to TRUE.');
     setAppLoading(true);
     try {
       await logout();
-      console.log('App.tsx: Backend logout successful.');
     } catch (error) {
       console.error('❌ App.tsx: Backend logout failed:', error);
     } finally {
       navigate('/', { replace: true, state: {} });
       setAuthenticated(false);
       setCurrentUser(null);
-      console.log('App.tsx: Frontend state cleared after logout. Setting appLoading to FALSE.');
       setAppLoading(false);
     }
   };
 
   const handleLoginSuccess = async (user: any) => {
-    console.log('App.tsx: handleLoginSuccess called.');
     await fetchAndSetCurrentUser();
   };
 
   const handleUserUpdate = async (updatedUser: any) => {
-    console.log('App.tsx: handleUserUpdate called.');
     await fetchAndSetCurrentUser();
   };
 

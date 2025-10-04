@@ -305,6 +305,8 @@ const BookDetails: React.FC<BookDetailsProps> = ({ setPageActionLoading, isPageA
 
     const files = Array.from(event.target.files);
     setPageActionLoading(true); // Activate global loader
+    const startTime = Date.now(); // Record start time
+
     try {
       await massUploadPages(Number(bookId), files);
       toast.success(t('page.massUpload.success', { count: files.length }), { autoClose: 3000 });
@@ -313,8 +315,14 @@ const BookDetails: React.FC<BookDetailsProps> = ({ setPageActionLoading, isPageA
       console.error('Failed to mass upload images:', error);
       toast.error(error.message || t('page.massUpload.error'), { autoClose: 5000 });
     } finally {
-      // Add a small delay to ensure the full-screen loader is visible
-      await new Promise(resolve => setTimeout(resolve, 500)); // 500ms delay
+      const endTime = Date.now();
+      const elapsedTime = endTime - startTime;
+      const minDisplayTime = 1000; // Minimum 1 second display time for loader
+
+      if (elapsedTime < minDisplayTime) {
+        const remainingTime = minDisplayTime - elapsedTime;
+        await new Promise(resolve => setTimeout(resolve, remainingTime));
+      }
       setPageActionLoading(false); // Deactivate global loader
       if (massFileInputRef.current) {
         massFileInputRef.current.value = ''; // Clear file input

@@ -26,7 +26,7 @@ const Bookshelf: React.FC<BookshelfProps> = ({ setPageActionLoading, isPageActio
   const [totalElements, setTotalElements] = useState(0);
 
   const fetchBooks = useCallback(async () => {
-    setPageActionLoading(true); // Activate global loader
+    setPageActionLoading(true); // Activate global loader for initial fetch
     try {
       const response = await getAllBooks(currentPage, pageSize, sort, searchTerm);
       setBooks(response.content);
@@ -70,7 +70,7 @@ const Bookshelf: React.FC<BookshelfProps> = ({ setPageActionLoading, isPageActio
 
   const handleDeleteBook = async (bookId: number) => {
     if (window.confirm(t('confirm_delete_book'))) {
-      setPageActionLoading(true); // Activate global loader
+      setPageActionLoading(true); // Activate global loader for this action
       try {
         await deleteBook(bookId);
         toast.success(t('book.delete.success'), { autoClose: 3000 });

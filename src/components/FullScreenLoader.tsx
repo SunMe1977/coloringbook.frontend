@@ -1,38 +1,20 @@
-import React from 'react';
+import React, { JSX } from 'react';
+import loaderGif from '../../src/img/loader.gif'; // Import the GIF
 
 export default function LoadingIndicator(): JSX.Element {
   return (
     <div
       className="loading-indicator"
-      style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '100px', // Consistent dimensions for the container
+        height: '100px',
+      }}
     >
-      <svg width="50" height="50" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
-        <circle
-          cx="25"
-          cy="25"
-          r="20"
-          fill="none"
-          stroke="#2098f3"
-          strokeWidth="4"
-          strokeLinecap="round"
-        >
-          <animateTransform
-            attributeName="transform"
-            type="rotate"
-            from="0 25 25"
-            to="360 25 25"
-            dur="1s"
-            repeatCount="indefinite"
-          />
-          <animate
-            attributeName="cy"
-            values="25; 20; 25; 30; 25"
-            keyTimes="0; 0.25; 0.5; 0.75; 1"
-            dur="2s"
-            repeatCount="indefinite"
-          />
-        </circle>
-      </svg>
+      <img src={loaderGif} alt="Loading..." style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
     </div>
   );
 }
