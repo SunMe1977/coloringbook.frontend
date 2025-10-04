@@ -313,6 +313,8 @@ const BookDetails: React.FC<BookDetailsProps> = ({ setPageActionLoading, isPageA
       console.error('Failed to mass upload images:', error);
       toast.error(error.message || t('page.massUpload.error'), { autoClose: 5000 });
     } finally {
+      // Add a small delay to ensure the full-screen loader is visible
+      await new Promise(resolve => setTimeout(resolve, 500)); // 500ms delay
       setPageActionLoading(false); // Deactivate global loader
       if (massFileInputRef.current) {
         massFileInputRef.current.value = ''; // Clear file input
