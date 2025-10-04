@@ -27,6 +27,15 @@ const Home: React.FC = () => {
           </div>
         </div>
       </div>
+      
+            {/* Button */}
+        <a href="https://www.indiegogo.com/projects/ai-selfpub-coloringbook-studio/x/38788543#/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-block bg-gradient-to-r from-purple-500 to-blue-500 text-white px-8 py-4 rounded-xl shadow-lg text-lg font-bold hover:scale-105 transform transition"
+          style={{ position: 'relative', zIndex: 1, marginTop: '2rem' }}>
+          {t('home.support_button_text')}
+        </a>
 
       <section className="bg-gradient-to-r from-purple-900 via-blue-900 to-black text-white py-16 text-center relative overflow-hidden">
         {/* Futuristic Glow Background */}
